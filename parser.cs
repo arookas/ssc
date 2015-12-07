@@ -1,5 +1,4 @@
 ﻿using PerCederberg.Grammatica.Runtime;
-using System;
 using System.IO;
 using System.Linq;
 
@@ -52,6 +51,7 @@ namespace arookas
 			{
 				switch (GetId(node))
 				{
+					case __sunConstants.ROOT_STATEMENT:
 					case __sunConstants.STATEMENT:
 					case __sunConstants.COMPOUND_STATEMENT:
 					case __sunConstants.COMPOUND_STATEMENT_ITEM:
@@ -82,6 +82,7 @@ namespace arookas
 			switch (GetId(node))
 			{
 				case __sunConstants.SCRIPT: return new sunNode(location);
+				case __sunConstants.ROOT_STATEMENT: return new sunNode(location);
 				case __sunConstants.STATEMENT: return new sunNode(location);
 				case __sunConstants.STATEMENT_BLOCK: return new sunStatementBlock(location);
 				case __sunConstants.COMPOUND_STATEMENT: return new sunNode(location);

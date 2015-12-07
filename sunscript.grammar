@@ -109,14 +109,16 @@ STRING							= <<"(\\.|[^"])*">>
 
 %productions%
 
-script							= statement+;
+script							= root_statement+;
 
 // statements
-statement						=
+root_statement					=
 								import_statement SEMICOLON |
-								compound_statement SEMICOLON |
 								function_definition |
 								builtin_declaration SEMICOLON |
+								statement;
+statement						=
+								compound_statement SEMICOLON |
 								if_statement |
 								while_statement |
 								do_statement SEMICOLON |
