@@ -1,24 +1,24 @@
 # ssc
 
-### Summary
+## Summary
 
 _ssc_ is a basic, work-in-progress compiler for SunScript. It supports all of the byte-code functionality and provides some basic compile-time functionality as well. The compiler compiles to the SPC binary format (.sb files) used by Super Mario Sunshine.
 
 This program utilizes the [Grammatica](http://grammatica.percederberg.net/) library to generate a LL parser using a grammar syntax file.
 
-### Usage
+## Usage
 
 To use _ssc_, fire it up via the command prompt and pass it the single SunScript file to be compiled as the argument. If a compiler or syntax error occurs, details will be printed in the output; otherwise, a compiled .sb file with the same name will be created in the same folder as the input.
 
-### Language
+## Language
 
 SunScript is the name of the language parsed natively by _ssc_. It closely resembles both JavaScript and the native byte-code used by Super Mario Sunshine's SPC interpreter. A SunScript file uses the extension ".sun" for convenience. Below is a brief summary of the language's syntax.
 
-#### Comments
+### Comments
 
 Both single-line comments and multi-line comments are supported. A single line comment begins with `//` and ends at the next new-line character.  A multi-line comment begins with `/*` and ends with `*/`.
 
-#### Variables
+### Variables
 
 A variable is created by use of the `var` keyword. A new variable may be either declared or defined. A definition assigns a default value explicitly to the variable, while a declaration assigns the interpreter's default value:
 
@@ -71,7 +71,7 @@ var circ = R * TWOPI; // this actually compiles to 'var circ = r * (2 * (3.14));
 
 _**Note:** You may have function calls or any other valid expression assigned to a constant._
 
-#### Functions
+### Functions
 
 There are two types of callables in SunScript: _builtins_ and _functions_. A builtin may only be declared (must not have a body), while a function may only be defined (must have a body). Callables may have any number of parameters.
 
@@ -94,13 +94,13 @@ A callable's return value is also dynamic. Use a `return` statement to override 
 Functions and builtins may be called either as standalone statements or in expressions. To call a function or builtin, simply pass its name, followed by any arguments, each separated by a comma:
 
 ```
-startMiss(); // calls the function 'startMiss' with no arguments
+appearReadyGo(); // calls the function 'appearReadyGo' with no arguments
 insertTimer(1, 0); // calls the function 'insertTimer' with two arguments, '1' and '0'
 ```
 
 _**Note:** You cannot call a function or builtin in code preceding its definition or declaration, respectively. All callable declarations and definitions must also be in the global scope._
 
-#### Operators
+### Operators
 
 The following table describes the operators supported by SunScript, as well as their precedence and associativity.
 
@@ -119,7 +119,39 @@ The following table describes the operators supported by SunScript, as well as t
 |9|`!`<br>`-`|logical-NOT<br>negation|right|
 |10|`[?:]`|ternary conditional|right|
 
-#### Importing
+### Flow Control
+
+SunScript has support for `while`, `do`, and `for` loops, as well as the `exit`, `break`, `continue`, and `return` statements:
+
+```
+function checkTime(time) {
+    if (time < 30) {
+        startMiss();
+        exit;
+    }
+}
+for (;;) {
+    checkTime();
+    if (stop) {
+        break;
+    }
+}
+```
+
+#### Named Loops
+
+Loops may be named. To name a loop, simply prefix the loop with a label. `break` and `continue` statements may be passed the name of the loop which they affect:
+
+```
+outer_loop:
+for (var a; a < 4; a += 1) {
+    for (var b; b < 4; b += 1) {
+        if (b == 2) break outer_loop;
+    }
+}
+```
+
+### Importing
 
 You may split a script amongst several files. Doing this requires the use of the `import` statement. Simply pass the name of the SunScript file to import:
 
