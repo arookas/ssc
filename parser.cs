@@ -48,20 +48,23 @@ namespace arookas
 				}
 			}
 			// transcience
-			switch ((__sunConstants)node.Id)
+			if (ast.Count == 1)
 			{
-				case __sunConstants.STATEMENT:
-				case __sunConstants.COMPOUND_STATEMENT:
-				case __sunConstants.COMPOUND_STATEMENT_ITEM:
-				case __sunConstants.ASSIGNMENT_OPERATOR:
-				case __sunConstants.BINARY_OPERATOR:
-				case __sunConstants.UNARY_OPERATOR:
-				case __sunConstants.TERM:
-				case __sunConstants.PARAMETER:
-				case __sunConstants.ARGUMENT_LIST:
-				case __sunConstants.ARGUMENT:
+				switch (GetId(node))
 				{
-					return Transcient(ast);
+					case __sunConstants.STATEMENT:
+					case __sunConstants.COMPOUND_STATEMENT:
+					case __sunConstants.COMPOUND_STATEMENT_ITEM:
+					case __sunConstants.ASSIGNMENT_OPERATOR:
+					case __sunConstants.BINARY_OPERATOR:
+					case __sunConstants.UNARY_OPERATOR:
+					case __sunConstants.TERM:
+					case __sunConstants.PARAMETER:
+					case __sunConstants.ARGUMENT_LIST:
+					case __sunConstants.ARGUMENT:
+					{
+						return ast[0];
+					}
 				}
 			}
 			return ast;
@@ -274,40 +277,6 @@ namespace arookas
 
 			// emergency fallback
 			return null;
-		}
-		static sunSourceLocation GetSourceLocation(string file, Node node)
-		{
-			if (file == null)
-			{
-				throw new ArgumentNullException("file");
-			}
-			if (node == null)
-			{
-				throw new ArgumentNullException("node");
-			}
-			if (node is Production)
-			{
-				var production = node as Production;
-				if (production.Count > 0)
-				{
-					return GetSourceLocation(file, production[0]);
-				}
-				throw new ArgumentException("node is a child-less production.", "node");
-			}
-			else if (node is Token)
-			{
-				var token = node as Token;
-				return new sunSourceLocation(file, token.StartLine, token.StartColumn);
-			}
-			throw new ArgumentException("node is an unsupported type.", "node");
-		}
-		static sunNode Transcient(sunNode node)
-		{
-			if (node == null)
-			{
-				throw new ArgumentNullException("node");
-			}
-			return node.Count == 1 ? node[0] : node;
 		}
 		static __sunConstants GetId(Node node)
 		{
