@@ -166,4 +166,4 @@ The `import` statement supports both relative and absolute path names. If the pa
 
 If the file cannot be found, a compiler error will occur.
 
-_**Note:** In order to prevent recursive inclusion, _ssc_ keeps track of all imported files and will ignore `import` statements whose files have already been compiled before._
+_**Note:** In order to prevent recursive inclusion, ssc keeps track of all imported files and will ignore `import` statements whose files have already been compiled before._
