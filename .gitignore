@@ -1,0 +1,17 @@
+# visual studio
+*.csproj
+*.user
+*.sln
+*.suo
+obj/
+bin/
+
+# generated types
+generated/
+
+# batch files
+*.bat
+
+# testing
+test.sun
+test.sb
