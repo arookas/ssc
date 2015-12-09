@@ -8,30 +8,34 @@ namespace arookas
 {
 	public class sunCompiler
 	{
-		Stack<string> files;
-		string defaultRootDir, rootDir;
-		public string RootDir
+		public sunCompilerResults Compile(string name, Stream output)
 		{
-			get { return rootDir ?? defaultRootDir; }
-			set { rootDir = value; }
+			return Compile(name, output, sunImportResolver.Default);
 		}
-
-		public sunCompiler()
+		public sunCompilerResults Compile(string name, Stream output, sunImportResolver resolver)
 		{
-			defaultRootDir = AppDomain.CurrentDomain.BaseDirectory;
-		}
-
-		public sunCompilerResults Compile(string file, Stream output)
-		{
+			if (name == null)
+			{
+				throw new ArgumentNullException("name");
+			}
+			if (output == null)
+			{
+				throw new ArgumentNullException("output");
+			}
+			if (resolver == null)
+			{
+				throw new ArgumentNullException("resolver");
+			}
 			var results = new sunCompilerResults();
 			var timer = Stopwatch.StartNew();
 			try
 			{
-				files = new Stack<string>(5);
-				sunContext context = new sunContext(output, RootDir);
-				context.EnterFile += EnterFile;
-				context.ExitFile += ExitFile;
-				context.Compile(file);
+				sunContext context = new sunContext(output, resolver);
+				var result = context.Import(name);
+				if (result != sunImportResult.Loaded)
+				{
+					throw new sunImportException(name, result);
+				}
 				context.Text.Terminate(); // NOTETOSELF: don't do this in sunScript because imported files will add this as well
 				foreach (var function in context.SymbolTable.Functions)
 				{
@@ -51,17 +55,10 @@ namespace arookas
 			{
 				results.Error = ex;
 			}
-			catch (ParserLogException ex)
-			{
-				results.Error = new sunParserException(files.Peek(), ex[0]);
-			}
 			timer.Stop();
 			results.CompileTime = timer.Elapsed;
 			return results;
 		}
-
-		void EnterFile(object sender, sunFileArgs e) { files.Push(e.File); }
-		void ExitFile(object sender, sunFileArgs e) { files.Pop(); }
 	}
 
 	public class sunCompilerResults

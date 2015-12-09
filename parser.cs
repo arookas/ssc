@@ -1,5 +1,4 @@
 ﻿using PerCederberg.Grammatica.Runtime;
-using System.IO;
 using System.Linq;
 
 namespace arookas
@@ -16,13 +15,20 @@ namespace arookas
 			"true", "false",
 		};
 
-		public sunNode Parse(string file)
+		public sunNode Parse(sunScriptFile file)
 		{
-			using (var input = new StreamReader(file))
+			using (var input = file.GetReader())
 			{
-				var parser = new __sunParser(input);
-				var node = parser.Parse();
-				return CreateAst(file, node);
+				try
+				{
+					var parser = new __sunParser(input);
+					var node = parser.Parse();
+					return CreateAst(file.Name, node);
+				}
+				catch (ParserLogException ex)
+				{
+					throw new sunParserException(file.Name, ex[0]);
+				}
 			}
 		}
 

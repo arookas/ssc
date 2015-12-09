@@ -16,21 +16,31 @@ namespace arookas
 		public sunSymbolTable SymbolTable { get; private set; }
 		public sunScopeStack Scopes { get; private set; }
 		public sunLoopStack Loops { get; private set; }
-		public sunImportTable Imports { get; private set; }
-
-		public event EventHandler<sunFileArgs> EnterFile;
-		public event EventHandler<sunFileArgs> ExitFile;
+		public sunImportResolver ImportResolver { get; private set; }
 
 		// open/close
-		public sunContext(Stream stream, string rootDir)
+		public sunContext(Stream output)
+			: this(output, sunImportResolver.Default)
 		{
+
+		}
+		public sunContext(Stream output, sunImportResolver importResolver)
+		{
+			if (output == null)
+			{
+				throw new ArgumentNullException("output");
+			}
+			if (importResolver == null)
+			{
+				throw new ArgumentNullException("importResolver");
+			}
 			DataTable = new sunDataTable();
 			SymbolTable = new sunSymbolTable();
 			Scopes = new sunScopeStack();
 			Loops = new sunLoopStack();
-			Imports = new sunImportTable(rootDir);
+			ImportResolver = importResolver;
 
-			writer = new aBinaryWriter(stream, Endianness.Big, Encoding.GetEncoding(932));
+			writer = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
 			Text = new sunWriter(writer);
 			writer.PushAnchor();
 
@@ -67,16 +77,24 @@ namespace arookas
 			return false;
 		}
 
-		// imports
-		public void Compile(string file)
+		// imports/compilation
+		public sunImportResult Import(string name)
 		{
-			Imports.PushDir(file);
-			OnEnterFile(new sunFileArgs(file));
-			var parser = new sunParser();
-			var tree = parser.Parse(file);
-			tree.Compile(this);
-			OnExitFile(new sunFileArgs(file));
-			Imports.PopDir();
+			if (name == null)
+			{
+				throw new ArgumentNullException("name");
+			}
+			sunScriptFile file;
+			var result = ImportResolver.ResolveImport(name, out file);
+			if (result == sunImportResult.Loaded)
+			{
+				ImportResolver.EnterFile(file);
+				var parser = new sunParser();
+				var tree = parser.Parse(file);
+				tree.Compile(this);
+				ImportResolver.ExitFile(file);
+			}
+			return result;
 		}
 
 		// builtins
@@ -218,32 +236,18 @@ namespace arookas
 			writer.WriteS32(SymbolTable.Count);
 			writer.WriteS32(Scopes.Root.VariableCount);
 		}
-
-		// events
-		void OnEnterFile(sunFileArgs e)
-		{
-			var func = EnterFile;
-			if (func != null)
-			{
-				func(this, e);
-			}
-		}
-		void OnExitFile(sunFileArgs e)
-		{
-			var func = ExitFile;
-			if (func != null)
-			{
-				func(this, e);
-			}
-		}
 	}
 
-	class sunFileArgs : EventArgs
+	public class sunFileArgs : EventArgs
 	{
-		public string File { get; private set; }
+		public sunScriptFile File { get; private set; }
 
-		public sunFileArgs(string file)
+		public sunFileArgs(sunScriptFile file)
 		{
+			if (file == null)
+			{
+				throw new ArgumentNullException("file");
+			}
 			File = file;
 		}
 	}

@@ -28,12 +28,12 @@
 
 		public override void Compile(sunContext context)
 		{
-			var file = context.Imports.ResolveImport(this);
-			if (file == null)
+			var result = context.Import(ImportFile.Value);
+			switch (result)
 			{
-				return; // the file has already been imported
+				case sunImportResult.Missing:
+				case sunImportResult.FailedToLoad: throw new sunMissingImportException(this);
 			}
-			context.Compile(file);
 		}
 	}
 

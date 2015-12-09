@@ -33,6 +33,27 @@ namespace arookas
 		}
 	}
 
+	public class sunImportException : sunCompilerException
+	{
+		public string Name { get; private set; }
+		public sunImportResult Result { get; private set; }
+		public override string Message { get { return String.Format("Name: {0}, Result: {1}", Name, Result); } }
+
+		public sunImportException(string name, sunImportResult result)
+		{
+			if (name == null)
+			{
+				throw new ArgumentNullException("name");
+			}
+			if (!result.IsDefined())
+			{
+				throw new ArgumentOutOfRangeException("name");
+			}
+			Name = name;
+			Result = result;
+		}
+	}
+
 	// wrapper around Grammatica exceptions
 	class sunParserException : sunScriptException
 	{
