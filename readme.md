@@ -19,7 +19,7 @@ Use the `sunCompiler.Compile` or any of its overloads to compile a script:
 |`resolver`|An instance of the import resolver to use. If not specified, `sunImportResolver.Default` will be used.|
 
 _ssc_ by default resolves imports by loading files on disk (see language.md for more information).
-To use a custom import resolver, create a new class inheriting from `sunImportResolver` and pass an instance of it to the `
+To use a custom import resolver, create a new class inheriting from `sunImportResolver` and pass an instance of it to the `sunCompiler.Compile` method.
 
 The result of compilation will be returned in a `sunCompilerResults` instance.
 Use the various properties on this type to gather the information of the compilation:
