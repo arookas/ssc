@@ -35,7 +35,6 @@ Use the various properties on this type to gather the information of the compila
 |`VariableCount`|The total number of global-scope variable symbols created.|
 
 If the error is of the type `sunScriptException`, you can cast and retrieve the script name, line, and column of the error.
-Compile` method.
 
 ## Language
 
