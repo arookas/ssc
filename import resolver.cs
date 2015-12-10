@@ -19,11 +19,12 @@ namespace arookas
 		{
 			List<sunScriptFile> imports = new List<sunScriptFile>(10);
 			Stack<sunScriptFile> current = new Stack<sunScriptFile>(5);
-			string rootDirectory;
+			string rootDirectory, currentDirectory;
 
 			public sunDefaultImportResolver()
 			{
 				rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				currentDirectory = Directory.GetCurrentDirectory();
 			}
 
 			public override void EnterFile(sunScriptFile file) { current.Push(file); }
@@ -43,12 +44,24 @@ namespace arookas
 				}
 				else
 				{
-					// check if the file exists relative to the current one;
-					// if it's not there, check the root directory
-					fullPath = Path.Combine(Path.GetDirectoryName(current.Peek().Name), name);
-					if (!File.Exists(fullPath))
+					if (current.Count > 0)
 					{
-						fullPath = Path.Combine(rootDirectory, name);
+						// check if the file exists relative to the current one;
+						// if it's not there, check the root directory
+						fullPath = Path.Combine(Path.GetDirectoryName(current.Peek().Name), name);
+						if (!File.Exists(fullPath))
+						{
+							fullPath = Path.Combine(rootDirectory, name);
+							if (!File.Exists(fullPath))
+							{
+								return sunImportResult.Missing;
+							}
+						}
+					}
+					else
+					{
+						// if this is the main script file (i.e. current stack is empty), just use the current directory
+						fullPath = Path.Combine(currentDirectory, name);
 						if (!File.Exists(fullPath))
 						{
 							return sunImportResult.Missing;
