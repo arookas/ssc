@@ -26,6 +26,7 @@ namespace arookas
 				if (results.Success)
 				{
 					Message("Finished compiling in {0:F2}ms.\n", results.CompileTime.TotalMilliseconds);
+					Message("  Data count: {0}\n", results.DataCount);
 					Message("Symbol count: {0}\n", results.SymbolCount);
 					Message(" -  builtins: {0}\n", results.BuiltinCount);
 					Message(" - functions: {0}\n", results.FunctionCount);

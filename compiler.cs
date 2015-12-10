@@ -43,6 +43,7 @@ namespace arookas
 				{
 					function.CloseCallSites(context);
 				}
+				results.DataCount = context.DataTable.Count;
 				results.SymbolCount = context.SymbolTable.Count;
 				results.BuiltinCount = context.SymbolTable.BuiltinCount;
 				results.FunctionCount = context.SymbolTable.FunctionCount;
@@ -66,6 +67,7 @@ namespace arookas
 		public sunCompilerException Error { get; internal set; }
 
 		// statistics
+		public int DataCount { get; internal set; }
 		public int SymbolCount { get; internal set; }
 		public int BuiltinCount { get; internal set; }
 		public int FunctionCount { get; internal set; }

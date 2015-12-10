@@ -29,6 +29,7 @@ Use the various properties on this type to gather the information of the compila
 |`Success`|Whether the script was compiled successfully. If not, the `Error` property should be non-null.|
 |`Error`|The fatal error which occured during compilation. If compilation was successful, this should be null.|
 |`CompileTime`|The time it took to compile, measured as a `TimeSpan` instance.|
+|`DataCount`|The total number of data-table entries created.|
 |`SymbolCount`|The total number of symbols (builtins, functions, and variables) created.|
 |`BuiltinCount`|The total number of builtin symbols created.|
 |`FunctionCount`|The total number of function symbols created.|
