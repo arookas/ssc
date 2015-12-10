@@ -68,6 +68,11 @@ namespace arookas
 						}
 					}
 				}
+				// make sure the file has not been imported yet
+				if (imports.Any(i => i.Name == fullPath))
+				{
+					return sunImportResult.Skipped;
+				}
 				// open the file
 				try
 				{
@@ -76,11 +81,6 @@ namespace arookas
 				catch
 				{
 					return sunImportResult.FailedToLoad;
-				}
-				// make sure the file has not been imported yet
-				if (imports.Any(i => i.Name == fullPath))
-				{
-					return sunImportResult.Skipped;
 				}
 				imports.Add(file);
 				return sunImportResult.Loaded;
