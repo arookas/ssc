@@ -85,7 +85,7 @@ namespace arookas
 		FailedToLoad,
 	}
 
-	public class sunScriptFile
+	public class sunScriptFile : IDisposable
 	{
 		public string Name { get; private set; }
 		public Stream Stream { get; private set; }
@@ -106,6 +106,11 @@ namespace arookas
 			}
 			Name = name;
 			Stream = stream;
+		}
+
+		public void Dispose()
+		{
+			Stream.Dispose();
 		}
 
 		public TextReader GetReader()

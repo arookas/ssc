@@ -93,6 +93,7 @@ namespace arookas
 				var tree = parser.Parse(file);
 				tree.Compile(this);
 				ImportResolver.ExitFile(file);
+				file.Dispose();
 			}
 			return result;
 		}
