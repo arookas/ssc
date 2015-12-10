@@ -1,6 +1,4 @@
-﻿using PerCederberg.Grammatica.Runtime;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 
@@ -36,7 +34,7 @@ namespace arookas
 				{
 					throw new sunImportException(name, result);
 				}
-				context.Text.Terminate(); // NOTETOSELF: don't do this in sunScript because imported files will add this as well
+				context.Text.Terminate(); // NOTETOSELF: don't do this via sunNode.Compile because imported files will add this as well
 				foreach (var function in context.SymbolTable.Functions)
 				{
 					function.Compile(context);
