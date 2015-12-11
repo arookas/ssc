@@ -18,7 +18,7 @@ Use the `sunCompiler.Compile` or any of its overloads to compile a script:
 |`output`|The output stream into which the compiled binary file will be written.|
 |`resolver`|An instance of the import resolver to use. If not specified, `sunImportResolver.Default` will be used.|
 
-_ssc_ by default resolves imports by loading files on disk (see language.md for more information).
+_ssc_ by default resolves imports by loading files on disk (see [language.md](language.md). for more information).
 To use a custom import resolver, create a new class inheriting from `sunImportResolver` and pass an instance of it to the `sunCompiler.Compile` method.
 
 The result of compilation will be returned in a `sunCompilerResults` instance.
@@ -39,4 +39,4 @@ If the error is of the type `sunScriptException`, you can cast and retrieve the 
 
 ## Language
 
-For more information on the SunScript language and its syntax, see language.md.
+For more information on the SunScript language and its syntax, see [language.md](language.md).
