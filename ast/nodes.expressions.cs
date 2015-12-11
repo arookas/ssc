@@ -102,8 +102,8 @@ namespace arookas
 		public sunExpression TrueBody { get { return this[1] as sunExpression; } }
 		public sunExpression FalseBody { get { return this[2] as sunExpression; } }
 
-		public sunTernaryOperator(sunSourceLocation node)
-			: base(node)
+		public sunTernaryOperator(sunSourceLocation location)
+			: base(location)
 		{
 
 		}
@@ -117,6 +117,92 @@ namespace arookas
 			context.Text.ClosePoint(falsePrologue);
 			FalseBody.Compile(context);
 			context.Text.ClosePoint(trueEpilogue);
+		}
+	}
+	
+	// increment/decrement
+	class sunPostfixAugment : sunOperand
+	{
+		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
+		public sunAugment Operator { get { return this[1] as sunAugment; } }
+
+		public sunPostfixAugment(sunSourceLocation location)
+			: base(location)
+		{
+
+		}
+
+		public override void Compile(sunContext context)
+		{
+			var variableInfo = context.ResolveVariable(Variable);
+			if (Parent is sunOperand)
+			{
+				context.Text.PushVariable(variableInfo);
+			}
+			Operator.Compile(context, variableInfo);
+			context.Text.StoreVariable(variableInfo);
+		}
+	}
+
+	class sunPrefixAugment : sunOperand
+	{
+		public sunAugment Operator { get { return this[0] as sunAugment; } }
+		public sunIdentifier Variable { get { return this[1] as sunIdentifier; } }
+
+		public sunPrefixAugment(sunSourceLocation location)
+			: base(location)
+		{
+
+		}
+
+		public override void Compile(sunContext context)
+		{
+			var variableInfo = context.ResolveVariable(Variable);
+			Operator.Compile(context, variableInfo);
+			context.Text.StoreVariable(variableInfo);
+			if (Parent is sunOperand)
+			{
+				context.Text.PushVariable(variableInfo);
+			}
+		}
+	}
+
+	abstract class sunAugment : sunNode
+	{
+		protected sunAugment(sunSourceLocation location)
+			: base(location)
+		{
+
+		}
+
+		public abstract void Compile(sunContext context, sunVariableInfo variable);
+	}
+
+	class sunIncrement : sunAugment
+	{
+		public sunIncrement(sunSourceLocation location)
+			: base(location)
+		{
+
+		}
+
+		public override void Compile(sunContext context, sunVariableInfo variable)
+		{
+			context.Text.IncVariable(variable);
+		}
+	}
+
+	class sunDecrement : sunAugment
+	{
+		public sunDecrement(sunSourceLocation location)
+			: base(location)
+		{
+
+		}
+
+		public override void Compile(sunContext context, sunVariableInfo variable)
+		{
+			context.Text.DecVariable(variable);
 		}
 	}
 }

@@ -61,9 +61,11 @@ namespace arookas
 					case __sunConstants.STATEMENT:
 					case __sunConstants.COMPOUND_STATEMENT:
 					case __sunConstants.COMPOUND_STATEMENT_ITEM:
+					case __sunConstants.VARIABLE_AUGMENT:
 					case __sunConstants.ASSIGNMENT_OPERATOR:
 					case __sunConstants.BINARY_OPERATOR:
 					case __sunConstants.UNARY_OPERATOR:
+					case __sunConstants.AUGMENT_OPERATOR:
 					case __sunConstants.TERM:
 					case __sunConstants.PARAMETER:
 					case __sunConstants.ARGUMENT_LIST:
@@ -162,10 +164,14 @@ namespace arookas
 				case __sunConstants.ASSIGN_BIT_LSH: return new sunAssignBitLsh(location);
 				case __sunConstants.ASSIGN_BIT_RSH: return new sunAssignBitRsh(location);
 
+				case __sunConstants.INCREMENT: return new sunIncrement(location);
+				case __sunConstants.DECREMENT: return new sunDecrement(location);
+
 				case __sunConstants.ASSIGNMENT_OPERATOR: return new sunNode(location);
 				case __sunConstants.TERNARY_OPERATOR: return new sunTernaryOperator(location);
 				case __sunConstants.BINARY_OPERATOR: return new sunNode(location);
 				case __sunConstants.UNARY_OPERATOR: return new sunNode(location);
+				case __sunConstants.AUGMENT_OPERATOR: return new sunNode(location);
 			}
 
 			// expressions
@@ -180,6 +186,9 @@ namespace arookas
 				case __sunConstants.INT_CAST: return new sunIntCast(location);
 				case __sunConstants.FLOAT_CAST: return new sunFloatCast(location);
 				case __sunConstants.TYPEOF_CAST: return new sunTypeofCast(location);
+
+				case __sunConstants.PREFIX_AUGMENT: return new sunPrefixAugment(location);
+				case __sunConstants.POSTFIX_AUGMENT: return new sunPostfixAugment(location);
 			}
 
 			// builtins
@@ -207,6 +216,7 @@ namespace arookas
 				case __sunConstants.VARIABLE_DECLARATION: return new sunVariableDeclaration(location);
 				case __sunConstants.VARIABLE_DEFINITION: return new sunVariableDefinition(location);
 				case __sunConstants.VARIABLE_ASSIGNMENT: return new sunVariableAssignment(location);
+				case __sunConstants.VARIABLE_AUGMENT: return new sunNode(location);
 			}
 
 			// constants

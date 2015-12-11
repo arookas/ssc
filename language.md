@@ -132,8 +132,8 @@ Loops may be named. To name a loop, simply prefix the loop with a label. `break`
 
 ```
 outer_loop:
-for (var a; a < 4; a += 1) {
-    for (var b; b < 4; b += 1) {
+for (var a; a < 4; ++a) {
+    for (var b; b < 4; ++b) {
         if (b == 2) break outer_loop;
     }
 }

@@ -100,6 +100,9 @@ ASSIGN_BIT_OR					= "|="
 ASSIGN_BIT_LSH					= "<<="
 ASSIGN_BIT_RSH					= ">>="
 
+INCREMENT						= "++"
+DECREMENT						= "--"
+
 // literals
 IDENTIFIER						= <<[_A-Za-z][_A-Za-z0-9]*>>
 DEC_NUMBER						= <<-?[0-9]+\.[0-9]+>>
@@ -138,6 +141,7 @@ compound_statement_item			=
 								variable_definition |
 								variable_declaration |
 								variable_assignment |
+								variable_augment |
 								print_statement |
 								function_call;
 statement_block					= L_BRACE {statement} R_BRACE;
@@ -161,6 +165,7 @@ binary_operator					=
 								EQ | NEQ | LT | LTEQ | GT | GTEQ | // comparison
 								LOG_AND | LOG_OR; // logical
 unary_operator					= LOG_NOT | SUB;
+augment_operator				= INCREMENT | DECREMENT;
 
 // expressions
 expression						= operand {binary_operator operand};
@@ -171,6 +176,7 @@ term							=
 								typeof_cast |
 								function_call |
 								variable_reference |
+								variable_augment |
 								STRING |
 								DEC_NUMBER |
 								HEX_NUMBER |
@@ -194,6 +200,10 @@ variable_reference				= IDENTIFIER; // used in expressions
 variable_declaration			= VAR IDENTIFIER;
 variable_definition				= VAR IDENTIFIER assignment_operator expression;
 variable_assignment				= IDENTIFIER assignment_operator expression;
+variable_augment				= postfix_augment | prefix_augment;
+
+postfix_augment					= IDENTIFIER augment_operator;
+prefix_augment					= augment_operator IDENTIFIER;
 
 // functions
 function_definition				= FUNCTION IDENTIFIER parameter_list statement_block;
