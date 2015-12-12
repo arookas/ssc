@@ -1,0 +1,14 @@
+﻿/* ================================================= *\
+ * system.sun
+ *
+ * ssc standard include utility
+ * 2015 arookas
+\* ================================================= */
+
+// builtins
+builtin getSystemFlag(flag);
+builtin setSystemFlag(flag, value);
+
+// functions
+function setOnSystemFlag(flag) { setSystemFlag(flag, true); }
+function setOffSystemFlag(flag) { setSystemFlag(flag, false); }

@@ -1,0 +1,115 @@
+﻿/* ================================================= *\
+ * talk.sun
+ *
+ * ssc standard include utility
+ * 2015 arookas
+\* ================================================= */
+
+// ================================================= \\
+// TALK
+// ================================================= \\
+
+// flags
+const TALKF_WAIT	= 0;
+const TALKF_CLOSE	= (1 << 0);
+
+// builtins
+builtin getTalkMode();
+builtin isTalkModeNow();
+builtin getTalkNPC();
+builtin getTalkNPCName();
+builtin setTalkMsgID(msgID, flags);
+
+// functions
+function waitTalkStart(name) {
+	while (true) {
+		if (isTalkModeNow()) {
+			if (getTalkNPCName() == name) {
+				break;
+			}
+		}
+		yield;
+	}
+}
+function waitTalkStartHandle(handle) {
+	while (true) {
+		if (isTalkModeNow()) {
+			if (getTalkNPC() == handle) {
+				break;
+			}
+		}
+		yield;
+	}
+}
+
+// sets message (blocking)
+function talk(msgID, flags) {
+	setTalkMsgID(msgID, flags);
+	if (flags & TALKF_CLOSE) {
+		while (isTalkModeNow()) {
+			yield;
+		}
+	}
+	yield;
+	while (getTalkMode() != true) {
+		yield;
+	}
+}
+
+function talkAndWait(msgID)				{ talk(msgID, TALKF_WAIT); }
+function talkAndClose(msgID)			{ talk(msgID, TALKF_CLOSE); }
+
+// ================================================= \\
+// SELECT
+// ================================================= \\
+
+// builtins
+builtin getTalkSelectedValue();
+
+// functions
+function select(msgID, flags) {
+	setTalkMsgID(msgID, flags);
+	if (flags & TALKF_CLOSE) {
+		while (isTalkModeNow()) {
+			yield;
+		}
+	}
+	else {
+		yield;
+		while (getTalkMode() != true) {
+			yield;
+		}
+	}
+	return getTalkSelectedValue();
+}
+
+function talkAndSelect(msgID)			{ select(msgID, TALKF_WAIT); }
+function talkAndSelectClose(msgID)		{ select(msgID, TALKF_CLOSE); }
+
+// ================================================= \\
+// FORCE
+// ================================================= \\
+
+// builtins
+builtin __forceStartTalk(handle);
+builtin __forceStartTalkExceptNpc(handle);
+
+// functions
+function forceTalk(handle) {
+	var res = __forceStartTalk(handle);
+	if (res == true) {
+		while (!isTalkModeNow()) {
+			yield;
+		}
+	}
+	return res;
+}
+function forceTalkExceptNpc(handle) {
+	var res = __forceStartTalkExceptNpc(handle);
+	if (res == true) {
+		while (!isTalkModeNow()) {
+			yield;
+		}
+	}
+	return res;
+}

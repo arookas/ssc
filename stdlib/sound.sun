@@ -1,0 +1,12 @@
+﻿/* ================================================= *\
+ * sound.sun
+ *
+ * ssc standard include utility
+ * 2015 arookas
+\* ================================================= */
+
+// builtins
+builtin startBGM(num);
+builtin stopBGM(num);
+
+builtin startSE(num);
