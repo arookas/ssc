@@ -88,12 +88,18 @@ namespace arookas
 			var result = ImportResolver.ResolveImport(name, out file);
 			if (result == sunImportResult.Loaded)
 			{
-				ImportResolver.EnterFile(file);
-				var parser = new sunParser();
-				var tree = parser.Parse(file);
-				tree.Compile(this);
-				ImportResolver.ExitFile(file);
-				file.Dispose();
+				try
+				{
+					ImportResolver.EnterFile(file);
+					var parser = new sunParser();
+					var tree = parser.Parse(file);
+					tree.Compile(this);
+					ImportResolver.ExitFile(file);
+				}
+				finally
+				{
+					file.Dispose();
+				}
 			}
 			return result;
 		}
