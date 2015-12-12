@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace arookas
 {
@@ -37,7 +38,7 @@ namespace arookas
 					if (results.Error is sunScriptException)
 					{
 						var error = results.Error as sunScriptException;
-						Error("  \"{0}\"\n  pos ({1}, {2})\n{3}", error.Location.File, error.Location.Line, error.Location.Column, error.Message);
+						Error("  in file \"{0}\"\n  at line {1}, col {2}\n\n{3}{4}", error.Location.File, error.Location.Line, error.Location.Column, GetErrorPreview(error.Location), error.Message);
 						exitCode = 1;
 					}
 					else
@@ -121,6 +122,43 @@ namespace arookas
 				Exit(1);
 			}
 			outputFile = prm[0];
+		}
+
+		static string GetErrorPreview(sunSourceLocation location)
+		{
+			Stream file;
+			try
+			{
+				file = File.OpenRead(location.File);
+			}
+			catch
+			{
+				// simply don't do a preview if opening a file fails
+				return "";
+			}
+			using (var reader = new StreamReader(file))
+			{
+				// skip to line
+				for (var line = 1; line < location.Line; ++line)
+				{
+					reader.ReadLine();
+				}
+				// generate column string
+				var sb = new StringBuilder();
+				var preview = reader.ReadLine();
+				sb.AppendLine(preview);
+				for (var column = 1; column < location.Column; ++column)
+				{
+					switch (preview[column - 1])
+					{
+						case '\t': sb.Append('\t'); break;
+						default: sb.Append(" "); break;
+					}
+				}
+				sb.Append("^");
+				sb.Append("\n");
+				return sb.ToString();
+			}
 		}
 
 		static void Message(string format, params object[] args) { Console.Write(format, args); }
