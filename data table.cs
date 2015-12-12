@@ -28,7 +28,8 @@ namespace arookas
 			foreach (var value in this)
 			{
 				writer.WriteS32(ofs);
-				ofs += value.Length + 1; // include terminator
+				var length = writer.Encoding.GetByteCount(value);
+				ofs += length + 1; // include terminator
 			}
 			foreach (var value in this)
 			{
