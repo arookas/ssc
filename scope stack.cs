@@ -7,6 +7,8 @@ namespace arookas
 	class sunScopeStack : IEnumerable<sunScope>
 	{
 		List<sunScope> stack = new List<sunScope>(8);
+		int GlobalCount { get { return stack.Where(i => i.Type == sunScopeType.Script).Sum(i => i.VariableCount); } }
+		int LocalCount { get { return stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.VariableCount); } }
 
 		public int Count { get { return stack.Count; } }
 		public bool IsRoot { get { return Count == 1; } }
@@ -18,12 +20,12 @@ namespace arookas
 
 		public sunScopeStack()
 		{
-			Push(); // push global scope
+			Push(sunScopeType.Script); // push global scope
 		}
 
-		public void Push()
+		public void Push(sunScopeType type)
 		{
-			stack.Add(new sunScope());
+			stack.Add(new sunScope(type));
 		}
 		public void Pop()
 		{
@@ -35,10 +37,37 @@ namespace arookas
 		public void Clear()
 		{
 			stack.Clear();
-			Push(); // add global scope
+			Push(sunScopeType.Script); // add global scope
 		}
 
 		public bool GetIsVariableDeclared(string name) { return stack.Any(i => i.GetIsVariableDeclared(name)); }
+		public sunVariableInfo DeclareVariable(string name)
+		{
+			switch (Top.Type)
+			{
+				case sunScopeType.Script: return DeclareGlobal(name);
+				case sunScopeType.Function: return DeclareLocal(name);
+			}
+			return null;
+		}
+		sunVariableInfo DeclareGlobal(string name)
+		{
+			var variableInfo = Top.DeclareVariable(name, 0, GlobalCount);
+			if (variableInfo == null)
+			{
+				return null;
+			}
+			return variableInfo;
+		}
+		sunVariableInfo DeclareLocal(string name)
+		{
+			var variableInfo = Top.DeclareVariable(name, 1, LocalCount);
+			if (variableInfo == null)
+			{
+				return null;
+			}
+			return variableInfo;
+		}
 
 		public IEnumerator<sunScope> GetEnumerator() { return stack.GetEnumerator(); }
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
@@ -48,18 +77,24 @@ namespace arookas
 	{
 		List<sunVariableInfo> variables = new List<sunVariableInfo>(10);
 		List<sunConstInfo> constants = new List<sunConstInfo>(10);
+		public sunScopeType Type { get; private set; }
+
+		public sunScope(sunScopeType type)
+		{
+			Type = type;
+		}
 
 		public int VariableCount { get { return variables.Count; } }
 		public int ConstantCount { get { return constants.Count; } }
 
 		public bool GetIsVariableDeclared(string name) { return variables.Any(v => v.Name == name); }
-		public sunVariableInfo DeclareVariable(string name, int display)
+		public sunVariableInfo DeclareVariable(string name, int display, int index)
 		{
 			if (GetIsVariableDeclared(name) || GetIsConstantDeclared(name))
 			{
 				return null;
 			}
-			var variableInfo = new sunVariableInfo(name, display, variables.Count);
+			var variableInfo = new sunVariableInfo(name, display, index);
 			variables.Add(variableInfo);
 			return variableInfo;
 		}
@@ -77,6 +112,12 @@ namespace arookas
 			return constInfo;
 		}
 		public sunConstInfo ResolveConstant(string name) { return constants.FirstOrDefault(c => c.Name == name); }
+	}
+
+	enum sunScopeType
+	{
+		Script, // outside of a function
+		Function, // inside of a function
 	}
 
 	class sunConstInfo

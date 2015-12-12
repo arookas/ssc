@@ -159,10 +159,10 @@ namespace arookas
 			{
 				throw new sunRedeclaredVariableException(node);
 			}
-			var variableInfo = Scopes.Top.DeclareVariable(node.Value, Scopes.Count > 1 ? 1 : 0);
-			if (Scopes.IsRoot)
+			var variableInfo = Scopes.DeclareVariable(node.Value);
+			if (Scopes.Top.Type == sunScopeType.Script)
 			{
-				// global-scope variables are added to the symbol table
+				// script variables are added to the symbol table
 				SymbolTable.Add(variableInfo);
 			}
 			return variableInfo;
@@ -181,7 +181,7 @@ namespace arookas
 			throw new sunUndeclaredVariableException(node);
 		}
 
-		public sunVariableInfo DeclareParameter(string name) { return Scopes.Top.DeclareVariable(name, 1); }
+		public sunVariableInfo DeclareParameter(string name) { return Scopes.DeclareVariable(name); }
 
 		// constants
 		public sunConstInfo DeclareConstant(sunIdentifier node, sunExpression expression)

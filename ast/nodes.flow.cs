@@ -114,7 +114,7 @@ namespace arookas
 
 		public override void Compile(sunContext context)
 		{
-			context.Scopes.Push();
+			context.Scopes.Push(context.Scopes.Top.Type);
 			context.Loops.Push(IsNamed ? NameLabel.Label.Value : null);
 			TryCompile(Declaration, context);
 			var bodyPrologue = context.Text.OpenPoint();

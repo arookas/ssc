@@ -10,7 +10,7 @@
 
 		public override void Compile(sunContext context)
 		{
-			context.Scopes.Push();
+			context.Scopes.Push(context.Scopes.Top.Type);
 			base.Compile(context);
 			context.Scopes.Pop();
 		}
