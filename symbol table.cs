@@ -129,7 +129,7 @@ namespace arookas
 		public override void Compile(sunContext context)
 		{
 			Offset = context.Text.Offset;
-			context.Scopes.Push();
+			context.Scopes.Push(sunScopeType.Function);
 			foreach (var parameter in Parameters)
 			{
 				context.DeclareParameter(parameter);
