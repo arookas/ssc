@@ -37,6 +37,16 @@ Use the various properties on this type to gather the information of the compila
 
 If the error is of the type `sunScriptException`, you can cast and retrieve the script name, line, and column of the error.
 
+## Compiling
+
+This repository contains a [premake5](https://premake.github.io/) configuration file (see [premake5.lua](premake5.lua)).
+The script generates a solution with the following projects:
+
+ - **ssc**, the base _ssc_ API library
+ - **frontend**, the basic command-line frontend
+
+Simply run the script through premake5 and build the resulting solution.
+
 ## Language
 
 For more information on the SunScript language and its syntax, see [language.md](language.md).
