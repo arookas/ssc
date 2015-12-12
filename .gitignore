@@ -1,3 +1,7 @@
+# premake
+premake5.bat
+premake5.exe
+
 # visual studio
 *.csproj
 *.user
