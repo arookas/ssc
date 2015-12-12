@@ -11,7 +11,6 @@ namespace arookas
 		int LocalCount { get { return stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.VariableCount); } }
 
 		public int Count { get { return stack.Count; } }
-		public bool IsRoot { get { return Count == 1; } }
 
 		public sunScope Root { get { return this[0]; } }
 		public sunScope Top { get { return this[Count - 1]; } }
@@ -29,7 +28,7 @@ namespace arookas
 		}
 		public void Pop()
 		{
-			if (!IsRoot)
+			if (Count > 1)
 			{
 				stack.RemoveAt(Count - 1);
 			}
@@ -40,7 +39,6 @@ namespace arookas
 			Push(sunScopeType.Script); // add global scope
 		}
 
-		public bool GetIsVariableDeclared(string name) { return stack.Any(i => i.GetIsVariableDeclared(name)); }
 		public sunVariableInfo DeclareVariable(string name)
 		{
 			switch (Top.Type)
