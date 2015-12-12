@@ -47,6 +47,9 @@ The script generates a solution with the following projects:
 
 Simply run the script through premake5 and build the resulting solution.
 
+_**Note:** A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.
+For more information, see Grammatic's official [installation documentation](http://grammatica.percederberg.net/doc/release/install.html)._
+
 ## Language
 
 For more information on the SunScript language and its syntax, see [language.md](language.md).
