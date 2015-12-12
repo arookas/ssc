@@ -1,6 +1,7 @@
 workspace "ssc"
 	configurations { "Debug", "Release" }
 	targetdir "bin/%{cfg.buildcfg}"
+	libdirs { "lib" }
 	
 	startproject "frontend"
 	
