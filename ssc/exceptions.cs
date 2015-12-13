@@ -18,15 +18,15 @@ namespace arookas
 	}
 
 	// exceptions that have a location in the source
-	public abstract class sunScriptException : sunCompilerException
+	public abstract class sunSourceException : sunCompilerException
 	{
 		public abstract sunSourceLocation Location { get; }
 
-		public sunScriptException()
+		public sunSourceException()
 		{
 
 		}
-		public sunScriptException(string format, params object[] args)
+		public sunSourceException(string format, params object[] args)
 			: base(format, args)
 		{
 
@@ -55,7 +55,7 @@ namespace arookas
 	}
 
 	// wrapper around Grammatica exceptions
-	class sunParserException : sunScriptException
+	class sunParserException : sunSourceException
 	{
 		string file;
 
@@ -79,7 +79,7 @@ namespace arookas
 	}
 
 	// node exceptions
-	abstract class sunNodeException<TNode> : sunScriptException where TNode : sunNode
+	abstract class sunNodeException<TNode> : sunSourceException where TNode : sunNode
 	{
 		public TNode Node { get; private set; }
 		public override sunSourceLocation Location { get { return Node.Location; } }

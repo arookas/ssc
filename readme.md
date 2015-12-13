@@ -35,7 +35,7 @@ Use the various properties on this type to gather the information of the compila
 |`FunctionCount`|The total number of function symbols created.|
 |`VariableCount`|The total number of global-scope variable symbols created.|
 
-If the error is of the type `sunScriptException`, you can cast and retrieve the script name, line, and column of the error.
+If the error is of the type `sunSourceException`, you can cast and retrieve the script name, line, and column of the error.
 
 ## Compiling
 

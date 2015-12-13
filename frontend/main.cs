@@ -35,9 +35,9 @@ namespace arookas
 				}
 				else
 				{
-					if (results.Error is sunScriptException)
+					if (results.Error is sunSourceException)
 					{
-						var error = results.Error as sunScriptException;
+						var error = results.Error as sunSourceException;
 						Error("  in file \"{0}\"\n  at line {1}, col {2}\n\n{3}{4}", error.Location.File, error.Location.Line, error.Location.Column, GetErrorPreview(error.Location), error.Message);
 						exitCode = 1;
 					}
