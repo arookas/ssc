@@ -37,7 +37,22 @@ namespace arookas
 	{
 		public string Name { get; private set; }
 		public sunImportResult Result { get; private set; }
-		public override string Message { get { return String.Format("Name: {0}, Result: {1}", Name, Result); } }
+		public override string Message
+		{
+			get
+			{
+				string format;
+				switch (Result)
+				{
+					case sunImportResult.Loaded: format = "Script '{0}' loaded successfully."; break; // Error: Success!
+					case sunImportResult.Skipped: format = "Script '{0}' was skipped."; break;
+					case sunImportResult.Missing: format = "Script '{0}' could not be found."; break;
+					case sunImportResult.FailedToLoad: format = "Script '{0}' failed to load."; break;
+					default: format = "Name: {0}, Result: {1}"; break;
+				}
+				return String.Format(format, Name, Result);
+			}
+		}
 
 		public sunImportException(string name, sunImportResult result)
 		{
