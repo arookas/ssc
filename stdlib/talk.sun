@@ -50,9 +50,11 @@ function talk(msgID, flags) {
 			yield;
 		}
 	}
-	yield;
-	while (getTalkMode() != true) {
+	else {
 		yield;
+		while (getTalkMode() != true) {
+			yield;
+		}
 	}
 }
 
