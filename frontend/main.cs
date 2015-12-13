@@ -149,16 +149,28 @@ namespace arookas
 				sb.AppendLine(preview);
 				for (var column = 1; column < location.Column; ++column)
 				{
-					switch (preview[column - 1])
+					var c = preview[column - 1];
+					if (IsFullWidth(c))
 					{
-						case '\t': sb.Append('\t'); break;
-						default: sb.Append(" "); break;
+						sb.Append("  "); // full-width hack
+					}
+					else if (c == '\t')
+					{
+						sb.Append('\t');
+					}
+					else
+					{
+						sb.Append(" ");
 					}
 				}
 				sb.Append("^");
 				sb.Append("\n");
 				return sb.ToString();
 			}
+		}
+		static bool IsFullWidth(char c)
+		{
+			return (c >= 0x2E80 && c <= 0x9FFF) || (c >= 0xFF00 && c <= 0xFFEF);
 		}
 
 		static void Message(string format, params object[] args) { Console.Write(format, args); }
