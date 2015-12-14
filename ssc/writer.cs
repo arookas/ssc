@@ -46,6 +46,11 @@ namespace arookas
 			writer.Write8(0x02);
 			writer.WriteS32(dataIndex);
 		}
+		public void PushAddress(int value)
+		{
+			writer.Write8(0x03);
+			writer.WriteS32(value);
+		}
 		public void PushVariable(sunVariableInfo variableInfo)
 		{
 			PushVariable(variableInfo.Display, variableInfo.Index);
