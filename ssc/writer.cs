@@ -57,6 +57,11 @@ namespace arookas
 			writer.WriteS32(variableIndex);
 		}
 
+		public void Nop()
+		{
+			writer.Write8(0x05);
+		}
+
 		public void IncVariable(sunVariableInfo variableInfo)
 		{
 			IncVariable(variableInfo.Display, variableInfo.Index);
