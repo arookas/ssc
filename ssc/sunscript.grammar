@@ -198,7 +198,7 @@ const_definition				= CONST IDENTIFIER ASSIGN expression;
 // variables
 variable_reference				= IDENTIFIER; // used in expressions
 variable_declaration			= VAR IDENTIFIER;
-variable_definition				= VAR IDENTIFIER assignment_operator expression;
+variable_definition				= VAR IDENTIFIER ASSIGN expression;
 variable_assignment				= IDENTIFIER assignment_operator expression;
 variable_augment				= postfix_augment | prefix_augment;
 
