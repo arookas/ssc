@@ -151,6 +151,32 @@ namespace arookas
 				context.Text.ClosePoint(callSite, Offset);
 			}
 		}
+
+		static int CalculateMaxLocalCount(sunNode node)
+		{
+			int locals = 0;
+			int maxChildLocals = 0;
+			foreach (var child in node)
+			{
+				if (child is sunVariableDeclaration || child is sunVariableDefinition)
+				{
+					++locals;
+				}
+				else if (child is sunCompoundStatement)
+				{
+					locals += CalculateMaxLocalCount(child); // HACK: compound statements aren't their own scope
+				}
+				else
+				{
+					int childLocals = CalculateMaxLocalCount(child);
+					if (childLocals > maxChildLocals)
+					{
+						maxChildLocals = childLocals;
+					}
+				}
+			}
+			return locals + maxChildLocals;
+		}
 	}
 
 	class sunParameterInfo : IEnumerable<string>
