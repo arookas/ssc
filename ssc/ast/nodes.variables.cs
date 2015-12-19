@@ -39,7 +39,6 @@
 		public override void Compile(sunContext context)
 		{
 			var variableInfo = context.DeclareVariable(Variable);
-			context.Text.DeclareLocal(1);
 		}
 	}
 
@@ -54,7 +53,6 @@
 		public override void Compile(sunContext context)
 		{
 			var variableInfo = context.DeclareVariable(Variable);
-			context.Text.DeclareLocal(1);
 			base.Compile(context);
 		}
 	}

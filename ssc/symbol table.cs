@@ -135,6 +135,7 @@ namespace arookas
 				context.DeclareParameter(parameter);
 			}
 			context.Text.StoreDisplay(1);
+			context.Text.DeclareLocal(CalculateMaxLocalCount(Body));
 			Body.Compile(context);
 			context.Text.ReturnVoid();
 			context.Scopes.Pop();
