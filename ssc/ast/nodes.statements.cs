@@ -1,5 +1,14 @@
 ﻿namespace arookas
 {
+	class sunCompoundStatement : sunNode
+	{
+		public sunCompoundStatement(sunSourceLocation location)
+			: base(location)
+		{
+
+		}
+	}
+
 	class sunStatementBlock : sunNode
 	{
 		public sunStatementBlock(sunSourceLocation location)

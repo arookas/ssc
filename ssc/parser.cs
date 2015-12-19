@@ -93,7 +93,7 @@ namespace arookas
 				case __sunConstants.ROOT_STATEMENT: return new sunNode(location);
 				case __sunConstants.STATEMENT: return new sunNode(location);
 				case __sunConstants.STATEMENT_BLOCK: return new sunStatementBlock(location);
-				case __sunConstants.COMPOUND_STATEMENT: return new sunNode(location);
+				case __sunConstants.COMPOUND_STATEMENT: return new sunCompoundStatement(location);
 				case __sunConstants.COMPOUND_STATEMENT_ITEM: return new sunNode(location);
 
 				case __sunConstants.IMPORT_STATEMENT: return new sunImport(location);
