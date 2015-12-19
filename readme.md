@@ -10,7 +10,7 @@ This program utilizes the [Grammatica](http://grammatica.percederberg.net/) libr
 ## Usage
 
 To use _ssc_, create an instance of the `sunCompiler` class.
-Use the `sunCompiler.Compile` or any of its overloads to compile a script:
+Use the `sunCompiler.Compile` method or any of its overloads to compile a script:
 
 |Parameter|Description|
 |---------|-----------|
