@@ -8,15 +8,18 @@ Both single-line comments and multi-line comments are supported. A single line c
 
 ### Variables
 
-A variable is created by use of the `var` keyword. A new variable may be either declared or defined. A definition assigns a default value explicitly to the variable, while a declaration assigns the interpreter's default value:
+A variable is created by use of the `var` keyword and may initially be either_ declared_ or _defined_.
+A declaration leaves the variable with an undefined initial value, while a definition assigns a value to the variable explicitly:
 
 ```
-var a; // declares a variable with default value
+var a; // declares a variable with an undefined value (may be assigned one later)
 var b = 33; // defines a variable by explicitly giving starting value
-var c += b; // compound operators are also available (but not very useful for definitions)
 ```
 
-There are three primitive types in SunScript, as shown in the following table. All variables are dynamically typed and can change at any time by simply assigning it an expression of another type.
+---
+
+There are three primitive types in SunScript, as shown in the following table.
+All variables are dynamically typed and can change at any time by simply assigning it an expression of another type.
 
 |Type  |       Example|
 |:-----|-------------:|
@@ -28,13 +31,17 @@ SunScript also has the two boolean keywords `true` and `false` (currently define
 
 ---
 
-To get the type of any variable or expression, use the ``typeof`` statement:
+To get the type of any variable or expression, use the `typeof` statement:
 
 ```
 var a = 1.1 * 8;
-var type_a = typeof(a);
-var type_b = typeof(1.1 * 8); // type_a == type_b
+var b = typeof(a);
+var c = typeof(1.1 * 8); // you may also put expressions as the argument
 ```
+
+Constants for the possible return values are defined in the [system.sun header](stdlib/system.sun).
+
+---
 
 To explicitly cast to the integer and floating-point types, use the `int` and `float` casting statements:
 
@@ -45,9 +52,11 @@ var piIsExactlyThree = int(PI); // *gasp*
 
 #### Constants
 
-Read-only variables may be created via the `const` keyword. Only constant definitions are allowed; constant declarations are **not** supported.
+Read-only variables may be created via the `const` keyword.
+Only constant definitions are allowed; constant declarations are **not** supported.
 
-To save space in the output binary, constants are not stored in the symbol table, nor are they compiled in the text section. Instead, they are simply evaluated each time they are actually used (similar to macros in CPP):
+To save space in the output binary, constants are not stored in the symbol table, nor are they compiled in the text section.
+Instead, they are simply evaluated each time they are actually used (similar to macros in CPP):
 
 ```
 const PI = 3.14;
@@ -61,9 +70,12 @@ _**Note:** You may have function calls or any other valid expression assigned to
 
 ### Functions
 
-There are two types of callables in SunScript: _builtins_ and _functions_. A builtin may only be declared (must not have a body), while a function may only be defined (must have a body). Callables may have any number of parameters.
+There are two types of callables in SunScript: _builtins_ and _functions_.
+A builtin may only be declared (must not have a body), while a function may only be defined (must have a body).
+Callables may have any number of parameters.
 
-To define a function, use the `function` keyword. For builtins, use the `builtin` keyword:
+To define a function, use the `function` keyword.
+For builtins, use the `builtin` keyword:
 
 ```
 builtin getSystemFlag(flag);
@@ -73,24 +85,29 @@ function setOnSystemFlag(flag) { setSystemFlag(flag, true); }
 function setOffSystemFlag(flag) { setSystemFlag(flag, false); }
 ```
 
-A callable may have any number of parameters. Each parameter is dynamically typed. A builtin may have a variadic signature by specifying an ellipsis keyword `...` as the final parameter (variadic functions are **not** supported).
+A callable may have any number of parameters.
+Each parameter is dynamically typed.
+A builtin may have a variadic signature by specifying an ellipsis keyword `...` as the final parameter (variadic functions are **not** supported).
 
-A callable's return value is also dynamic. Use a `return` statement to override the interpreter's default return value for a given code path.
+A callable's return value is also dynamic.
+Use a `return` statement to override the interpreter's default return value for a given code path.
 
 ---
 
-Functions and builtins may be called either as standalone statements or in expressions. To call a function or builtin, simply pass its name, followed by any arguments, each separated by a comma:
+Functions and builtins may be called either as standalone statements or in expressions.
+To call a function or builtin, simply pass its name, followed by any arguments, each separated by a comma:
 
 ```
 appearReadyGo(); // calls the function 'appearReadyGo' with no arguments
 insertTimer(1, 0); // calls the function 'insertTimer' with two arguments, '1' and '0'
 ```
 
-_**Note:** You cannot call a function or builtin in code preceding its definition or declaration, respectively. All callable declarations and definitions must also be in the global scope._
+_**Note:** You cannot call a function or builtin in code preceding its definition or declaration, respectively.
+All callable declarations and definitions must also be in the global scope._
 
 ### Operators
 
-The following table describes the operators supported by SunScript, as well as their precedence and associativity.
+The following table describes the operators supported by SunScript, as well as their precedence and associativity:
 
 |Precedence|Symbol|Name|Associativity|
 |:--------:|:-----|:---|:-----------:|
@@ -128,7 +145,9 @@ for (;;) {
 
 #### Named Loops
 
-Loops may be named. To name a loop, simply prefix the loop with a label. `break` and `continue` statements may be passed the name of the loop which they affect:
+Loops may be named.
+To name a loop, simply prefix the loop with a label.
+`break` and `continue` statements may be passed the name of the loop which they affect:
 
 ```
 outer_loop:
@@ -141,17 +160,21 @@ for (var a; a < 4; ++a) {
 
 ### Importing
 
-You may split a script amongst several files. Doing this requires the use of the `import` statement. Simply pass the name of the SunScript file to import:
+You may split a script amongst several files.
+Doing this requires the use of the `import` statement.
+Simply pass the name of the SunScript file to import:
 
 ```
-import "constants.sun"; // looks for 'constants.sun' in current directory
+import "constants.sun"; // looks for 'constants.sun' in current directory, then in the compiler's directory
 import "C:/math.sun"; // looks for 'math.sun' in the root C:/ drive only
 ```
 
-_**Note:** It is recommended to use forward slashes as a path delimiter as a backslash will be interpreted as an escape._
+_**Note:** It is recommended to use forward slashes as a path delimiter as a single backslash will be interpreted as an escape._
 
-The `import` statement supports both relative and absolute path names. If the path is relative, then the file will be looked in two places: first, the path to the file currently being compiled; otherwise, if not there, the path of the compiler executable. Otherwise, if the path is absolute, only that path is searched as-is.
+The `import` statement supports both relative and absolute path names.
+If the path is relative, then the file will be looked in two places: first, the path to the file currently being compiled; otherwise, if not there, the path of the compiler executable.
+If the path is absolute, only that path is searched as-is.
 
-If the file cannot be found, a compiler error will occur.
+A compiler error will occur if the file cannot be found.
 
 _**Note:** In order to prevent recursive inclusion, ssc keeps track of all imported files and will ignore `import` statements whose files have already been compiled before._
