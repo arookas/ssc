@@ -201,7 +201,7 @@ namespace arookas
 	}
 	class sunArgumentCountException : sunNodeException<sunFunctionCall>
 	{
-		public sunCallableSymbolInfo CalledSymbol { get; private set; }
+		public sunCallableSymbol CalledSymbol { get; private set; }
 		public int ArgumentMinimum { get { return CalledSymbol.Parameters.Minimum; } }
 		public int ArgumentCount { get { return Node.Arguments.Count; } }
 
@@ -227,7 +227,7 @@ namespace arookas
 			}
 		}
 
-		public sunArgumentCountException(sunFunctionCall node, sunCallableSymbolInfo calledSymbol)
+		public sunArgumentCountException(sunFunctionCall node, sunCallableSymbol calledSymbol)
 			: base(node)
 		{
 			if (calledSymbol == null)

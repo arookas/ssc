@@ -39,7 +39,7 @@ namespace arookas
 			Push(sunScopeType.Script); // add global scope
 		}
 
-		public sunVariableInfo DeclareVariable(string name)
+		public sunVariableSymbol DeclareVariable(string name)
 		{
 			switch (Top.Type)
 			{
@@ -48,7 +48,7 @@ namespace arookas
 			}
 			return null;
 		}
-		sunVariableInfo DeclareGlobal(string name)
+		sunVariableSymbol DeclareGlobal(string name)
 		{
 			var variableInfo = Top.DeclareVariable(name, 0, GlobalCount);
 			if (variableInfo == null)
@@ -57,7 +57,7 @@ namespace arookas
 			}
 			return variableInfo;
 		}
-		sunVariableInfo DeclareLocal(string name)
+		sunVariableSymbol DeclareLocal(string name)
 		{
 			var variableInfo = Top.DeclareVariable(name, 1, LocalCount);
 			if (variableInfo == null)
@@ -73,7 +73,7 @@ namespace arookas
 
 	class sunScope
 	{
-		List<sunVariableInfo> variables = new List<sunVariableInfo>(10);
+		List<sunVariableSymbol> variables = new List<sunVariableSymbol>(10);
 		List<sunConstInfo> constants = new List<sunConstInfo>(10);
 		public sunScopeType Type { get; private set; }
 
@@ -86,17 +86,17 @@ namespace arookas
 		public int ConstantCount { get { return constants.Count; } }
 
 		public bool GetIsVariableDeclared(string name) { return variables.Any(v => v.Name == name); }
-		public sunVariableInfo DeclareVariable(string name, int display, int index)
+		public sunVariableSymbol DeclareVariable(string name, int display, int index)
 		{
 			if (GetIsVariableDeclared(name) || GetIsConstantDeclared(name))
 			{
 				return null;
 			}
-			var variableInfo = new sunVariableInfo(name, display, index);
+			var variableInfo = new sunVariableSymbol(name, display, index);
 			variables.Add(variableInfo);
 			return variableInfo;
 		}
-		public sunVariableInfo ResolveVariable(string name) { return variables.FirstOrDefault(v => v.Name == name); }
+		public sunVariableSymbol ResolveVariable(string name) { return variables.FirstOrDefault(v => v.Name == name); }
 
 		public bool GetIsConstantDeclared(string name) { return constants.Any(c => c.Name == name); }
 		public sunConstInfo DeclareConstant(string name, sunExpression expression)

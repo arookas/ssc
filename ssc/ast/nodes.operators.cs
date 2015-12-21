@@ -291,7 +291,7 @@ namespace arookas
 
 		}
 
-		public virtual void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public virtual void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			expression.Compile(context);
 			context.Text.StoreVariable(variableInfo);
@@ -306,7 +306,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);
@@ -323,7 +323,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);
@@ -340,7 +340,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);
@@ -357,7 +357,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);
@@ -374,7 +374,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);
@@ -391,7 +391,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);
@@ -408,7 +408,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);
@@ -425,7 +425,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);
@@ -442,7 +442,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
 		{
 			context.Text.PushVariable(variableInfo);
 			expression.Compile(context);

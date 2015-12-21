@@ -51,7 +51,7 @@ namespace arookas
 			writer.Write8(0x03);
 			writer.WriteS32(value);
 		}
-		public void PushVariable(sunVariableInfo variableInfo)
+		public void PushVariable(sunVariableSymbol variableInfo)
 		{
 			PushVariable(variableInfo.Display, variableInfo.Index);
 		}
@@ -67,11 +67,11 @@ namespace arookas
 			writer.Write8(0x05);
 		}
 
-		public void IncVariable(sunVariableInfo variableInfo)
+		public void IncVariable(sunVariableSymbol variableInfo)
 		{
 			IncVariable(variableInfo.Display, variableInfo.Index);
 		}
-		public void DecVariable(sunVariableInfo variableInfo)
+		public void DecVariable(sunVariableSymbol variableInfo)
 		{
 			DecVariable(variableInfo.Display, variableInfo.Index);
 		}
@@ -94,7 +94,7 @@ namespace arookas
 		public void Div() { writer.Write8(0x0B); }
 		public void Mod() { writer.Write8(0x0C); }
 
-		public void StoreVariable(sunVariableInfo variableInfo)
+		public void StoreVariable(sunVariableSymbol variableInfo)
 		{
 			StoreVariable(variableInfo.Display, variableInfo.Index);
 		}

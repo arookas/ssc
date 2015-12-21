@@ -12,7 +12,7 @@
 
 		public override void Compile(sunContext context)
 		{
-			sunVariableInfo variableInfo;
+			sunVariableSymbol variableInfo;
 			sunConstInfo constInfo;
 			context.ResolveVariableOrConstant(Variable, out variableInfo, out constInfo);
 			if (variableInfo != null)

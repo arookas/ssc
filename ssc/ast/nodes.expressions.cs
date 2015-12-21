@@ -175,7 +175,7 @@ namespace arookas
 
 		}
 
-		public abstract void Compile(sunContext context, sunVariableInfo variable);
+		public abstract void Compile(sunContext context, sunVariableSymbol variable);
 	}
 
 	class sunIncrement : sunAugment
@@ -186,7 +186,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variable)
+		public override void Compile(sunContext context, sunVariableSymbol variable)
 		{
 			context.Text.IncVariable(variable);
 		}
@@ -200,7 +200,7 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableInfo variable)
+		public override void Compile(sunContext context, sunVariableSymbol variable)
 		{
 			context.Text.DecVariable(variable);
 		}

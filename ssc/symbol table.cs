@@ -7,21 +7,21 @@ using System.Linq;
 
 namespace arookas
 {
-	class sunSymbolTable : IEnumerable<sunSymbolInfo>
+	class sunSymbolTable : IEnumerable<sunSymbol>
 	{
-		List<sunSymbolInfo> symbols = new List<sunSymbolInfo>(10);
+		List<sunSymbol> symbols = new List<sunSymbol>(10);
 
 		public int Count { get { return symbols.Count; } }
 		public int BuiltinCount { get { return symbols.Count(sym => sym.Type == sunSymbolType.Builtin); } }
 		public int FunctionCount { get { return symbols.Count(sym => sym.Type == sunSymbolType.Function); } }
 		public int VariableCount { get { return symbols.Count(sym => sym.Type == sunSymbolType.Variable); } }
 
-		public IEnumerable<sunCallableSymbolInfo> Callables { get { return symbols.OfType<sunCallableSymbolInfo>(); } }
-		public IEnumerable<sunBuiltinInfo> Builtins { get { return symbols.Where(sym => sym.Type == sunSymbolType.Builtin).Cast<sunBuiltinInfo>(); } }
-		public IEnumerable<sunFunctionInfo> Functions { get { return symbols.Where(sym => sym.Type == sunSymbolType.Function).Cast<sunFunctionInfo>(); } }
-		public IEnumerable<sunVariableInfo> Variables { get { return symbols.Where(sym => sym.Type == sunSymbolType.Variable).Cast<sunVariableInfo>(); } }
+		public IEnumerable<sunCallableSymbol> Callables { get { return symbols.OfType<sunCallableSymbol>(); } }
+		public IEnumerable<sunBuiltinSymbol> Builtins { get { return symbols.Where(sym => sym.Type == sunSymbolType.Builtin).Cast<sunBuiltinSymbol>(); } }
+		public IEnumerable<sunFunctionSymbol> Functions { get { return symbols.Where(sym => sym.Type == sunSymbolType.Function).Cast<sunFunctionSymbol>(); } }
+		public IEnumerable<sunVariableSymbol> Variables { get { return symbols.Where(sym => sym.Type == sunSymbolType.Variable).Cast<sunVariableSymbol>(); } }
 
-		public void Add(sunSymbolInfo symbol) { symbols.Add(symbol); }
+		public void Add(sunSymbol symbol) { symbols.Add(symbol); }
 		public void Clear() { symbols.Clear(); }
 
 		public void Write(aBinaryWriter writer)
@@ -45,11 +45,11 @@ namespace arookas
 			}
 		}
 
-		public IEnumerator<sunSymbolInfo> GetEnumerator() { return symbols.GetEnumerator(); }
+		public IEnumerator<sunSymbol> GetEnumerator() { return symbols.GetEnumerator(); }
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
 
-	abstract class sunSymbolInfo
+	abstract class sunSymbol
 	{
 		public string Name { get; private set; }
 
@@ -57,20 +57,20 @@ namespace arookas
 		public abstract sunSymbolType Type { get; }
 		public abstract uint Data { get; }
 
-		protected sunSymbolInfo(string name)
+		protected sunSymbol(string name)
 		{
 			Name = name;
 		}
 	}
 
-	abstract class sunCallableSymbolInfo : sunSymbolInfo
+	abstract class sunCallableSymbol : sunSymbol
 	{
 		public sunParameterInfo Parameters { get; private set; }
 		protected List<sunPoint> CallSites { get; private set; }
 
 		public bool HasCallSites { get { return CallSites.Count > 0; } }
 
-		protected sunCallableSymbolInfo(string name, sunParameterInfo parameterInfo)
+		protected sunCallableSymbol(string name, sunParameterInfo parameterInfo)
 			: base(name)
 		{
 			Parameters = parameterInfo;
@@ -83,7 +83,7 @@ namespace arookas
 		public abstract void Compile(sunContext context);
 	}
 
-	class sunBuiltinInfo : sunCallableSymbolInfo
+	class sunBuiltinSymbol : sunCallableSymbol
 	{
 		public int Index { get; private set; }
 
@@ -91,7 +91,7 @@ namespace arookas
 		public override sunSymbolType Type { get { return sunSymbolType.Builtin; } }
 		public override uint Data { get { return (uint)Index; } }
 
-		public sunBuiltinInfo(string name, sunParameterInfo parameters, int index)
+		public sunBuiltinSymbol(string name, sunParameterInfo parameters, int index)
 			: base(name, parameters)
 		{
 			Index = index;
@@ -111,7 +111,7 @@ namespace arookas
 		}
 	}
 
-	class sunFunctionInfo : sunCallableSymbolInfo
+	class sunFunctionSymbol : sunCallableSymbol
 	{
 		sunNode Body { get; set; }
 		public uint Offset { get; private set; }
@@ -120,7 +120,7 @@ namespace arookas
 		public override sunSymbolType Type { get { return sunSymbolType.Function; } }
 		public override uint Data { get { return (uint)Offset; } }
 
-		public sunFunctionInfo(string name, sunParameterInfo parameters, sunNode body)
+		public sunFunctionSymbol(string name, sunParameterInfo parameters, sunNode body)
 			: base(name, parameters)
 		{
 			Body = body;
@@ -213,7 +213,7 @@ namespace arookas
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
 
-	class sunVariableInfo : sunSymbolInfo
+	class sunVariableSymbol : sunSymbol
 	{
 		public int Display { get; private set; }
 		public int Index { get; private set; }
@@ -222,7 +222,7 @@ namespace arookas
 		public override sunSymbolType Type { get { return sunSymbolType.Variable; } }
 		public override uint Data { get { return (uint)Index; } }
 
-		public sunVariableInfo(string name, int display, int index)
+		public sunVariableSymbol(string name, int display, int index)
 			: base(name)
 		{
 			Display = display;
