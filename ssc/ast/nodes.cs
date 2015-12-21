@@ -37,6 +37,35 @@ namespace arookas
 		public bool IsBranch { get { return Count > 0; } }
 		public bool IsLeaf { get { return Count < 1; } }
 
+		public int MaxLocalCount
+		{
+			get
+			{
+				int locals = 0;
+				int maxChildLocals = 0;
+				foreach (var child in this)
+				{
+					if (child is sunVariableDeclaration || child is sunVariableDefinition)
+					{
+						++locals;
+					}
+					else if (child is sunCompoundStatement)
+					{
+						locals += child.MaxLocalCount; // HACK: compound statements aren't their own scope
+					}
+					else
+					{
+						int childLocals = child.MaxLocalCount;
+						if (childLocals > maxChildLocals)
+						{
+							maxChildLocals = childLocals;
+						}
+					}
+				}
+				return locals + maxChildLocals;
+			}
+		}
+
 		public sunNode(sunSourceLocation location)
 		{
 			children = new List<sunNode>(5);
