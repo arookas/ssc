@@ -10,6 +10,7 @@ namespace arookas
 	{
 		aBinaryWriter writer;
 		uint textOffset, dataOffset, symbolOffset;
+		int varCount;
 
 		public sunWriter Text { get; private set; }
 		public sunDataTable DataTable { get; private set; }
@@ -93,6 +94,7 @@ namespace arookas
 					ImportResolver.EnterFile(file);
 					var parser = new sunParser();
 					var tree = parser.Parse(file);
+					varCount += tree.MaxLocalCount;
 					tree.Compile(this);
 					ImportResolver.ExitFile(file);
 				}
@@ -236,7 +238,7 @@ namespace arookas
 			writer.WriteS32(DataTable.Count);
 			writer.Write32(symbolOffset);
 			writer.WriteS32(SymbolTable.Count);
-			writer.WriteS32(Scopes.Root.VariableCount);
+			writer.WriteS32(varCount);
 		}
 	}
 
