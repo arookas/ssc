@@ -53,7 +53,7 @@ namespace arookas
 					{
 						locals += child.MaxLocalCount; // HACK: compound statements aren't their own scope
 					}
-					else
+					else if (!(child is sunFunctionDefinition)) // don't recurse into function bodies
 					{
 						int childLocals = child.MaxLocalCount;
 						if (childLocals > maxChildLocals)
