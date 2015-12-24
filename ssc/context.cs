@@ -213,22 +213,23 @@ namespace arookas
 
 		public void ResolveVariableOrConstant(sunIdentifier node, out sunVariableSymbol variableInfo, out sunConstInfo constInfo)
 		{
-			try
+			variableInfo = null;
+			constInfo = null;
+			// walk the stack backwards to resolve to the latest declaration
+			for (int i = Scopes.Count - 1; i >= 0; --i)
 			{
-				variableInfo = ResolveVariable(node);
+				var variable = Scopes[i].ResolveVariable(node.Value);
+				if (variable != null)
+				{
+					variableInfo = variable;
+				}
+				var constant = Scopes[i].ResolveConstant(node.Value);
+				if (constant != null)
+				{
+					constInfo = constant;
+				}
 			}
-			catch
-			{
-				variableInfo = null;
-			}
-			try
-			{
-				constInfo = ResolveConstant(node);
-			}
-			catch
-			{
-				constInfo = null;
-			}
+			throw new sunUndeclaredVariableException(node);
 		}
 
 		void WriteHeader()
