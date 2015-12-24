@@ -37,7 +37,7 @@ namespace arookas
 				writer.WriteS32(0);
 				writer.WriteS32(0);
 
-				ofs += sym.Name.Length + 1; // include null terminator
+				ofs += writer.Encoding.GetByteCount(sym.Name) + 1; // include null terminator
 			}
 			foreach (var sym in this)
 			{
