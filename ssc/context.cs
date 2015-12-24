@@ -10,6 +10,7 @@ namespace arookas
 	{
 		aBinaryWriter writer;
 		uint textOffset, dataOffset, symbolOffset;
+		int varCount;
 
 		public sunWriter Text { get; private set; }
 		public sunDataTable DataTable { get; private set; }
@@ -94,6 +95,7 @@ namespace arookas
 					ImportResolver.EnterFile(file);
 					var parser = new sunParser();
 					var tree = parser.Parse(file);
+					varCount += tree.MaxLocalCount;
 					tree.Compile(this);
 					ImportResolver.ExitFile(file);
 				}
@@ -167,11 +169,6 @@ namespace arookas
 				throw new sunRedeclaredVariableException(node);
 			}
 			var variableInfo = Scopes.DeclareVariable(node.Value);
-			if (Scopes.Top.Type == sunScopeType.Script)
-			{
-				// script variables are added to the symbol table
-				SymbolTable.Add(variableInfo);
-			}
 			return variableInfo;
 		}
 		public sunVariableSymbol ResolveVariable(sunIdentifier node)
@@ -243,7 +240,7 @@ namespace arookas
 			writer.WriteS32(DataTable.Count);
 			writer.Write32(symbolOffset);
 			writer.WriteS32(SymbolTable.Count);
-			writer.WriteS32(SymbolTable.VariableCount);
+			writer.WriteS32(varCount);
 		}
 	}
 }
