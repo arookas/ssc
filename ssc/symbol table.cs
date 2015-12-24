@@ -201,6 +201,8 @@ namespace arookas
 		public int Display { get; private set; }
 		public int Index { get; private set; }
 
+		string TableName { get { return String.Format("varsym_{0}_{1}", Display, Index); } }
+
 		// symbol table
 		public override sunSymbolType Type { get { return sunSymbolType.Variable; } }
 		public override uint Data { get { return (uint)Index; } }
@@ -210,6 +212,16 @@ namespace arookas
 		{
 			Display = display;
 			Index = index;
+		}
+
+		public override int WriteSymbolTable(aBinaryWriter writer, int ofs)
+		{
+			base.WriteSymbolTable(writer, ofs);
+			return writer.Encoding.GetByteCount(TableName) + 1; // include null terminator
+		}
+		public override void WriteStringTable(aBinaryWriter writer)
+		{
+			writer.WriteString(TableName, aBinaryStringFormat.NullTerminated);
 		}
 	}
 
