@@ -238,18 +238,4 @@ namespace arookas
 			writer.WriteS32(varCount);
 		}
 	}
-
-	public class sunFileArgs : EventArgs
-	{
-		public sunScriptFile File { get; private set; }
-
-		public sunFileArgs(sunScriptFile file)
-		{
-			if (file == null)
-			{
-				throw new ArgumentNullException("file");
-			}
-			File = file;
-		}
-	}
 }
