@@ -26,6 +26,8 @@ namespace arookas
 			loops.Pop();
 		}
 
+		public void Clear() { loops.Clear(); }
+
 		public bool AddBreak(sunPoint point) { return AddBreak(point, null); }
 		public bool AddContinue(sunPoint point) { return AddContinue(point, null); }
 		public bool AddBreak(sunPoint point, string name)
