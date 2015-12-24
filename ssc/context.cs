@@ -42,6 +42,10 @@ namespace arookas
 			{
 				throw new ArgumentNullException("importResolver");
 			}
+			DataTable.Clear();
+			SymbolTable.Clear();
+			Scopes.Clear();
+			Loops.Clear();
 			ImportResolver = importResolver;
 			writer = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
 			Text = new sunWriter(writer);
