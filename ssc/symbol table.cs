@@ -29,19 +29,11 @@ namespace arookas
 			int ofs = 0;
 			foreach (var sym in this)
 			{
-				writer.WriteS32((int)sym.Type);
-				writer.WriteS32(ofs);
-				writer.Write32(sym.Data);
-
-				// runtime fields
-				writer.WriteS32(0);
-				writer.WriteS32(0);
-
-				ofs += writer.Encoding.GetByteCount(sym.Name) + 1; // include null terminator
+				ofs += sym.WriteSymbolTable(writer, ofs);
 			}
 			foreach (var sym in this)
 			{
-				writer.WriteString(sym.Name, aBinaryStringFormat.NullTerminated);
+				sym.WriteStringTable(writer);
 			}
 		}
 
@@ -60,6 +52,23 @@ namespace arookas
 		protected sunSymbol(string name)
 		{
 			Name = name;
+		}
+
+		public virtual int WriteSymbolTable(aBinaryWriter writer, int ofs)
+		{
+			writer.WriteS32((int)Type);
+			writer.WriteS32(ofs);
+			writer.Write32(Data);
+
+			// runtime fields
+			writer.WriteS32(0);
+			writer.WriteS32(0);
+
+			return writer.Encoding.GetByteCount(Name) + 1; // include null terminator
+		}
+		public virtual void WriteStringTable(aBinaryWriter writer)
+		{
+			writer.WriteString(Name, aBinaryStringFormat.NullTerminated);
 		}
 	}
 
