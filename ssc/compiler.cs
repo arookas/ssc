@@ -24,11 +24,12 @@ namespace arookas
 			{
 				throw new ArgumentNullException("resolver");
 			}
+			var context = new sunContext();
 			var results = new sunCompilerResults();
 			var timer = Stopwatch.StartNew();
 			try
 			{
-				sunContext context = new sunContext(output, resolver);
+				context.Open(output, resolver);
 				var result = context.Import(name);
 				if (result != sunImportResult.Loaded)
 				{
@@ -48,7 +49,7 @@ namespace arookas
 				results.BuiltinCount = context.SymbolTable.BuiltinCount;
 				results.FunctionCount = context.SymbolTable.FunctionCount;
 				results.VariableCount = context.SymbolTable.VariableCount;
-				context.Dispose();
+				context.Close();
 			}
 			catch (sunCompilerException ex)
 			{

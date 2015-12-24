@@ -6,7 +6,7 @@ using System.Text;
 
 namespace arookas
 {
-	class sunContext : aDisposable
+	class sunContext
 	{
 		aBinaryWriter writer;
 		uint textOffset, dataOffset, symbolOffset;
@@ -19,13 +19,20 @@ namespace arookas
 		public sunLoopStack Loops { get; private set; }
 		public sunImportResolver ImportResolver { get; private set; }
 
-		// open/close
-		public sunContext(Stream output)
-			: this(output, sunImportResolver.Default)
+		public sunContext()
 		{
-
+			DataTable = new sunDataTable();
+			SymbolTable = new sunSymbolTable();
+			Scopes = new sunScopeStack();
+			Loops = new sunLoopStack();
 		}
-		public sunContext(Stream output, sunImportResolver importResolver)
+
+		// open/close
+		public void Open(Stream output)
+		{
+			Open(output, sunImportResolver.Default);
+		}
+		public void Open(Stream output, sunImportResolver importResolver)
 		{
 			if (output == null)
 			{
@@ -35,12 +42,7 @@ namespace arookas
 			{
 				throw new ArgumentNullException("importResolver");
 			}
-			DataTable = new sunDataTable();
-			SymbolTable = new sunSymbolTable();
-			Scopes = new sunScopeStack();
-			Loops = new sunLoopStack();
 			ImportResolver = importResolver;
-
 			writer = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
 			Text = new sunWriter(writer);
 			writer.PushAnchor();
@@ -62,20 +64,15 @@ namespace arookas
 			DeclareSystemBuiltin("typeof", false, "x");
 			DeclareSystemBuiltin("print", true);
 		}
-		protected override bool Dispose(bool destructor)
+		public void Close()
 		{
-			if (!destructor)
-			{
-				writer.PopAnchor();
-				dataOffset = (uint)writer.Position;
-				DataTable.Write(writer);
-				symbolOffset = (uint)writer.Position;
-				SymbolTable.Write(writer);
-				writer.Goto(0);
-				WriteHeader();
-				return true; // don't dispose the writer so the stream doesn't get disposed
-			}
-			return false;
+			writer.PopAnchor();
+			dataOffset = (uint)writer.Position;
+			DataTable.Write(writer);
+			symbolOffset = (uint)writer.Position;
+			SymbolTable.Write(writer);
+			writer.Goto(0);
+			WriteHeader();
 		}
 
 		// imports/compilation
