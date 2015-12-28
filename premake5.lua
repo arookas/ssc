@@ -22,21 +22,18 @@ workspace "ssc"
 		
 		links { "System", "arookas", "grammatica-1.6" }
 		
-		files
-		{
+		files {
 			"ssc/**.cs",
 			"ssc/**.grammar",
 			"ssc/**.bat",
 		}
 		
-		excludes
-		{
+		excludes {
 			"ssc/bin/**",
 			"ssc/obj/**",
 		}
 		
-		prebuildcommands
-		{
+		prebuildcommands {
 			-- regenerate grammatica classes before compilation begins
 			"{CHDIR} \"%{prj.location}\"",
 			"java -jar grammatica.jar \"sunscript.grammar\" --csoutput \".\\generated\" --csnamespace \"arookas\" --csclassname \"__sun\"",
@@ -52,19 +49,16 @@ workspace "ssc"
 		
 		links { "System", "arookas", "SSC" }
 		
-		files
-		{
+		files {
 			"frontend/**.cs",
 		}
 		
-		excludes
-		{
+		excludes {
 			"frontend/bin/**",
 			"frontend/obj/**",
 		}
 		
-		postbuildcommands
-		{
+		postbuildcommands {
 			-- copy stdlib to frontend output so users can import the scripts
 			"{RMDIR} \"%{cfg.buildtarget.directory}ssc\"",
 			"{COPY} \"%{wks.location}stdlib\" \"%{cfg.buildtarget.directory}ssc\"",
