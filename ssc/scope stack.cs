@@ -6,36 +6,37 @@ namespace arookas
 {
 	class sunScopeStack : IEnumerable<sunScope>
 	{
-		List<sunScope> stack = new List<sunScope>(8);
-		int GlobalCount { get { return stack.Where(i => i.Type == sunScopeType.Script).Sum(i => i.StorableCount); } }
-		int LocalCount { get { return stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.StorableCount); } }
+		List<sunScope> Stack { get; set; }
+		int GlobalCount { get { return Stack.Where(i => i.Type == sunScopeType.Script).Sum(i => i.StorableCount); } }
+		int LocalCount { get { return Stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.StorableCount); } }
 
-		public int Count { get { return stack.Count; } }
+		public int Count { get { return Stack.Count; } }
 
 		public sunScope Root { get { return this[0]; } }
 		public sunScope Top { get { return this[Count - 1]; } }
 
-		public sunScope this[int index] { get { return stack[index]; } }
+		public sunScope this[int index] { get { return Stack[index]; } }
 
 		public sunScopeStack()
 		{
+			Stack = new List<sunScope>(8);
 			Push(sunScopeType.Script); // push global scope
 		}
 
 		public void Push(sunScopeType type)
 		{
-			stack.Add(new sunScope(type));
+			Stack.Add(new sunScope(type));
 		}
 		public void Pop()
 		{
 			if (Count > 1)
 			{
-				stack.RemoveAt(Count - 1);
+				Stack.RemoveAt(Count - 1);
 			}
 		}
 		public void Clear()
 		{
-			stack.Clear();
+			Stack.Clear();
 			Push(sunScopeType.Script); // add global scope
 		}
 
@@ -71,7 +72,7 @@ namespace arookas
 			return variableInfo;
 		}
 
-		public IEnumerator<sunScope> GetEnumerator() { return stack.GetEnumerator(); }
+		public IEnumerator<sunScope> GetEnumerator() { return Stack.GetEnumerator(); }
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
 
