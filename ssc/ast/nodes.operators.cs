@@ -291,10 +291,10 @@ namespace arookas
 
 		}
 
-		public virtual void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public virtual void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
 			expression.Compile(context);
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -306,12 +306,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.Add();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -323,12 +323,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.Sub();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -340,12 +340,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.Mul();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -357,12 +357,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.Div();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -374,12 +374,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.Mod();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -391,12 +391,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.BitAND();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -408,12 +408,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.BitOR();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -425,12 +425,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.ShL();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -442,12 +442,12 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variableInfo, sunExpression expression)
+		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression)
 		{
-			context.Text.PushVariable(variableInfo);
+			symbol.CompileGet(context);
 			expression.Compile(context);
 			context.Text.ShR();
-			context.Text.StoreVariable(variableInfo);
+			symbol.CompileSet(context);
 		}
 	}
 }
