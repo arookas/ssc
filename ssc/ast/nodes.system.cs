@@ -92,7 +92,7 @@
 
 		public override void Compile(sunContext context)
 		{
-			var builtinInfo = context.DeclareSystemBuiltin("int", false, "x");
+			var builtinInfo = context.ResolveSystemBuiltin("int");
 			Argument.Compile(context);
 			context.Text.CallBuiltin(builtinInfo.Index, 1);
 		}
