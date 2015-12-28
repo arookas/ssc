@@ -29,11 +29,19 @@ namespace arookas
 			int ofs = 0;
 			foreach (var sym in this)
 			{
-				ofs += sym.WriteSymbolTable(writer, ofs);
+				writer.WriteS32((int)sym.Type);
+				writer.WriteS32(ofs);
+				writer.Write32(sym.Data);
+
+				// runtime fields
+				writer.WriteS32(0);
+				writer.WriteS32(0);
+
+				ofs += writer.Encoding.GetByteCount(sym.Name) + 1; // include null terminator
 			}
 			foreach (var sym in this)
 			{
-				sym.WriteStringTable(writer);
+				writer.WriteString(sym.Name, aBinaryStringFormat.NullTerminated);
 			}
 		}
 
@@ -55,23 +63,6 @@ namespace arookas
 		}
 
 		public abstract void Compile(sunContext context);
-
-		public virtual int WriteSymbolTable(aBinaryWriter writer, int ofs)
-		{
-			writer.WriteS32((int)Type);
-			writer.WriteS32(ofs);
-			writer.Write32(Data);
-
-			// runtime fields
-			writer.WriteS32(0);
-			writer.WriteS32(0);
-
-			return writer.Encoding.GetByteCount(Name) + 1; // include null terminator
-		}
-		public virtual void WriteStringTable(aBinaryWriter writer)
-		{
-			writer.WriteString(Name, aBinaryStringFormat.NullTerminated);
-		}
 	}
 
 	abstract class sunCallableSymbol : sunSymbol
@@ -229,8 +220,6 @@ namespace arookas
 		public int Display { get; private set; }
 		public int Index { get; private set; }
 
-		string TableName { get { return String.Format("varsym_{0}_{1}", Display, Index); } }
-
 		// symbol table
 		public override sunSymbolType Type { get { return sunSymbolType.Variable; } }
 		public override uint Data { get { return (uint)Index; } }
@@ -257,15 +246,6 @@ namespace arookas
 		public override void CompileDec(sunContext context)
 		{
 			context.Text.DecVariable(Display, Index);
-		}
-		public override int WriteSymbolTable(aBinaryWriter writer, int ofs)
-		{
-			base.WriteSymbolTable(writer, ofs);
-			return writer.Encoding.GetByteCount(TableName) + 1; // include null terminator
-		}
-		public override void WriteStringTable(aBinaryWriter writer)
-		{
-			writer.WriteString(TableName, aBinaryStringFormat.NullTerminated);
 		}
 	}
 
