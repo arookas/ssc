@@ -187,8 +187,7 @@ namespace arookas
 			{
 				throw new sunRedeclaredVariableException(node);
 			}
-			var variableInfo = Scopes.DeclareVariable(node.Value);
-			return variableInfo;
+			return Scopes.DeclareVariable(node.Value);
 		}
 		public sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression)
 		{
@@ -196,8 +195,7 @@ namespace arookas
 			{
 				throw new sunRedeclaredVariableException(node);
 			}
-			var constInfo = Scopes.Top.DeclareConstant(node.Value, expression);
-			return constInfo;
+			return Scopes.Top.DeclareConstant(node.Value, expression);
 		}
 		public sunStorableSymbol ResolveStorable(sunIdentifier node)
 		{
@@ -262,7 +260,6 @@ namespace arookas
 			}
 			return symbol;
 		}
-
 
 		void WriteHeader()
 		{
