@@ -118,16 +118,4 @@ namespace arookas
 		Script, // outside of a function
 		Function, // inside of a function
 	}
-
-	class sunConstInfo
-	{
-		public string Name { get; private set; }
-		public sunExpression Expression { get; private set; }
-
-		public sunConstInfo(string name, sunExpression expression)
-		{
-			Name = name;
-			Expression = expression;
-		}
-	}
 }
