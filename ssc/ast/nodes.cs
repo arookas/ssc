@@ -12,6 +12,10 @@ namespace arookas
 
 		public sunSourceLocation(string file, int line, int column)
 		{
+			if (file == null)
+			{
+				throw new ArgumentNullException("file");
+			}
 			File = file;
 			Line = line;
 			Column = column;
