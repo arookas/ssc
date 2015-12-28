@@ -159,6 +159,16 @@ namespace arookas
 
 		}
 	}
+	class sunAssignConstantException : sunNodeException<sunIdentifier>
+	{
+		public override string Message { get { return String.Format("Constant '{0}' is read-only.", Node.Value); } }
+
+		public sunAssignConstantException(sunIdentifier node)
+			: base(node)
+		{
+
+		}
+	}
 	class sunRedeclaredParameterException : sunNodeException<sunIdentifier>
 	{
 		public override string Message { get { return String.Format("Redeclared parameter '{0}'.", Node.Value); } }
