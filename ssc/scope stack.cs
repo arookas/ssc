@@ -57,21 +57,11 @@ namespace arookas
 		}
 		sunVariableSymbol DeclareGlobal(string name)
 		{
-			var variableInfo = Top.DeclareVariable(name, 0, GlobalCount);
-			if (variableInfo == null)
-			{
-				return null;
-			}
-			return variableInfo;
+			return Top.DeclareVariable(name, 0, GlobalCount);
 		}
 		sunVariableSymbol DeclareLocal(string name)
 		{
-			var variableInfo = Top.DeclareVariable(name, 1, LocalCount);
-			if (variableInfo == null)
-			{
-				return null;
-			}
-			return variableInfo;
+			return Top.DeclareVariable(name, 1, LocalCount);
 		}
 
 		public IEnumerator<sunScope> GetEnumerator() { return Stack.GetEnumerator(); }
