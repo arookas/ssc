@@ -74,12 +74,12 @@
 		}
 	}
 
-	class sunConstDefinition : sunNode
+	class sunConstantDefinition : sunNode
 	{
 		public sunIdentifier Constant { get { return this[0] as sunIdentifier; } }
 		public sunExpression Expression { get { return this[2] as sunExpression; } }
 
-		public sunConstDefinition(sunSourceLocation location)
+		public sunConstantDefinition(sunSourceLocation location)
 			: base(location)
 		{
 

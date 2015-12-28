@@ -222,7 +222,7 @@ namespace arookas
 			// constants
 			switch (GetId(node))
 			{
-				case __sunConstants.CONST_DEFINITION: return new sunConstDefinition(location);
+				case __sunConstants.CONST_DEFINITION: return new sunConstantDefinition(location);
 			}
 
 			// flow control
