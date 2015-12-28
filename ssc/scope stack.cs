@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace arookas
-{
-	class sunScopeStack : IEnumerable<sunScope>
-	{
+namespace arookas {
+	class sunScopeStack : IEnumerable<sunScope> {
 		List<sunScope> Stack { get; set; }
 
 		public int Count { get { return Stack.Count; } }
@@ -24,25 +22,20 @@ namespace arookas
 
 		public sunScope this[int index] { get { return Stack[index]; } }
 
-		public sunScopeStack()
-		{
+		public sunScopeStack() {
 			Stack = new List<sunScope>(8);
 			Push(sunScopeType.Script); // push global scope
 		}
 
-		public void Push(sunScopeType type)
-		{
+		public void Push(sunScopeType type) {
 			Stack.Add(new sunScope(type));
 		}
-		public void Pop()
-		{
-			if (Count > 1)
-			{
+		public void Pop() {
+			if (Count > 1) {
 				Stack.RemoveAt(Count - 1);
 			}
 		}
-		public void Clear()
-		{
+		public void Clear() {
 			Stack.Clear();
 			Push(sunScopeType.Script); // add global scope
 		}
@@ -52,36 +45,29 @@ namespace arookas
 		public void ResetLocalCount() { LocalCount = 0; }
 #endif
 
-		public sunVariableSymbol DeclareVariable(string name)
-		{
-			switch (Top.Type)
-			{
+		public sunVariableSymbol DeclareVariable(string name) {
+			switch (Top.Type) {
 				case sunScopeType.Script: return DeclareGlobal(name);
 				case sunScopeType.Function: return DeclareLocal(name);
 			}
 			return null;
 		}
-		public sunConstantSymbol DeclareConstant(string name, sunExpression expression)
-		{
+		public sunConstantSymbol DeclareConstant(string name, sunExpression expression) {
 			return Top.DeclareConstant(name, expression);
 		}
-		sunVariableSymbol DeclareGlobal(string name)
-		{
+		sunVariableSymbol DeclareGlobal(string name) {
 			var symbol = Top.DeclareVariable(name, 0, GlobalCount);
 #if !SSC_PACK_VARS
-			if (symbol != null)
-			{
+			if (symbol != null) {
 				++GlobalCount;
 			}
 #endif
 			return symbol;
 		}
-		sunVariableSymbol DeclareLocal(string name)
-		{
+		sunVariableSymbol DeclareLocal(string name) {
 			var symbol = Top.DeclareVariable(name, 1, LocalCount);
 #if !SSC_PACK_VARS
-			if (symbol != null)
-			{
+			if (symbol != null) {
 				++LocalCount;
 			}
 #endif
@@ -92,15 +78,13 @@ namespace arookas
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
 
-	class sunScope
-	{
+	class sunScope {
 		List<sunStorableSymbol> Storables { get; set; }
 		IEnumerable<sunVariableSymbol> Variables { get { return Storables.OfType<sunVariableSymbol>(); } }
 		IEnumerable<sunConstantSymbol> Constants { get { return Storables.OfType<sunConstantSymbol>(); } }
 		public sunScopeType Type { get; private set; }
 
-		public sunScope(sunScopeType type)
-		{
+		public sunScope(sunScopeType type) {
 			Storables = new List<sunStorableSymbol>(10);
 			Type = type;
 		}
@@ -111,20 +95,16 @@ namespace arookas
 
 		public bool GetIsDeclared(string name) { return Storables.Any(v => v.Name == name); }
 
-		public sunVariableSymbol DeclareVariable(string name, int display, int index)
-		{
-			if (GetIsDeclared(name))
-			{
+		public sunVariableSymbol DeclareVariable(string name, int display, int index) {
+			if (GetIsDeclared(name)) {
 				return null;
 			}
 			var symbol = new sunVariableSymbol(name, display, index);
 			Storables.Add(symbol);
 			return symbol;
 		}
-		public sunConstantSymbol DeclareConstant(string name, sunExpression expression)
-		{
-			if (GetIsDeclared(name))
-			{
+		public sunConstantSymbol DeclareConstant(string name, sunExpression expression) {
+			if (GetIsDeclared(name)) {
 				return null;
 			}
 			var symbol = new sunConstantSymbol(name, expression);
@@ -137,8 +117,7 @@ namespace arookas
 		public sunConstantSymbol ResolveConstant(string name) { return Constants.FirstOrDefault(i => i.Name == name); }
 	}
 
-	enum sunScopeType
-	{
+	enum sunScopeType {
 		Script, // outside of a function
 		Function, // inside of a function
 	}

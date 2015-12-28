@@ -1,33 +1,22 @@
-﻿namespace arookas
-{
-	class sunStorableReference : sunNode
-	{
+﻿namespace arookas {
+	class sunStorableReference : sunNode {
 		public sunIdentifier Storable { get { return this[0] as sunIdentifier; } }
 
 		public sunStorableReference(sunSourceLocation location)
-			: base(location)
-		{
+			: base(location) { }
 
-		}
-
-		public override void Compile(sunContext context)
-		{
+		public override void Compile(sunContext context) {
 			context.MustResolveStorable(Storable).Compile(context);
 		}
 	}
 
-	class sunVariableDeclaration : sunNode
-	{
+	class sunVariableDeclaration : sunNode {
 		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
 
 		public sunVariableDeclaration(sunSourceLocation location)
-			: base(location)
-		{
+			: base(location) { }
 
-		}
-
-		public override void Compile(sunContext context)
-		{
+		public override void Compile(sunContext context) {
 			context.DeclareVariable(Variable);
 		}
 	}
@@ -39,13 +28,9 @@
 		public sunExpression Expression { get { return this[2] as sunExpression; } }
 
 		public sunVariableDefinition(sunSourceLocation location)
-			: base(location)
-		{
+			: base(location) { }
 
-		}
-
-		public override void Compile(sunContext context)
-		{
+		public override void Compile(sunContext context) {
 			var symbol = context.DeclareVariable(Variable);
 			Operator.Compile(context, symbol, Expression);
 		}
@@ -58,16 +43,11 @@
 		public sunExpression Expression { get { return this[2] as sunExpression; } }
 
 		public sunStorableAssignment(sunSourceLocation location)
-			: base(location)
-		{
+			: base(location) { }
 
-		}
-
-		public override void Compile(sunContext context)
-		{
+		public override void Compile(sunContext context) {
 			var symbol = context.MustResolveStorable(Storable);
-			if (symbol is sunConstantSymbol)
-			{
+			if (symbol is sunConstantSymbol) {
 				throw new sunAssignConstantException(Storable);
 			}
 			Operator.Compile(context, symbol, Expression);
@@ -80,13 +60,9 @@
 		public sunExpression Expression { get { return this[2] as sunExpression; } }
 
 		public sunConstantDefinition(sunSourceLocation location)
-			: base(location)
-		{
+			: base(location) { }
 
-		}
-
-		public override void Compile(sunContext context)
-		{
+		public override void Compile(sunContext context) {
 			context.DeclareConstant(Constant, Expression);
 		}
 	}

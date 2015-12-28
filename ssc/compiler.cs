@@ -2,46 +2,35 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace arookas
-{
-	public class sunCompiler
-	{
-		public sunCompilerResults Compile(string name, Stream output)
-		{
+namespace arookas {
+	public class sunCompiler {
+		public sunCompilerResults Compile(string name, Stream output) {
 			return Compile(name, output, sunImportResolver.Default);
 		}
-		public sunCompilerResults Compile(string name, Stream output, sunImportResolver resolver)
-		{
-			if (name == null)
-			{
+		public sunCompilerResults Compile(string name, Stream output, sunImportResolver resolver) {
+			if (name == null) {
 				throw new ArgumentNullException("name");
 			}
-			if (output == null)
-			{
+			if (output == null) {
 				throw new ArgumentNullException("output");
 			}
-			if (resolver == null)
-			{
+			if (resolver == null) {
 				throw new ArgumentNullException("resolver");
 			}
 			var context = new sunContext();
 			var results = new sunCompilerResults();
 			var timer = Stopwatch.StartNew();
-			try
-			{
+			try {
 				context.Open(output, resolver);
 				var result = context.Import(name);
-				if (result != sunImportResult.Loaded)
-				{
+				if (result != sunImportResult.Loaded) {
 					throw new sunImportException(name, result);
 				}
 				context.Text.Terminate(); // NOTETOSELF: don't do this via sunNode.Compile because imported files will add this as well
-				foreach (var function in context.SymbolTable.Functions)
-				{
+				foreach (var function in context.SymbolTable.Functions) {
 					function.Compile(context);
 				}
-				foreach (var function in context.SymbolTable.Functions)
-				{
+				foreach (var function in context.SymbolTable.Functions) {
 					function.CloseCallSites(context);
 				}
 				results.DataCount = context.DataTable.Count;
@@ -51,8 +40,7 @@ namespace arookas
 				results.VariableCount = context.SymbolTable.VariableCount;
 				context.Close();
 			}
-			catch (sunCompilerException ex)
-			{
+			catch (sunCompilerException ex) {
 				results.Error = ex;
 			}
 			timer.Stop();
@@ -61,8 +49,7 @@ namespace arookas
 		}
 	}
 
-	public class sunCompilerResults
-	{
+	public class sunCompilerResults {
 		// success
 		public bool Success { get { return Error == null; } }
 		public sunCompilerException Error { get; internal set; }

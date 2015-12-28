@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace arookas
-{
-	public abstract class sunImportResolver
-	{
+namespace arookas {
+	public abstract class sunImportResolver {
 		static sunImportResolver defaultResolver = new sunDefaultImportResolver();
 		public static sunImportResolver Default { get { return defaultResolver; } }
 
@@ -15,60 +13,49 @@ namespace arookas
 		public abstract sunImportResult ResolveImport(string name, out sunScriptFile file);
 
 		// default implementation
-		sealed class sunDefaultImportResolver : sunImportResolver
-		{
+		sealed class sunDefaultImportResolver : sunImportResolver {
 			List<sunScriptFile> imports = new List<sunScriptFile>(10);
 			Stack<sunScriptFile> current = new Stack<sunScriptFile>(5);
 			string rootDirectory, currentDirectory;
 			string CurrentDirectory { get { return current.Count > 0 ? Path.GetDirectoryName(current.Peek().Name) : currentDirectory; } }
 
-			public sunDefaultImportResolver()
-			{
+			public sunDefaultImportResolver() {
 				rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
 				currentDirectory = Directory.GetCurrentDirectory();
 			}
 
 			public override void EnterFile(sunScriptFile file) { current.Push(file); }
 			public override void ExitFile(sunScriptFile file) { current.Pop(); }
-			public override sunImportResult ResolveImport(string name, out sunScriptFile file)
-			{
+			public override sunImportResult ResolveImport(string name, out sunScriptFile file) {
 				file = null;
 				string fullPath;
-				if (Path.IsPathRooted(name))
-				{
+				if (Path.IsPathRooted(name)) {
 					// if the path is absolute, just use it directly
 					fullPath = name;
-					if (!File.Exists(fullPath))
-					{
+					if (!File.Exists(fullPath)) {
 						return sunImportResult.Missing;
 					}
 				}
-				else
-				{
+				else {
 					// check if the file exists relative to the current one;
 					// if it's not there, check the root directory
 					fullPath = Path.Combine(CurrentDirectory, name);
-					if (!File.Exists(fullPath))
-					{
+					if (!File.Exists(fullPath)) {
 						fullPath = Path.Combine(rootDirectory, name);
-						if (!File.Exists(fullPath))
-						{
+						if (!File.Exists(fullPath)) {
 							return sunImportResult.Missing;
 						}
 					}
 				}
 				// make sure the file has not been imported yet
-				if (imports.Any(i => i.Name == fullPath))
-				{
+				if (imports.Any(i => i.Name == fullPath)) {
 					return sunImportResult.Skipped;
 				}
 				// open the file
-				try
-				{
+				try {
 					file = new sunScriptFile(name, File.OpenRead(fullPath));
 				}
-				catch
-				{
+				catch {
 					return sunImportResult.FailedToLoad;
 				}
 				imports.Add(file);
@@ -77,44 +64,36 @@ namespace arookas
 		}
 	}
 
-	public enum sunImportResult
-	{
+	public enum sunImportResult {
 		Loaded,
 		Skipped,
 		Missing,
 		FailedToLoad,
 	}
 
-	public class sunScriptFile : IDisposable
-	{
+	public class sunScriptFile : IDisposable {
 		public string Name { get; private set; }
 		public Stream Stream { get; private set; }
 
-		public sunScriptFile(string name, Stream stream)
-		{
-			if (name == null)
-			{
+		public sunScriptFile(string name, Stream stream) {
+			if (name == null) {
 				throw new ArgumentNullException("name");
 			}
-			if (stream == null)
-			{
+			if (stream == null) {
 				throw new ArgumentNullException("stream");
 			}
-			if (!stream.CanRead)
-			{
+			if (!stream.CanRead) {
 				throw new ArgumentException("Stream does not support reading.", "stream");
 			}
 			Name = name;
 			Stream = stream;
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			Stream.Dispose();
 		}
 
-		public TextReader GetReader()
-		{
+		public TextReader GetReader() {
 			return new StreamReader(Stream);
 		}
 	}

@@ -1,12 +1,9 @@
 ﻿using PerCederberg.Grammatica.Runtime;
 using System.Linq;
 
-namespace arookas
-{
-	class sunParser
-	{
-		static string[] keywords =
-		{
+namespace arookas {
+	class sunParser {
+		static string[] keywords = {
 			"import",
 			"builtin", "function", "var", "const",
 			"if", "while", "do", "for",
@@ -15,48 +12,37 @@ namespace arookas
 			"true", "false",
 		};
 
-		public sunNode Parse(sunScriptFile file)
-		{
-			using (var input = file.GetReader())
-			{
-				try
-				{
+		public sunNode Parse(sunScriptFile file) {
+			using (var input = file.GetReader()) {
+				try {
 					var parser = new __sunParser(input);
 					var node = parser.Parse();
 					return CreateAst(file.Name, node);
 				}
-				catch (ParserLogException ex)
-				{
+				catch (ParserLogException ex) {
 					throw new sunParserException(file.Name, ex[0]);
 				}
 			}
 		}
 
-		static sunNode CreateAst(string file, Node node)
-		{
+		static sunNode CreateAst(string file, Node node) {
 			var ast = ConvertNode(file, node);
-			if (ast == null)
-			{
+			if (ast == null) {
 				return null;
 			}
 			// children
-			if (node is Production)
-			{
+			if (node is Production) {
 				var production = node as Production;
-				for (int i = 0; i < production.Count; ++i)
-				{
+				for (int i = 0; i < production.Count; ++i) {
 					var child = CreateAst(file, production[i]);
-					if (child != null)
-					{
+					if (child != null) {
 						ast.Add(child);
 					}
 				}
 			}
 			// transcience
-			if (ast.Count == 1)
-			{
-				switch (GetId(node))
-				{
+			if (ast.Count == 1) {
+				switch (GetId(node)) {
 					case __sunConstants.ROOT_STATEMENT:
 					case __sunConstants.STATEMENT:
 					case __sunConstants.COMPOUND_STATEMENT:
@@ -69,26 +55,22 @@ namespace arookas
 					case __sunConstants.TERM:
 					case __sunConstants.PARAMETER:
 					case __sunConstants.ARGUMENT_LIST:
-					case __sunConstants.ARGUMENT:
-					{
-						return ast[0];
-					}
+					case __sunConstants.ARGUMENT: {
+							return ast[0];
+						}
 				}
 			}
 			return ast;
 		}
-		static sunNode ConvertNode(string file, Node node)
-		{
+		static sunNode ConvertNode(string file, Node node) {
 			var location = new sunSourceLocation(file, node.StartLine, node.StartColumn);
 			string token = null;
-			if (node is Token)
-			{
+			if (node is Token) {
 				token = (node as Token).Image;
 			}
 
 			// statements
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.SCRIPT: return new sunNode(location);
 				case __sunConstants.ROOT_STATEMENT: return new sunNode(location);
 				case __sunConstants.STATEMENT: return new sunNode(location);
@@ -108,8 +90,7 @@ namespace arookas
 			}
 
 			// literals
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.INT_NUMBER: return new sunIntLiteral(location, token);
 				case __sunConstants.HEX_NUMBER: return new sunHexLiteral(location, token);
 				case __sunConstants.DEC_NUMBER: return new sunFloatLiteral(location, token);
@@ -121,17 +102,14 @@ namespace arookas
 			}
 
 			// operators
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.ADD: return new sunAdd(location);
-				case __sunConstants.SUB:
-				{
-					if (GetId(node.Parent) == __sunConstants.UNARY_OPERATOR)
-					{
-						return new sunNeg(location);
+				case __sunConstants.SUB: {
+						if (GetId(node.Parent) == __sunConstants.UNARY_OPERATOR) {
+							return new sunNeg(location);
+						}
+						return new sunSub(location);
 					}
-					return new sunSub(location);
-				}
 				case __sunConstants.MUL: return new sunMul(location);
 				case __sunConstants.DIV: return new sunDiv(location);
 				case __sunConstants.MOD: return new sunMod(location);
@@ -175,12 +153,11 @@ namespace arookas
 			}
 
 			// expressions
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.EXPRESSION: return new sunExpression(location);
 				case __sunConstants.OPERAND: return new sunOperand(location);
 				case __sunConstants.TERM: return new sunNode(location);
-				
+
 				case __sunConstants.UNARY_OPERATOR_LIST: return new sunUnaryOperatorList(location);
 
 				case __sunConstants.INT_CAST: return new sunIntCast(location);
@@ -192,14 +169,12 @@ namespace arookas
 			}
 
 			// builtins
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.BUILTIN_DECLARATION: return new sunBuiltinDeclaration(location);
 			}
 
 			// functions
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.FUNCTION_DEFINITION: return new sunFunctionDefinition(location);
 				case __sunConstants.FUNCTION_CALL: return new sunFunctionCall(location);
 
@@ -210,8 +185,7 @@ namespace arookas
 			}
 
 			// variables
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.VARIABLE_REFERENCE: return new sunStorableReference(location);
 				case __sunConstants.VARIABLE_DECLARATION: return new sunVariableDeclaration(location);
 				case __sunConstants.VARIABLE_DEFINITION: return new sunVariableDefinition(location);
@@ -220,14 +194,12 @@ namespace arookas
 			}
 
 			// constants
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.CONST_DEFINITION: return new sunConstantDefinition(location);
 			}
 
 			// flow control
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				case __sunConstants.IF_STATEMENT: return new sunIf(location);
 				case __sunConstants.WHILE_STATEMENT: return new sunWhile(location);
 				case __sunConstants.DO_STATEMENT: return new sunDo(location);
@@ -242,8 +214,7 @@ namespace arookas
 			}
 
 			// cleanup keywords punctuation
-			switch (GetId(node))
-			{
+			switch (GetId(node)) {
 				// keywords
 				case __sunConstants.IMPORT:
 				case __sunConstants.BUILTIN:
@@ -286,22 +257,19 @@ namespace arookas
 				case __sunConstants.COMMA:
 				case __sunConstants.DOT:
 				// case __sunConstants.ELLIPSIS: // do not exclude ellipsis for variadic parameters
-				case __sunConstants.QMARK:
-				{
-					return null;
-				}
+				case __sunConstants.QMARK: {
+						return null;
+					}
 			}
 
 			// emergency fallback
 			return null;
 		}
-		static __sunConstants GetId(Node node)
-		{
+		static __sunConstants GetId(Node node) {
 			return (__sunConstants)node.Id;
 		}
 
-		public static bool IsKeyword(string name)
-		{
+		public static bool IsKeyword(string name) {
 			return keywords.Contains(name);
 		}
 	}

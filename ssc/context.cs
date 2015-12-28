@@ -4,10 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace arookas
-{
-	class sunContext
-	{
+namespace arookas {
+	class sunContext {
 		bool mOpen;
 		aBinaryWriter mWriter;
 		uint mTextOffset, mDataOffset, mSymbolOffset;
@@ -19,8 +17,7 @@ namespace arookas
 		public sunLoopStack Loops { get; private set; }
 		public sunImportResolver ImportResolver { get; private set; }
 
-		public sunContext()
-		{
+		public sunContext() {
 			DataTable = new sunDataTable();
 			SymbolTable = new sunSymbolTable();
 			Scopes = new sunScopeStack();
@@ -28,22 +25,15 @@ namespace arookas
 		}
 
 		// open/close
-		public void Open(Stream output)
-		{
-			Open(output, sunImportResolver.Default);
-		}
-		public void Open(Stream output, sunImportResolver importResolver)
-		{
-			if (mOpen)
-			{
+		public void Open(Stream output) { Open(output, sunImportResolver.Default); }
+		public void Open(Stream output, sunImportResolver importResolver) {
+			if (mOpen) {
 				throw new InvalidOperationException();
 			}
-			if (output == null)
-			{
+			if (output == null) {
 				throw new ArgumentNullException("output");
 			}
-			if (importResolver == null)
-			{
+			if (importResolver == null) {
 				throw new ArgumentNullException("importResolver");
 			}
 			mOpen = true;
@@ -73,10 +63,8 @@ namespace arookas
 			DeclareSystemBuiltin("typeof", false, "x");
 			DeclareSystemBuiltin("print", true);
 		}
-		public void Close()
-		{
-			if (!mOpen)
-			{
+		public void Close() {
+			if (!mOpen) {
 				throw new InvalidOperationException();
 			}
 			mWriter.PopAnchor();
@@ -90,26 +78,21 @@ namespace arookas
 		}
 
 		// imports/compilation
-		public sunImportResult Import(string name)
-		{
-			if (name == null)
-			{
+		public sunImportResult Import(string name) {
+			if (name == null) {
 				throw new ArgumentNullException("name");
 			}
 			sunScriptFile file;
 			var result = ImportResolver.ResolveImport(name, out file);
-			if (result == sunImportResult.Loaded)
-			{
-				try
-				{
+			if (result == sunImportResult.Loaded) {
+				try {
 					ImportResolver.EnterFile(file);
 					var parser = new sunParser();
 					var tree = parser.Parse(file);
 					tree.Compile(this);
 					ImportResolver.ExitFile(file);
 				}
-				finally
-				{
+				finally {
 					file.Dispose();
 				}
 			}
@@ -117,82 +100,68 @@ namespace arookas
 		}
 
 		// callables
-		public sunBuiltinSymbol DeclareBuiltin(sunBuiltinDeclaration node)
-		{
-			if (SymbolTable.Callables.Any(i => i.Name == node.Builtin.Value))
-			{
+		public sunBuiltinSymbol DeclareBuiltin(sunBuiltinDeclaration node) {
+			if (SymbolTable.Callables.Any(i => i.Name == node.Builtin.Value)) {
 				throw new sunRedeclaredBuiltinException(node);
 			}
 			var symbol = new sunBuiltinSymbol(node.Builtin.Value, node.Parameters.ParameterInfo, SymbolTable.Count);
 			SymbolTable.Add(symbol);
 			return symbol;
 		}
-		public sunFunctionSymbol DefineFunction(sunFunctionDefinition node)
-		{
-			if (node.Parameters.IsVariadic)
-			{
+		public sunFunctionSymbol DefineFunction(sunFunctionDefinition node) {
+			if (node.Parameters.IsVariadic) {
 				throw new sunVariadicFunctionException(node);
 			}
-			if (SymbolTable.Callables.Any(i => i.Name == node.Function.Value))
-			{
+			if (SymbolTable.Callables.Any(i => i.Name == node.Function.Value)) {
 				throw new sunRedefinedFunctionException(node);
 			}
 			var symbol = new sunFunctionSymbol(node.Function.Value, node.Parameters.ParameterInfo, node.Body);
 			SymbolTable.Add(symbol);
 			return symbol;
 		}
-		public sunCallableSymbol ResolveCallable(sunFunctionCall node)
-		{
+		public sunCallableSymbol ResolveCallable(sunFunctionCall node) {
 			var symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == node.Function.Value);
-			if (symbol == null)
-			{
+			if (symbol == null) {
 				throw new sunUndefinedFunctionException(node);
 			}
 			return symbol;
 		}
-		public sunCallableSymbol MustResolveCallable(sunFunctionCall node)
-		{
+		public sunCallableSymbol MustResolveCallable(sunFunctionCall node) {
 			var symbol = ResolveCallable(node);
-			if (symbol == null)
-			{
+			if (symbol == null) {
 				throw new sunUndefinedFunctionException(node);
 			}
 			return symbol;
 		}
 
-		public sunBuiltinSymbol DeclareSystemBuiltin(string name, bool variadic, params string[] parameters)
-		{
+		public sunBuiltinSymbol DeclareSystemBuiltin(string name, bool variadic, params string[] parameters) {
 			var symbol = SymbolTable.Builtins.FirstOrDefault(i => i.Name == name);
-			if (symbol == null)
-			{
+			if (symbol == null) {
 				symbol = new sunBuiltinSymbol(name, new sunParameterInfo(parameters, variadic), SymbolTable.Count);
 				SymbolTable.Add(symbol);
 			}
 			return symbol;
 		}
-		public sunBuiltinSymbol ResolveSystemBuiltin(string name)
-		{
+		public sunBuiltinSymbol ResolveSystemBuiltin(string name) {
 			return SymbolTable.Builtins.FirstOrDefault(i => i.Name == name);
 		}
 
 		// storables
-		public sunVariableSymbol DeclareVariable(sunIdentifier node)
-		{
+		public sunVariableSymbol DeclareVariable(sunIdentifier node) {
 #if SSC_RESOLVEVAR_NEST
-			if (Scopes.Top.GetIsDeclared(node.Value))
-#else
-			if (Scopes.Any(i => i.GetIsDeclared(node.Value)))
-#endif
-			{
+			if (Scopes.Top.GetIsDeclared(node.Value)) {
 				throw new sunRedeclaredVariableException(node);
 			}
+#else
+			if (Scopes.Any(i => i.GetIsDeclared(node.Value))) {
+				throw new sunRedeclaredVariableException(node);
+			}
+#endif
 			var symbol = Scopes.DeclareVariable(node.Value);
-			if (Scopes.Top.Type == sunScopeType.Script) // global-scope variables are added to the symbol table
-			{
+			if (Scopes.Top.Type == sunScopeType.Script) { // global-scope variables are added to the symbol table
 #if SSC_RESOLVEVAR_NEST
 				// only add the variable symbol if there isn't one with this index already
-				if (!SymbolTable.Variables.Any(i => i.Index == symbol.Index))
-				{
+				if (!SymbolTable.Variables.Any(i => i.Index == symbol.Index)) {
 					SymbolTable.Add(new sunVariableSymbol(String.Format("global{0}", symbol.Index), symbol.Display, symbol.Index));
 				}
 #else
@@ -201,68 +170,52 @@ namespace arookas
 			}
 			return symbol;
 		}
-		public sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression)
-		{
+		public sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression) {
 #if SSC_RESOLVEVAR_NEST
-			if (Scopes.Top.GetIsDeclared(node.Value))
-#else
-			if (Scopes.Any(i => i.GetIsDeclared(node.Value)))
-#endif
-			{
+			if (Scopes.Top.GetIsDeclared(node.Value)) {
 				throw new sunRedeclaredVariableException(node);
 			}
+#else
+			if (Scopes.Any(i => i.GetIsDeclared(node.Value))) {
+				throw new sunRedeclaredVariableException(node);
+			}
+#endif
 			return Scopes.DeclareConstant(node.Value, expression);
 		}
-		public sunStorableSymbol ResolveStorable(sunIdentifier node)
-		{
-			for (int i = Scopes.Count - 1; i >= 0; --i)
-			{
+		public sunStorableSymbol ResolveStorable(sunIdentifier node) {
+			for (int i = Scopes.Count - 1; i >= 0; --i) {
 				var symbol = Scopes[i].ResolveStorable(node.Value);
-				if (symbol != null)
-				{
+				if (symbol != null) {
 					return symbol;
 				}
 			}
 			return null;
 		}
-		public sunVariableSymbol ResolveVariable(sunIdentifier node)
-		{
-			return ResolveStorable(node) as sunVariableSymbol;
-		}
-		public sunConstantSymbol ResolveConstant(sunIdentifier node)
-		{
-			return ResolveStorable(node) as sunConstantSymbol;
-		}
-		public sunStorableSymbol MustResolveStorable(sunIdentifier node)
-		{
+		public sunVariableSymbol ResolveVariable(sunIdentifier node) { return ResolveStorable(node) as sunVariableSymbol; }
+		public sunConstantSymbol ResolveConstant(sunIdentifier node) { return ResolveStorable(node) as sunConstantSymbol; }
+		public sunStorableSymbol MustResolveStorable(sunIdentifier node) {
 			var symbol = ResolveStorable(node);
-			if (symbol == null)
-			{
+			if (symbol == null) {
 				throw new sunUndeclaredVariableException(node);
 			}
 			return symbol;
 		}
-		public sunVariableSymbol MustResolveVariable(sunIdentifier node)
-		{
+		public sunVariableSymbol MustResolveVariable(sunIdentifier node) {
 			var symbol = ResolveVariable(node);
-			if (symbol == null)
-			{
+			if (symbol == null) {
 				throw new sunUndeclaredVariableException(node);
 			}
 			return symbol;
 		}
-		public sunConstantSymbol MustResolveConstant(sunIdentifier node)
-		{
+		public sunConstantSymbol MustResolveConstant(sunIdentifier node) {
 			var symbol = ResolveConstant(node);
-			if (symbol == null)
-			{
+			if (symbol == null) {
 				throw new sunUndeclaredVariableException(node);
 			}
 			return symbol;
 		}
 
-		void WriteHeader()
-		{
+		void WriteHeader() {
 			mWriter.WriteString("SPCB");
 			mWriter.Write32(mTextOffset);
 			mWriter.Write32(mDataOffset);

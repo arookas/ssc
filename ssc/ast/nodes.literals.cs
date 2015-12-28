@@ -2,91 +2,70 @@
 using System.Globalization;
 using System.Text;
 
-namespace arookas
-{
-	class sunIntLiteral : sunToken<int> // base-10 integer
-	{
+namespace arookas {
+	class sunIntLiteral : sunToken<int> { // base-10 integer
 		public sunIntLiteral(sunSourceLocation location, string literal)
-			: base(location)
-		{
+			: base(location) {
 			Value = Int32.Parse(literal);
 		}
-		protected sunIntLiteral(sunSourceLocation location)
-			: base(location)
-		{
-			// this overload lets protected classes set the value to something else
-		}
 
-		public override void Compile(sunContext context)
-		{
-			context.Text.PushInt(Value);
-		}
+		// this overload lets protected classes set the value to something else
+		protected sunIntLiteral(sunSourceLocation location)
+			: base(location) { }
+
+		public override void Compile(sunContext context) { context.Text.PushInt(Value); }
 	}
 
-	class sunHexLiteral : sunIntLiteral // base-16 integer
-	{
+	class sunHexLiteral : sunIntLiteral { // base-16 integer
 		public sunHexLiteral(sunSourceLocation location, string literal)
-			: base(location)
-		{
+			: base(location) {
 			// because .NET's hex parsing is gay and doesn't support
 			// leading signs, manually detect negative literals
 			var neg = (literal[0] == '-');
 			var trim = neg ? 3 : 2;
 			var digits = literal.Substring(trim); // trim the '0x' prefix before parsing
 			Value = Int32.Parse(literal.Substring(2), NumberStyles.AllowHexSpecifier);
-			if (neg)
-			{
+			if (neg) {
 				Value = -Value;
 			}
 		}
 	}
 
-	class sunFloatLiteral : sunToken<float>
-	{
+	class sunFloatLiteral : sunToken<float> {
 		public sunFloatLiteral(sunSourceLocation location, string literal)
-			: base(location)
-		{
+			: base(location) {
 			Value = Single.Parse(literal);
 		}
 
-		public override void Compile(sunContext context)
-		{
+		public override void Compile(sunContext context) {
 			context.Text.PushFloat(Value);
 		}
 	}
 
-	class sunStringLiteral : sunToken<string>
-	{
+	class sunStringLiteral : sunToken<string> {
 		public sunStringLiteral(sunSourceLocation location, string literal)
-			: base(location)
-		{
+			: base(location) {
 			Value = UnescapeString(literal.Substring(1, literal.Length - 2)); // remove enclosing quotes
 		}
 
-		public override void Compile(sunContext context)
-		{
+		public override void Compile(sunContext context) {
 			context.Text.PushData(context.DataTable.Add(Value));
 		}
 
 		// string unescaping utility
-		string UnescapeString(string value)
-		{
+		string UnescapeString(string value) {
 			// based on Hans Passant's code
 			StringBuilder sb = new StringBuilder(value.Length);
-			for (int i = 0; i < value.Length;)
-			{
+			for (int i = 0; i < value.Length;) {
 				int j = value.IndexOf('\\', i);
-				if (j < 0 || j >= value.Length - 1)
-				{
+				if (j < 0 || j >= value.Length - 1) {
 					j = value.Length;
 				}
 				sb.Append(value, i, j - i);
-				if (j >= value.Length)
-				{
+				if (j >= value.Length) {
 					break;
 				}
-				switch (value[j + 1])
-				{
+				switch (value[j + 1]) {
 					case '\'': sb.Append('\''); break;
 					case '"': sb.Append('"'); break;
 					case '\\': sb.Append('\\'); break;
@@ -106,16 +85,13 @@ namespace arookas
 			}
 			return sb.ToString();
 		}
-		char UnescapeHex(string value, int start, out int end)
-		{
-			if (start > value.Length)
-			{
+		char UnescapeHex(string value, int start, out int end) {
+			if (start > value.Length) {
 				throw new sunEscapeSequenceException(this); // we need at least one digit
 			}
 			StringBuilder sb = new StringBuilder(4);
 			int digits = 0;
-			while (digits < 4 && start < value.Length && IsHexDigit(value[start]))
-			{
+			while (digits < 4 && start < value.Length && IsHexDigit(value[start])) {
 				sb.Append(value[start]);
 				++digits;
 				++start;
@@ -123,46 +99,37 @@ namespace arookas
 			end = start;
 			return (char)Int32.Parse(sb.ToString(), NumberStyles.AllowHexSpecifier);
 		}
-		char UnescapeUnicodeCodeUnit(string value, int start, out int end)
-		{
-			if (start >= value.Length - 4)
-			{
+		char UnescapeUnicodeCodeUnit(string value, int start, out int end) {
+			if (start >= value.Length - 4) {
 				throw new sunEscapeSequenceException(this); // we need four digits
 			}
 			end = start + 4;
 			return (char)Int32.Parse(value.Substring(start, 4), NumberStyles.AllowHexSpecifier);
 		}
-		string UnescapeUnicodeSurrogatePair(string value, int start, out int end)
-		{
-			if (start >= value.Length - 8)
-			{
+		string UnescapeUnicodeSurrogatePair(string value, int start, out int end) {
+			if (start >= value.Length - 8) {
 				throw new sunEscapeSequenceException(this); // we need eight digits
 			}
 			char high = (char)Int32.Parse(value.Substring(start, 4), NumberStyles.AllowHexSpecifier);
 			char low = (char)Int32.Parse(value.Substring(start + 4, 4), NumberStyles.AllowHexSpecifier);
-			if (!Char.IsHighSurrogate(high) || !Char.IsLowSurrogate(low))
-			{
+			if (!Char.IsHighSurrogate(high) || !Char.IsLowSurrogate(low)) {
 				throw new sunEscapeSequenceException(this); // characters are not a surrogate pair
 			}
 			end = start + 8;
 			return String.Concat(high, low);
 		}
-		static bool IsHexDigit(char c)
-		{
+		static bool IsHexDigit(char c) {
 			return (c >= '0' && c <= '9') ||
 				(c >= 'A' && c <= 'F') ||
 				(c >= 'a' && c <= 'f');
 		}
 	}
 
-	class sunIdentifier : sunToken<string>
-	{
+	class sunIdentifier : sunToken<string> {
 		public sunIdentifier(sunSourceLocation location, string identifier)
-			: base(location)
-		{
+			: base(location) {
 			// make sure it is a valid identifier name (i.e. not a keyword)
-			if (sunParser.IsKeyword(identifier))
-			{
+			if (sunParser.IsKeyword(identifier)) {
 				throw new sunIdentifierException(this);
 			}
 			Value = identifier;
@@ -171,20 +138,16 @@ namespace arookas
 		// identifiers are compiled on a per-context basis (i.e. at a higher level)
 	}
 
-	class sunTrue : sunIntLiteral
-	{
+	class sunTrue : sunIntLiteral {
 		public sunTrue(sunSourceLocation location)
-			: base(location)
-		{
+			: base(location) {
 			Value = 1;
 		}
 	}
 
-	class sunFalse : sunIntLiteral
-	{
+	class sunFalse : sunIntLiteral {
 		public sunFalse(sunSourceLocation location)
-			: base(location)
-		{
+			: base(location) {
 			Value = 0;
 		}
 	}
