@@ -119,7 +119,12 @@ namespace arookas {
 
 		public sunAssignConstantException(sunIdentifier node)
 			: base(node) { }
+	}
+	class sunConstantExpressionException : sunNodeException<sunNode> {
+		public override string Message { get { return "Expression must be constant."; } }
 
+		public sunConstantExpressionException(sunNode node)
+			: base(node) { }
 	}
 	class sunRedeclaredParameterException : sunNodeException<sunIdentifier> {
 		public override string Message { get { return String.Format("Redeclared parameter '{0}'.", Node.Value); } }
