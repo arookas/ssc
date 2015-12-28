@@ -74,6 +74,13 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
+			// analyze the expression first. this does two things:
+			//   1) prevents recursion (i.e. the const referencing itself)
+			//   2) asserts actual constness
+			var flags = Expression.Analyze(context);
+			if (flags.HasFlag(sunExpressionFlags.Dynamic)) {
+				throw new sunConstantExpressionException(Expression);
+			}
 			context.DeclareConstant(Constant, Expression);
 		}
 	}
