@@ -48,6 +48,10 @@ namespace arookas
 			}
 			return null;
 		}
+		public sunConstantSymbol DeclareConstant(string name, sunExpression expression)
+		{
+			return Top.DeclareConstant(name, expression);
+		}
 		sunVariableSymbol DeclareGlobal(string name)
 		{
 			var variableInfo = Top.DeclareVariable(name, 0, GlobalCount);
