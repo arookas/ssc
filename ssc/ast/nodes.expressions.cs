@@ -1,9 +1,14 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace arookas {
-	class sunExpression : sunNode {
+	interface sunTerm {
+		sunExpressionFlags GetExpressionFlags(sunContext context);
+	}
+
+	class sunExpression : sunNode, sunTerm {
 		public sunExpression(sunSourceLocation location)
 			: base(location) { }
 
@@ -11,8 +16,11 @@ namespace arookas {
 			Stack<sunOperator> operatorStack = new Stack<sunOperator>(32);
 			CompileExpression(context, this, operatorStack);
 		}
+		public sunExpressionFlags Analyze(sunContext context) {
+			return AnalyzeExpression(context, this);
+		}
 
-		void CompileExpression(sunContext context, sunExpression expression, Stack<sunOperator> operatorStack) {
+		static void CompileExpression(sunContext context, sunExpression expression, Stack<sunOperator> operatorStack) {
 			// this implementation assumes that the expression production child list alternates between operand and operator
 			// we can safely assume this as the grammar "operand {binary_operator operand}" enforces it
 			int stackCount = operatorStack.Count;
@@ -47,6 +55,35 @@ namespace arookas {
 				operatorStack.Pop().Compile(context);
 			}
 		}
+		static sunExpressionFlags AnalyzeExpression(sunContext context, sunExpression expression) {
+			sunExpressionFlags flags = sunExpressionFlags.None;
+			foreach (var operand in expression.OfType<sunOperand>()) {
+				var term = operand.Term as sunTerm;
+				if (term != null) {
+					flags |= term.GetExpressionFlags(context);
+				}
+			}
+			return flags;
+		}
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return Analyze(context);
+		}
+	}
+
+	[Flags]
+	enum sunExpressionFlags {
+		// contents
+		None = 0,
+		Literals = 1,
+		Variables = 2,
+		Augments = 4,
+		Casts = 8,
+		Calls = 16,
+		Constants = 32,
+
+		// description
+		Dynamic = 64,
 	}
 
 	class sunOperand : sunNode {
@@ -71,7 +108,7 @@ namespace arookas {
 		}
 	}
 
-	class sunTernaryOperator : sunNode {
+	class sunTernaryOperator : sunNode, sunTerm {
 		public sunExpression Condition { get { return this[0] as sunExpression; } }
 		public sunExpression TrueBody { get { return this[1] as sunExpression; } }
 		public sunExpression FalseBody { get { return this[2] as sunExpression; } }
@@ -88,10 +125,14 @@ namespace arookas {
 			FalseBody.Compile(context);
 			context.Text.ClosePoint(trueEpilogue);
 		}
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return Condition.Analyze(context) | TrueBody.Analyze(context) | FalseBody.Analyze(context);
+		}
 	}
-	
+
 	// increment/decrement
-	class sunPostfixAugment : sunOperand {
+	class sunPostfixAugment : sunOperand, sunTerm {
 		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
 		public sunAugment Augment { get { return this[1] as sunAugment; } }
 
@@ -108,9 +149,13 @@ namespace arookas {
 			}
 			Augment.Compile(context, symbol);
 		}
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return sunExpressionFlags.Augments;
+		}
 	}
 
-	class sunPrefixAugment : sunOperand {
+	class sunPrefixAugment : sunOperand, sunTerm {
 		public sunAugment Augment { get { return this[0] as sunAugment; } }
 		public sunIdentifier Variable { get { return this[1] as sunIdentifier; } }
 
@@ -126,6 +171,10 @@ namespace arookas {
 			if (Parent is sunOperand) {
 				symbol.CompileGet(context);
 			}
+		}
+		
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return sunExpressionFlags.Augments;
 		}
 	}
 

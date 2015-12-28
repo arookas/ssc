@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Text;
 
 namespace arookas {
-	class sunIntLiteral : sunToken<int> { // base-10 integer
+	class sunIntLiteral : sunToken<int>, sunTerm { // base-10 integer
 		public sunIntLiteral(sunSourceLocation location, string literal)
 			: base(location) {
 			Value = Int32.Parse(literal);
@@ -14,6 +14,10 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunContext context) { context.Text.PushInt(Value); }
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return sunExpressionFlags.Literals;
+		}
 	}
 
 	class sunHexLiteral : sunIntLiteral { // base-16 integer
@@ -31,7 +35,7 @@ namespace arookas {
 		}
 	}
 
-	class sunFloatLiteral : sunToken<float> {
+	class sunFloatLiteral : sunToken<float>, sunTerm {
 		public sunFloatLiteral(sunSourceLocation location, string literal)
 			: base(location) {
 			Value = Single.Parse(literal);
@@ -40,9 +44,13 @@ namespace arookas {
 		public override void Compile(sunContext context) {
 			context.Text.PushFloat(Value);
 		}
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return sunExpressionFlags.Literals;
+		}
 	}
 
-	class sunStringLiteral : sunToken<string> {
+	class sunStringLiteral : sunToken<string>, sunTerm {
 		public sunStringLiteral(sunSourceLocation location, string literal)
 			: base(location) {
 			Value = UnescapeString(literal.Substring(1, literal.Length - 2)); // remove enclosing quotes
@@ -122,6 +130,10 @@ namespace arookas {
 			return (c >= '0' && c <= '9') ||
 				(c >= 'A' && c <= 'F') ||
 				(c >= 'a' && c <= 'f');
+		}
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return sunExpressionFlags.Literals;
 		}
 	}
 

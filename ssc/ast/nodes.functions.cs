@@ -27,7 +27,7 @@ namespace arookas {
 		}
 	}
 
-	class sunFunctionCall : sunNode {
+	class sunFunctionCall : sunNode, sunTerm {
 		public sunIdentifier Function { get { return this[0] as sunIdentifier; } }
 		public sunNode Arguments { get { return this[1] as sunNode; } }
 
@@ -46,6 +46,10 @@ namespace arookas {
 			if (IsStatement) {
 				context.Text.Pop();
 			}
+		}
+		
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return sunExpressionFlags.Calls | sunExpressionFlags.Dynamic;
 		}
 	}
 

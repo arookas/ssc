@@ -1,5 +1,5 @@
 ﻿namespace arookas {
-	class sunStorableReference : sunNode {
+	class sunStorableReference : sunNode, sunTerm {
 		public sunIdentifier Storable { get { return this[0] as sunIdentifier; } }
 
 		public sunStorableReference(sunSourceLocation location)
@@ -7,6 +7,17 @@
 
 		public override void Compile(sunContext context) {
 			context.MustResolveStorable(Storable).Compile(context);
+		}
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			var symbol = context.MustResolveStorable(Storable);
+			if (symbol is sunVariableSymbol) {
+				return sunExpressionFlags.Variables | sunExpressionFlags.Dynamic;
+			}
+			else if (symbol is sunConstantSymbol) {
+				return sunExpressionFlags.Constants;
+			}
+			return sunExpressionFlags.None;
 		}
 	}
 

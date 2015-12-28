@@ -54,42 +54,46 @@
 		}
 	}
 
-	class sunIntCast : sunNode {
+	abstract class sunCast : sunNode, sunTerm {
 		public sunExpression Argument { get { return this[0] as sunExpression; } }
 
+		protected sunCast(sunSourceLocation location)
+			: base(location) { }
+
+		protected void Compile(sunContext context, sunBuiltinSymbol symbol) {
+			Argument.Compile(context);
+			context.Text.CallBuiltin(symbol.Index, 1);
+		}
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return sunExpressionFlags.Casts | Argument.Analyze(context);
+		}
+	}
+
+	class sunIntCast : sunCast {
 		public sunIntCast(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("int");
-			Argument.Compile(context);
-			context.Text.CallBuiltin(builtinInfo.Index, 1);
+			Compile(context, context.ResolveSystemBuiltin("int"));
 		}
 	}
 
-	class sunFloatCast : sunNode {
-		public sunExpression Argument { get { return this[0] as sunExpression; } }
-
+	class sunFloatCast : sunCast {
 		public sunFloatCast(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("float");
-			Argument.Compile(context);
-			context.Text.CallBuiltin(builtinInfo.Index, 1);
+			Compile(context, context.ResolveSystemBuiltin("float"));
 		}
 	}
 
-	class sunTypeofCast : sunNode {
-		public sunExpression Argument { get { return this[0] as sunExpression; } }
-
+	class sunTypeofCast : sunCast {
 		public sunTypeofCast(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("typeof");
-			Argument.Compile(context);
-			context.Text.CallBuiltin(builtinInfo.Index, 1);
+			Compile(context, context.ResolveSystemBuiltin("typeof"));
 		}
 	}
 
