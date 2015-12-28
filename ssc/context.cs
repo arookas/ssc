@@ -8,6 +8,7 @@ namespace arookas
 {
 	class sunContext
 	{
+		bool mOpen;
 		aBinaryWriter mWriter;
 		uint mTextOffset, mDataOffset, mSymbolOffset;
 		int mVarCount;
@@ -34,6 +35,10 @@ namespace arookas
 		}
 		public void Open(Stream output, sunImportResolver importResolver)
 		{
+			if (mOpen)
+			{
+				throw new InvalidOperationException();
+			}
 			if (output == null)
 			{
 				throw new ArgumentNullException("output");
@@ -42,6 +47,7 @@ namespace arookas
 			{
 				throw new ArgumentNullException("importResolver");
 			}
+			mOpen = true;
 			DataTable.Clear();
 			SymbolTable.Clear();
 			Scopes.Clear();
@@ -70,6 +76,10 @@ namespace arookas
 		}
 		public void Close()
 		{
+			if (!mOpen)
+			{
+				throw new InvalidOperationException();
+			}
 			mWriter.PopAnchor();
 			mDataOffset = (uint)mWriter.Position;
 			DataTable.Write(mWriter);
@@ -77,6 +87,7 @@ namespace arookas
 			SymbolTable.Write(mWriter);
 			mWriter.Goto(0);
 			WriteHeader();
+			mOpen = false;
 		}
 
 		// imports/compilation
