@@ -140,9 +140,10 @@ namespace arookas
 		{
 			Offset = context.Text.Offset;
 			context.Scopes.Push(sunScopeType.Function);
+			context.Scopes.ResetLocalCount();
 			foreach (var parameter in Parameters)
 			{
-				context.Scopes.DeclareVariable(parameter);
+				context.Scopes.DeclareVariable(parameter); // since there is no AST node for these, they won't affect MaxLocalCount
 			}
 			context.Text.StoreDisplay(1);
 			context.Text.DeclareLocal(Body.MaxLocalCount);
