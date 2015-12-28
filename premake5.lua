@@ -1,8 +1,8 @@
 -- options
 newoption {
 	trigger = "var-alloc",
-	value = "MODE"
-	description = "Sets how the compiler should allocate variables"
+	value = "MODE",
+	description = "Sets how the compiler should allocate variables",
 	allowed = {
 		{ "pack", "Recycle slices as they become unused" },
 		{ "inc", "Every variable gets its own slice" }
