@@ -18,7 +18,7 @@ Use the `sunCompiler.Compile` method or any of its overloads to compile a script
 |`output`|The output stream into which the compiled binary file will be written.|
 |`resolver`|An instance of the import resolver to use. If not specified, `sunImportResolver.Default` will be used.|
 
-_ssc_ by default resolves imports by loading files on disk (see [language.md](language.md). for more information).
+_ssc_ by default resolves imports by loading files on disk (see [language.md](language.md) for more information).
 To use a custom import resolver, create a new class inheriting from `sunImportResolver` and pass an instance of it to the `sunCompiler.Compile` method.
 
 The result of compilation will be returned in a `sunCompilerResults` instance.
@@ -26,8 +26,8 @@ Use the various properties on this type to gather the information of the compila
 
 |Property|Description|
 |--------|-----------|
-|`Success`|Whether the script was compiled successfully. If not, the `Error` property should be non-null.|
-|`Error`|The fatal error which occured during compilation. If compilation was successful, this should be null.|
+|`Success`|Whether the script was compiled successfully. If not, the `Error` property will be non-`null`.|
+|`Error`|The fatal error which occured during compilation. If compilation was successful, this will be `null`.|
 |`CompileTime`|The time it took to compile, measured as a `TimeSpan` instance.|
 |`DataCount`|The total number of data-table entries created.|
 |`SymbolCount`|The total number of symbols (builtins, functions, and variables) created.|
@@ -39,13 +39,18 @@ If the error is of the type `sunSourceException`, you can cast and retrieve the 
 
 ## Compiling
 
-This repository contains a [premake5](https://premake.github.io/) configuration file (see [premake5.lua](premake5.lua)).
+This repository contains a [premake5](https://premake.github.io/) [configuration file](premake5.lua).
 The script generates a solution with the following projects:
 
  - **ssc**, the base _ssc_ API library
  - **frontend**, the basic command-line frontend
 
 Simply run the script through premake5 and build the resulting solution.
+There are also several compile-time options which are able to be configured via the premake5 command line:
+
+|Option|Description|
+|------|-----------|
+|var-alloc|Affects how variables are allocated slices. Available values are _pack_ and _inc_.|
 
 _**Note:** A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.
 For more information, see Grammatica's official [installation documentation](http://grammatica.percederberg.net/doc/release/install.html)._
