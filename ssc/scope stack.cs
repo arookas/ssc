@@ -7,10 +7,10 @@ namespace arookas
 	class sunScopeStack : IEnumerable<sunScope>
 	{
 		List<sunScope> Stack { get; set; }
-		int GlobalCount { get { return Stack.Where(i => i.Type == sunScopeType.Script).Sum(i => i.StorableCount); } }
-		int LocalCount { get { return Stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.StorableCount); } }
 
 		public int Count { get { return Stack.Count; } }
+		int GlobalCount { get { return Stack.Where(i => i.Type == sunScopeType.Script).Sum(i => i.VariableCount); } }
+		int LocalCount { get { return Stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.VariableCount); } }
 
 		public sunScope Root { get { return this.FirstOrDefault(i => i.Type == Top.Type); } }
 		public sunScope Script { get { return this.FirstOrDefault(i => i.Type == sunScopeType.Script); } }
