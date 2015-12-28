@@ -9,10 +9,10 @@ namespace arookas {
 
 		public override void Compile(sunContext context) {
 			Stack<sunOperator> operatorStack = new Stack<sunOperator>(32);
-			AnalyzeExpression(context, this, operatorStack);
+			CompileExpression(context, this, operatorStack);
 		}
 
-		void AnalyzeExpression(sunContext context, sunExpression expression, Stack<sunOperator> operatorStack) {
+		void CompileExpression(sunContext context, sunExpression expression, Stack<sunOperator> operatorStack) {
 			// this implementation assumes that the expression production child list alternates between operand and operator
 			// we can safely assume this as the grammar "operand {binary_operator operand}" enforces it
 			int stackCount = operatorStack.Count;
@@ -23,7 +23,7 @@ namespace arookas {
 					// term
 					var term = operand.Term;
 					if (term is sunExpression) {
-						AnalyzeExpression(context, term as sunExpression, operatorStack);
+						CompileExpression(context, term as sunExpression, operatorStack);
 					}
 					else {
 						term.Compile(context);
