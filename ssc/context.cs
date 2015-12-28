@@ -8,9 +8,9 @@ namespace arookas
 {
 	class sunContext
 	{
-		aBinaryWriter writer;
-		uint textOffset, dataOffset, symbolOffset;
-		int varCount;
+		aBinaryWriter mWriter;
+		uint mTextOffset, mDataOffset, mSymbolOffset;
+		int mVarCount;
 
 		public sunWriter Text { get; private set; }
 		public sunDataTable DataTable { get; private set; }
@@ -47,15 +47,15 @@ namespace arookas
 			Scopes.Clear();
 			Loops.Clear();
 			ImportResolver = importResolver;
-			writer = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
-			Text = new sunWriter(writer);
-			writer.PushAnchor();
+			mWriter = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
+			Text = new sunWriter(mWriter);
+			mWriter.PushAnchor();
 
 			WriteHeader(); // dummy header
 
 			// begin text block
-			textOffset = (uint)writer.Position;
-			writer.PushAnchor(); // match code offsets and writer offsets
+			mTextOffset = (uint)mWriter.Position;
+			mWriter.PushAnchor(); // match code offsets and writer offsets
 
 			// add system builtins
 			DeclareSystemBuiltin("yield", false);
@@ -70,12 +70,12 @@ namespace arookas
 		}
 		public void Close()
 		{
-			writer.PopAnchor();
-			dataOffset = (uint)writer.Position;
-			DataTable.Write(writer);
-			symbolOffset = (uint)writer.Position;
-			SymbolTable.Write(writer);
-			writer.Goto(0);
+			mWriter.PopAnchor();
+			mDataOffset = (uint)mWriter.Position;
+			DataTable.Write(mWriter);
+			mSymbolOffset = (uint)mWriter.Position;
+			SymbolTable.Write(mWriter);
+			mWriter.Goto(0);
 			WriteHeader();
 		}
 
@@ -95,7 +95,7 @@ namespace arookas
 					ImportResolver.EnterFile(file);
 					var parser = new sunParser();
 					var tree = parser.Parse(file);
-					varCount += tree.MaxLocalCount;
+					mVarCount += tree.MaxLocalCount;
 					tree.Compile(this);
 					ImportResolver.ExitFile(file);
 				}
@@ -234,13 +234,13 @@ namespace arookas
 
 		void WriteHeader()
 		{
-			writer.WriteString("SPCB");
-			writer.Write32(textOffset);
-			writer.Write32(dataOffset);
-			writer.WriteS32(DataTable.Count);
-			writer.Write32(symbolOffset);
-			writer.WriteS32(SymbolTable.Count);
-			writer.WriteS32(varCount);
+			mWriter.WriteString("SPCB");
+			mWriter.Write32(mTextOffset);
+			mWriter.Write32(mDataOffset);
+			mWriter.WriteS32(DataTable.Count);
+			mWriter.Write32(mSymbolOffset);
+			mWriter.WriteS32(SymbolTable.Count);
+			mWriter.WriteS32(mVarCount);
 		}
 	}
 }

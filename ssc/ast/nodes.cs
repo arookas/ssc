@@ -25,13 +25,13 @@ namespace arookas
 
 	class sunNode : IEnumerable<sunNode>
 	{
-		List<sunNode> children;
+		List<sunNode> mChildren;
 
 		public sunNode Parent { get; private set; }
 		public sunSourceLocation Location { get; private set; }
 
-		public int Count { get { return children.Count; } }
-		public sunNode this[int index] { get { return index >= 0 && index < Count ? children[index] : null; } }
+		public int Count { get { return mChildren.Count; } }
+		public sunNode this[int index] { get { return index >= 0 && index < Count ? mChildren[index] : null; } }
 
 		public bool IsRoot { get { return Parent == null; } }
 		public bool IsBranch { get { return Count > 0; } }
@@ -68,7 +68,7 @@ namespace arookas
 
 		public sunNode(sunSourceLocation location)
 		{
-			children = new List<sunNode>(5);
+			mChildren = new List<sunNode>(5);
 			Location = location;
 		}
 
@@ -83,7 +83,7 @@ namespace arookas
 				node.Parent.Remove(node);
 			}
 			node.Parent = this;
-			children.Add(node);
+			mChildren.Add(node);
 		}
 		public void Remove(sunNode node)
 		{
@@ -93,7 +93,7 @@ namespace arookas
 			}
 			if (node.Parent == this)
 			{
-				children.Remove(node);
+				mChildren.Remove(node);
 				node.Parent = null;
 			}
 		}
@@ -103,7 +103,7 @@ namespace arookas
 			{
 				child.Parent = null;
 			}
-			children.Clear();
+			mChildren.Clear();
 		}
 
 		public virtual void Compile(sunContext context)
@@ -126,7 +126,7 @@ namespace arookas
 			return false;
 		}
 
-		public IEnumerator<sunNode> GetEnumerator() { return children.GetEnumerator(); }
+		public IEnumerator<sunNode> GetEnumerator() { return mChildren.GetEnumerator(); }
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
 
