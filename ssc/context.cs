@@ -121,14 +121,13 @@ namespace arookas
 		// callables
 		public sunBuiltinSymbol DeclareBuiltin(sunBuiltinDeclaration node)
 		{
-			var symbolInfo = SymbolTable.Callables.FirstOrDefault(f => f.Name == node.Builtin.Value);
-			if (symbolInfo != null)
+			if (SymbolTable.Callables.Any(i => i.Name == node.Builtin.Value))
 			{
 				throw new sunRedeclaredBuiltinException(node);
 			}
-			var builtinInfo = new sunBuiltinSymbol(node.Builtin.Value, node.Parameters.ParameterInfo, SymbolTable.Count);
-			SymbolTable.Add(builtinInfo);
-			return builtinInfo;
+			var symbol = new sunBuiltinSymbol(node.Builtin.Value, node.Parameters.ParameterInfo, SymbolTable.Count);
+			SymbolTable.Add(symbol);
+			return symbol;
 		}
 		public sunFunctionSymbol DefineFunction(sunFunctionDefinition node)
 		{
@@ -136,18 +135,17 @@ namespace arookas
 			{
 				throw new sunVariadicFunctionException(node);
 			}
-			var symbolInfo = SymbolTable.Callables.FirstOrDefault(f => f.Name == node.Function.Value);
-			if (symbolInfo != null)
+			if (SymbolTable.Callables.Any(i => i.Name == node.Function.Value))
 			{
 				throw new sunRedefinedFunctionException(node);
 			}
-			var functionInfo = new sunFunctionSymbol(node.Function.Value, node.Parameters.ParameterInfo, node.Body);
-			SymbolTable.Add(functionInfo);
-			return functionInfo;
+			var symbol = new sunFunctionSymbol(node.Function.Value, node.Parameters.ParameterInfo, node.Body);
+			SymbolTable.Add(symbol);
+			return symbol;
 		}
 		public sunCallableSymbol ResolveCallable(sunFunctionCall node)
 		{
-			var symbol = SymbolTable.Callables.FirstOrDefault(f => f.Name == node.Function.Value);
+			var symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == node.Function.Value);
 			if (symbol == null)
 			{
 				throw new sunUndefinedFunctionException(node);
@@ -166,17 +164,17 @@ namespace arookas
 
 		public sunBuiltinSymbol DeclareSystemBuiltin(string name, bool variadic, params string[] parameters)
 		{
-			var builtinInfo = SymbolTable.Builtins.FirstOrDefault(f => f.Name == name);
-			if (builtinInfo == null)
+			var symbol = SymbolTable.Builtins.FirstOrDefault(i => i.Name == name);
+			if (symbol == null)
 			{
-				builtinInfo = new sunBuiltinSymbol(name, new sunParameterInfo(parameters, variadic), SymbolTable.Count);
-				SymbolTable.Add(builtinInfo);
+				symbol = new sunBuiltinSymbol(name, new sunParameterInfo(parameters, variadic), SymbolTable.Count);
+				SymbolTable.Add(symbol);
 			}
-			return builtinInfo;
+			return symbol;
 		}
 		public sunBuiltinSymbol ResolveSystemBuiltin(string name)
 		{
-			return SymbolTable.Builtins.FirstOrDefault(f => f.Name == name);
+			return SymbolTable.Builtins.FirstOrDefault(i => i.Name == name);
 		}
 
 		// storables
