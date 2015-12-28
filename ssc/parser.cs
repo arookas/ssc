@@ -215,7 +215,7 @@ namespace arookas
 				case __sunConstants.VARIABLE_REFERENCE: return new sunStorableReference(location);
 				case __sunConstants.VARIABLE_DECLARATION: return new sunVariableDeclaration(location);
 				case __sunConstants.VARIABLE_DEFINITION: return new sunVariableDefinition(location);
-				case __sunConstants.VARIABLE_ASSIGNMENT: return new sunVariableAssignment(location);
+				case __sunConstants.VARIABLE_ASSIGNMENT: return new sunStorableAssignment(location);
 				case __sunConstants.VARIABLE_AUGMENT: return new sunNode(location);
 			}
 

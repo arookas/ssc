@@ -51,13 +51,13 @@
 		}
 	}
 
-	class sunVariableAssignment : sunNode
+	class sunStorableAssignment : sunNode
 	{
 		public sunIdentifier Storable { get { return this[0] as sunIdentifier; } }
 		public sunAssign Operator { get { return this[1] as sunAssign; } }
 		public sunExpression Expression { get { return this[2] as sunExpression; } }
 
-		public sunVariableAssignment(sunSourceLocation location)
+		public sunStorableAssignment(sunSourceLocation location)
 			: base(location)
 		{
 
