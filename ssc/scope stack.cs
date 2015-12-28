@@ -12,7 +12,9 @@ namespace arookas
 
 		public int Count { get { return Stack.Count; } }
 
-		public sunScope Root { get { return this[0]; } }
+		public sunScope Root { get { return this.FirstOrDefault(i => i.Type == Top.Type); } }
+		public sunScope Script { get { return this.FirstOrDefault(i => i.Type == sunScopeType.Script); } }
+		public sunScope Function { get { return this.FirstOrDefault(i => i.Type == sunScopeType.Function); } }
 		public sunScope Top { get { return this[Count - 1]; } }
 
 		public sunScope this[int index] { get { return Stack[index]; } }
