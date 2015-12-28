@@ -211,27 +211,11 @@ namespace arookas
 		}
 		public sunVariableSymbol ResolveVariable(sunIdentifier node)
 		{
-			for (int i = Scopes.Count - 1; i >= 0; --i)
-			{
-				var symbol = Scopes[i].ResolveVariable(node.Value);
-				if (symbol != null)
-				{
-					return symbol;
-				}
-			}
-			return null;
+			return ResolveStorable(node) as sunVariableSymbol;
 		}
 		public sunConstantSymbol ResolveConstant(sunIdentifier node)
 		{
-			for (int i = Scopes.Count - 1; i >= 0; --i)
-			{
-				var symbol = Scopes[i].ResolveConstant(node.Value);
-				if (symbol != null)
-				{
-					return symbol;
-				}
-			}
-			return null;
+			return ResolveStorable(node) as sunConstantSymbol;
 		}
 		public sunStorableSymbol MustResolveStorable(sunIdentifier node)
 		{
