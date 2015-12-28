@@ -263,7 +263,6 @@ namespace arookas
 			return symbol;
 		}
 
-		public sunVariableSymbol DeclareParameter(string name) { return Scopes.DeclareVariable(name); }
 
 		void WriteHeader()
 		{

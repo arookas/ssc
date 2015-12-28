@@ -141,7 +141,7 @@ namespace arookas
 			context.Scopes.Push(sunScopeType.Function);
 			foreach (var parameter in Parameters)
 			{
-				context.DeclareParameter(parameter);
+				context.Scopes.DeclareVariable(parameter);
 			}
 			context.Text.StoreDisplay(1);
 			context.Text.DeclareLocal(Body.MaxLocalCount);
