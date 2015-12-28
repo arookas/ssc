@@ -5,14 +5,11 @@ using System.Text;
 
 namespace arookas
 {
-	static class SSC
-	{
-		static void Main(string[] args)
-		{
+	static class SSC {
+		static void Main(string[] args) {
 			Message("ssc v0.1 arookas\n");
 			var cmd = new CommandLine(args);
-			if (cmd.Count == 0)
-			{
+			if (cmd.Count == 0) {
 				Message("Usage: ssc -input <input.sun> [-output <output.sb>]\n");
 				Pause();
 				Exit(1);
@@ -21,11 +18,9 @@ namespace arookas
 			int exitCode = 0;
 			string inputFile, outputFile;
 			ReadCmdLine(cmd, out inputFile, out outputFile);
-			using (var output = OpenOutput(outputFile))
-			{
+			using (var output = OpenOutput(outputFile)) {
 				var results = compiler.Compile(inputFile, output);
-				if (results.Success)
-				{
+				if (results.Success) {
 					Message("Finished compiling in {0:F2}ms.\n", results.CompileTime.TotalMilliseconds);
 					Message("  Data count: {0}\n", results.DataCount);
 					Message("Symbol count: {0}\n", results.SymbolCount);
@@ -33,16 +28,13 @@ namespace arookas
 					Message(" - functions: {0}\n", results.FunctionCount);
 					Message(" - variables: {0}\n", results.VariableCount);
 				}
-				else
-				{
-					if (results.Error is sunSourceException)
-					{
+				else {
+					if (results.Error is sunSourceException) {
 						var error = results.Error as sunSourceException;
 						Error("  in file \"{0}\"\n  at line {1}, col {2}\n\n{3}{4}", error.Location.File, error.Location.Line, error.Location.Column, GetErrorPreview(error.Location), error.Message);
 						exitCode = 1;
 					}
-					else
-					{
+					else {
 						var error = results.Error;
 						Error("{0}", error.Message);
 						exitCode = 1;
@@ -53,14 +45,11 @@ namespace arookas
 			Exit(exitCode);
 		}
 
-		static Stream OpenOutput(string path)
-		{
-			try
-			{
+		static Stream OpenOutput(string path) {
+			try {
 				return File.Create(path);
 			}
-			catch
-			{
+			catch {
 				Error("Failed to create output file '{0}'.", path);
 				Pause();
 				Exit(1);
@@ -68,55 +57,45 @@ namespace arookas
 			return null;
 		}
 
-		static void ReadCmdLine(CommandLine cmd, out string inputFile, out string outputFile)
-		{
+		// command-line
+		static void ReadCmdLine(CommandLine cmd, out string inputFile, out string outputFile) {
 			inputFile = null;
 			outputFile = null;
-			foreach (var prm in cmd)
-			{
-				switch (prm.Name)
-				{
+			foreach (var prm in cmd) {
+				switch (prm.Name) {
 					case "-input": GetInput(prm, ref inputFile); break;
 					case "-output": GetOutput(prm, ref outputFile); break;
 				}
 			}
-			if (inputFile == null)
-			{
+			if (inputFile == null) {
 				Error("Missing -input option.\n");
 				Pause();
 				Exit(1);
 			}
-			if (outputFile == null)
-			{
+			if (outputFile == null) {
 				outputFile = Path.ChangeExtension(inputFile, ".sb");
 			}
 		}
-		static void GetInput(CommandLineParameter prm, ref string inputFile)
-		{
-			if (inputFile != null)
-			{
+		static void GetInput(CommandLineParameter prm, ref string inputFile) {
+			if (inputFile != null) {
 				Error("Only one -input option is allowed.\n");
 				Pause();
 				Exit(1);
 			}
-			if (prm.Count != 1)
-			{
+			if (prm.Count != 1) {
 				Error("Incorrect number of arguments in -input option.\n");
 				Pause();
 				Exit(1);
 			}
 			inputFile = prm[0];
 		}
-		static void GetOutput(CommandLineParameter prm, ref string outputFile)
-		{
-			if (outputFile != null)
-			{
+		static void GetOutput(CommandLineParameter prm, ref string outputFile) {
+			if (outputFile != null) {
 				Error("Only one -output option is allowed.\n");
 				Pause();
 				Exit(1);
 			}
-			if (prm.Count != 1)
-			{
+			if (prm.Count != 1) {
 				Error("Incorrect number of arguments in -output option.\n");
 				Pause();
 				Exit(1);
@@ -124,42 +103,34 @@ namespace arookas
 			outputFile = prm[0];
 		}
 
-		static string GetErrorPreview(sunSourceLocation location)
-		{
+		// error preview
+		static string GetErrorPreview(sunSourceLocation location) {
 			Stream file;
-			try
-			{
+			try {
 				file = File.OpenRead(location.File);
 			}
-			catch
-			{
+			catch {
 				// simply don't do a preview if opening a file fails
 				return "";
 			}
-			using (var reader = new StreamReader(file))
-			{
+			using (var reader = new StreamReader(file)) {
 				// skip to line
-				for (var line = 1; line < location.Line; ++line)
-				{
+				for (var line = 1; line < location.Line; ++line) {
 					reader.ReadLine();
 				}
 				// generate column string
 				var sb = new StringBuilder();
 				var preview = reader.ReadLine();
 				sb.AppendLine(preview);
-				for (var column = 1; column < location.Column; ++column)
-				{
+				for (var column = 1; column < location.Column; ++column) {
 					var c = preview[column - 1];
-					if (IsFullWidth(c))
-					{
+					if (IsFullWidth(c)) {
 						sb.Append("  "); // full-width hack
 					}
-					else if (c == '\t')
-					{
+					else if (c == '\t') {
 						sb.Append('\t');
 					}
-					else
-					{
+					else {
 						sb.Append(" ");
 					}
 				}
@@ -168,30 +139,24 @@ namespace arookas
 				return sb.ToString();
 			}
 		}
-		static bool IsFullWidth(char c)
-		{
-			return (c >= 0x2E80 && c <= 0x9FFF) || (c >= 0xFF00 && c <= 0xFFEF);
-		}
+		static bool IsFullWidth(char c) { return (c >= 0x2E80 && c <= 0x9FFF) || (c >= 0xFF00 && c <= 0xFFEF); }
 
+		// output
 		static void Message(string format, params object[] args) { Console.Write(format, args); }
-		static void Warning(string format, params object[] args)
-		{
+		static void Warning(string format, params object[] args) {
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.Write("WARNING:\n");
 			Message(format, args);
 			Console.ResetColor();
 		}
-		static void Error(string format, params object[] args)
-		{
+		static void Error(string format, params object[] args) {
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.Write("ERROR:\n");
 			Message(format, args);
 			Console.ResetColor();
 		}
-		[Conditional("DEBUG")] static void Pause()
-		{
-			Console.ReadKey();
-		}
+
+		[Conditional("DEBUG")] static void Pause() { Console.ReadKey(); }
 		static void Exit(int code) { Environment.Exit(code); }
 	}
 }
