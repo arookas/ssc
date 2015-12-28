@@ -148,7 +148,7 @@ namespace arookas {
 
 		// storables
 		public sunVariableSymbol DeclareVariable(sunIdentifier node) {
-#if SSC_RESOLVEVAR_NEST
+#if SSC_PACK_VARS
 			if (Scopes.Top.GetIsDeclared(node.Value)) {
 				throw new sunRedeclaredVariableException(node);
 			}
@@ -159,7 +159,7 @@ namespace arookas {
 #endif
 			var symbol = Scopes.DeclareVariable(node.Value);
 			if (Scopes.Top.Type == sunScopeType.Script) { // global-scope variables are added to the symbol table
-#if SSC_RESOLVEVAR_NEST
+#if SSC_PACK_VARS
 				// only add the variable symbol if there isn't one with this index already
 				if (!SymbolTable.Variables.Any(i => i.Index == symbol.Index)) {
 					SymbolTable.Add(new sunVariableSymbol(String.Format("global{0}", symbol.Index), symbol.Display, symbol.Index));
@@ -171,7 +171,7 @@ namespace arookas {
 			return symbol;
 		}
 		public sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression) {
-#if SSC_RESOLVEVAR_NEST
+#if SSC_PACK_VARS
 			if (Scopes.Top.GetIsDeclared(node.Value)) {
 				throw new sunRedeclaredVariableException(node);
 			}
