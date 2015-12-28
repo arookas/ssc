@@ -9,20 +9,26 @@ namespace arookas
 {
 	class sunSymbolTable : IEnumerable<sunSymbol>
 	{
-		List<sunSymbol> symbols = new List<sunSymbol>(10);
 
-		public int Count { get { return symbols.Count; } }
-		public int BuiltinCount { get { return symbols.Count(sym => sym.Type == sunSymbolType.Builtin); } }
-		public int FunctionCount { get { return symbols.Count(sym => sym.Type == sunSymbolType.Function); } }
-		public int VariableCount { get { return symbols.Count(sym => sym.Type == sunSymbolType.Variable); } }
 
-		public IEnumerable<sunCallableSymbol> Callables { get { return symbols.OfType<sunCallableSymbol>(); } }
-		public IEnumerable<sunBuiltinSymbol> Builtins { get { return symbols.Where(sym => sym.Type == sunSymbolType.Builtin).Cast<sunBuiltinSymbol>(); } }
-		public IEnumerable<sunFunctionSymbol> Functions { get { return symbols.Where(sym => sym.Type == sunSymbolType.Function).Cast<sunFunctionSymbol>(); } }
-		public IEnumerable<sunVariableSymbol> Variables { get { return symbols.Where(sym => sym.Type == sunSymbolType.Variable).Cast<sunVariableSymbol>(); } }
+		List<sunSymbol> Symbols { get; set; }
+		public int Count { get { return Symbols.Count; } }
+		public int CallableCount { get { return Callables.Count(); } }
+		public int BuiltinCount { get { return Builtins.Count(); } }
+		public int FunctionCount { get { return Functions.Count(); } }
+		public int VariableCount { get { return Variables.Count(); } }
+		public IEnumerable<sunCallableSymbol> Callables { get { return Symbols.OfType<sunCallableSymbol>(); } }
+		public IEnumerable<sunBuiltinSymbol> Builtins { get { return Symbols.OfType<sunBuiltinSymbol>(); } }
+		public IEnumerable<sunFunctionSymbol> Functions { get { return Symbols.OfType<sunFunctionSymbol>(); } }
+		public IEnumerable<sunVariableSymbol> Variables { get { return Symbols.OfType<sunVariableSymbol>(); } }
 
-		public void Add(sunSymbol symbol) { symbols.Add(symbol); }
-		public void Clear() { symbols.Clear(); }
+		public sunSymbolTable()
+		{
+			Symbols = new List<sunSymbol>(10);
+		}
+
+		public void Add(sunSymbol symbol) { Symbols.Add(symbol); }
+		public void Clear() { Symbols.Clear(); }
 
 		public void Write(aBinaryWriter writer)
 		{
@@ -45,7 +51,7 @@ namespace arookas
 			}
 		}
 
-		public IEnumerator<sunSymbol> GetEnumerator() { return symbols.GetEnumerator(); }
+		public IEnumerator<sunSymbol> GetEnumerator() { return Symbols.GetEnumerator(); }
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
 
