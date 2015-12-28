@@ -188,13 +188,13 @@ namespace arookas {
 			: base(node) { }
 	}
 	class sunBreakException : sunNodeException<sunBreak> {
-		public override string Message { get { return "Break statements must be placed within a loop statement."; } }
+		public override string Message { get { return "Misplaced break statement."; } }
 
 		public sunBreakException(sunBreak node)
 			: base(node) { }
 	}
 	class sunContinueException : sunNodeException<sunContinue> {
-		public override string Message { get { return "Continue statements must be placed within a loop statement."; } }
+		public override string Message { get { return "Misplaced continue statement."; } }
 
 		public sunContinueException(sunContinue node)
 			: base(node) { }
