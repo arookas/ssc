@@ -1,3 +1,15 @@
+-- options
+newoption {
+	trigger = "var-alloc",
+	value = "MODE"
+	description = "Sets how the compiler should allocate variables"
+	allowed = {
+		{ "pack", "Recycle slices as they become unused" },
+		{ "inc", "Every variable gets its own slice" }
+	}
+}
+
+-- main workspace
 workspace "ssc"
 	configurations { "Debug", "Release" }
 	targetdir "bin/%{cfg.buildcfg}"
@@ -22,6 +34,11 @@ workspace "ssc"
 		
 		links { "System", "arookas", "grammatica-1.6" }
 		
+		-- apply options
+		filter "options:var-alloc=pack"
+			defines { "SSC_PACK_VARS" }
+		filter {}
+
 		files {
 			"ssc/**.cs",
 			"ssc/**.grammar",
