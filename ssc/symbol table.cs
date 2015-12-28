@@ -9,18 +9,22 @@ namespace arookas
 {
 	class sunSymbolTable : IEnumerable<sunSymbol>
 	{
-
-
 		List<sunSymbol> Symbols { get; set; }
+
 		public int Count { get { return Symbols.Count; } }
 		public int CallableCount { get { return Callables.Count(); } }
 		public int BuiltinCount { get { return Builtins.Count(); } }
 		public int FunctionCount { get { return Functions.Count(); } }
+		public int StorableCount { get { return Storables.Count(); } }
 		public int VariableCount { get { return Variables.Count(); } }
+		public int ConstantCount { get { return Constants.Count(); } }
+
 		public IEnumerable<sunCallableSymbol> Callables { get { return Symbols.OfType<sunCallableSymbol>(); } }
 		public IEnumerable<sunBuiltinSymbol> Builtins { get { return Symbols.OfType<sunBuiltinSymbol>(); } }
 		public IEnumerable<sunFunctionSymbol> Functions { get { return Symbols.OfType<sunFunctionSymbol>(); } }
+		public IEnumerable<sunStorableSymbol> Storables { get { return Symbols.OfType<sunStorableSymbol>(); } }
 		public IEnumerable<sunVariableSymbol> Variables { get { return Symbols.OfType<sunVariableSymbol>(); } }
+		public IEnumerable<sunConstantSymbol> Constants { get { return Symbols.OfType<sunConstantSymbol>(); } }
 
 		public sunSymbolTable()
 		{
