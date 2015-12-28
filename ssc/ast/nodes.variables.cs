@@ -18,7 +18,7 @@
 
 	class sunVariableDeclaration : sunNode
 	{
-		public sunIdentifier Storable { get { return this[0] as sunIdentifier; } }
+		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
 
 		public sunVariableDeclaration(sunSourceLocation location)
 			: base(location)
@@ -28,12 +28,16 @@
 
 		public override void Compile(sunContext context)
 		{
-			context.DeclareVariable(Storable);
+			context.DeclareVariable(Variable);
 		}
 	}
 
-	class sunVariableDefinition : sunVariableAssignment
+	class sunVariableDefinition : sunNode
 	{
+		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
+		public sunAssign Operator { get { return this[1] as sunAssign; } }
+		public sunExpression Expression { get { return this[2] as sunExpression; } }
+
 		public sunVariableDefinition(sunSourceLocation location)
 			: base(location)
 		{
@@ -42,13 +46,14 @@
 
 		public override void Compile(sunContext context)
 		{
-			context.DeclareVariable(Storable);
-			base.Compile(context);
+			var symbol = context.DeclareVariable(Variable);
+			Operator.Compile(context, symbol, Expression);
 		}
 	}
 
-	class sunVariableAssignment : sunVariableDeclaration
+	class sunVariableAssignment : sunNode
 	{
+		public sunIdentifier Storable { get { return this[0] as sunIdentifier; } }
 		public sunAssign Operator { get { return this[1] as sunAssign; } }
 		public sunExpression Expression { get { return this[2] as sunExpression; } }
 
@@ -65,7 +70,7 @@
 			{
 				throw new sunAssignConstantException(Storable);
 			}
-			Operator.Compile(context, symbol as sunVariableSymbol, Expression);
+			Operator.Compile(context, symbol, Expression);
 		}
 	}
 
