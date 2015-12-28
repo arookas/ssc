@@ -212,7 +212,7 @@ namespace arookas
 			// variables
 			switch (GetId(node))
 			{
-				case __sunConstants.VARIABLE_REFERENCE: return new sunVariableReference(location);
+				case __sunConstants.VARIABLE_REFERENCE: return new sunStorableReference(location);
 				case __sunConstants.VARIABLE_DECLARATION: return new sunVariableDeclaration(location);
 				case __sunConstants.VARIABLE_DEFINITION: return new sunVariableDefinition(location);
 				case __sunConstants.VARIABLE_ASSIGNMENT: return new sunVariableAssignment(location);

@@ -124,7 +124,7 @@ namespace arookas
 	class sunPostfixAugment : sunOperand
 	{
 		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
-		public sunAugment Operator { get { return this[1] as sunAugment; } }
+		public sunAugment Augment { get { return this[1] as sunAugment; } }
 
 		public sunPostfixAugment(sunSourceLocation location)
 			: base(location)
@@ -134,19 +134,22 @@ namespace arookas
 
 		public override void Compile(sunContext context)
 		{
-			var variableInfo = context.ResolveVariable(Variable);
+			var symbol = context.MustResolveStorable(Variable);
+			if (symbol is sunConstantSymbol)
+			{
+				throw new sunAssignConstantException(Variable);
+			}
 			if (Parent is sunOperand)
 			{
-				context.Text.PushVariable(variableInfo);
+				symbol.CompileGet(context);
 			}
-			Operator.Compile(context, variableInfo);
-			context.Text.StoreVariable(variableInfo);
+			Augment.Compile(context, symbol);
 		}
 	}
 
 	class sunPrefixAugment : sunOperand
 	{
-		public sunAugment Operator { get { return this[0] as sunAugment; } }
+		public sunAugment Augment { get { return this[0] as sunAugment; } }
 		public sunIdentifier Variable { get { return this[1] as sunIdentifier; } }
 
 		public sunPrefixAugment(sunSourceLocation location)
@@ -157,12 +160,15 @@ namespace arookas
 
 		public override void Compile(sunContext context)
 		{
-			var variableInfo = context.ResolveVariable(Variable);
-			Operator.Compile(context, variableInfo);
-			context.Text.StoreVariable(variableInfo);
+			var symbol = context.MustResolveStorable(Variable);
+			if (symbol is sunConstantSymbol)
+			{
+				throw new sunAssignConstantException(Variable);
+			}
+			Augment.Compile(context, symbol);
 			if (Parent is sunOperand)
 			{
-				context.Text.PushVariable(variableInfo);
+				symbol.CompileGet(context);
 			}
 		}
 	}
@@ -175,7 +181,7 @@ namespace arookas
 
 		}
 
-		public abstract void Compile(sunContext context, sunVariableSymbol variable);
+		public abstract void Compile(sunContext context, sunStorableSymbol symbol);
 	}
 
 	class sunIncrement : sunAugment
@@ -186,9 +192,10 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variable)
+		public override void Compile(sunContext context, sunStorableSymbol symbol)
 		{
-			context.Text.IncVariable(variable);
+			symbol.CompileInc(context);
+			symbol.CompileSet(context);
 		}
 	}
 
@@ -200,9 +207,10 @@ namespace arookas
 
 		}
 
-		public override void Compile(sunContext context, sunVariableSymbol variable)
+		public override void Compile(sunContext context, sunStorableSymbol symbol)
 		{
-			context.Text.DecVariable(variable);
+			symbol.CompileDec(context);
+			symbol.CompileSet(context);
 		}
 	}
 }

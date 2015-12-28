@@ -118,7 +118,7 @@ namespace arookas
 			return result;
 		}
 
-		// builtins
+		// callables
 		public sunBuiltinSymbol DeclareBuiltin(sunBuiltinDeclaration node)
 		{
 			var symbolInfo = SymbolTable.Callables.FirstOrDefault(f => f.Name == node.Builtin.Value);
@@ -130,22 +130,6 @@ namespace arookas
 			SymbolTable.Add(builtinInfo);
 			return builtinInfo;
 		}
-		public sunBuiltinSymbol DeclareSystemBuiltin(string name, bool variadic, params string[] parameters)
-		{
-			var builtinInfo = SymbolTable.Builtins.FirstOrDefault(f => f.Name == name);
-			if (builtinInfo == null)
-			{
-				builtinInfo = new sunBuiltinSymbol(name, new sunParameterInfo(parameters, variadic), SymbolTable.Count);
-				SymbolTable.Add(builtinInfo);
-			}
-			return builtinInfo;
-		}
-		public sunBuiltinSymbol ResolveSystemBuiltin(string name)
-		{
-			return SymbolTable.Builtins.FirstOrDefault(f => f.Name == name);
-		}
-
-		// functions
 		public sunFunctionSymbol DefineFunction(sunFunctionDefinition node)
 		{
 			if (node.Parameters.IsVariadic)
@@ -163,85 +147,123 @@ namespace arookas
 		}
 		public sunCallableSymbol ResolveCallable(sunFunctionCall node)
 		{
-			var symbolInfo = SymbolTable.Callables.FirstOrDefault(f => f.Name == node.Function.Value);
-			if (symbolInfo == null)
+			var symbol = SymbolTable.Callables.FirstOrDefault(f => f.Name == node.Function.Value);
+			if (symbol == null)
 			{
 				throw new sunUndefinedFunctionException(node);
 			}
-			return symbolInfo;
+			return symbol;
+		}
+		public sunCallableSymbol MustResolveCallable(sunFunctionCall node)
+		{
+			var symbol = ResolveCallable(node);
+			if (symbol == null)
+			{
+				throw new sunUndefinedFunctionException(node);
+			}
+			return symbol;
 		}
 
-		// variables
+		public sunBuiltinSymbol DeclareSystemBuiltin(string name, bool variadic, params string[] parameters)
+		{
+			var builtinInfo = SymbolTable.Builtins.FirstOrDefault(f => f.Name == name);
+			if (builtinInfo == null)
+			{
+				builtinInfo = new sunBuiltinSymbol(name, new sunParameterInfo(parameters, variadic), SymbolTable.Count);
+				SymbolTable.Add(builtinInfo);
+			}
+			return builtinInfo;
+		}
+		public sunBuiltinSymbol ResolveSystemBuiltin(string name)
+		{
+			return SymbolTable.Builtins.FirstOrDefault(f => f.Name == name);
+		}
+
+		// storables
 		public sunVariableSymbol DeclareVariable(sunIdentifier node)
 		{
 			// assert variable is not already declared in current scope
-			if (Scopes.Top.GetIsVariableDeclared(node.Value))
+			if (Scopes.Top.GetIsDeclared(node.Value))
 			{
 				throw new sunRedeclaredVariableException(node);
 			}
 			var variableInfo = Scopes.DeclareVariable(node.Value);
 			return variableInfo;
 		}
-		public sunVariableSymbol ResolveVariable(sunIdentifier node)
+		public sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression)
 		{
-			// walk the stack backwards to resolve to the variable's latest declaration
-			for (int i = Scopes.Count - 1; i >= 0; --i)
-			{
-				var variableInfo = Scopes[i].ResolveVariable(node.Value);
-				if (variableInfo != null)
-				{
-					return variableInfo;
-				}
-			}
-			throw new sunUndeclaredVariableException(node);
-		}
-
-		public sunVariableSymbol DeclareParameter(string name) { return Scopes.DeclareVariable(name); }
-
-		// constants
-		public sunConstInfo DeclareConstant(sunIdentifier node, sunExpression expression)
-		{
-			if (Scopes.Top.GetIsConstantDeclared(node.Value))
+			if (Scopes.Top.GetIsDeclared(node.Value))
 			{
 				throw new sunRedeclaredVariableException(node);
 			}
 			var constInfo = Scopes.Top.DeclareConstant(node.Value, expression);
 			return constInfo;
 		}
-		public sunConstInfo ResolveConstant(sunIdentifier node)
+		public sunStorableSymbol ResolveStorable(sunIdentifier node)
 		{
-			// walk the stack backwards to resolve to the constant's latest declaration
 			for (int i = Scopes.Count - 1; i >= 0; --i)
 			{
-				var constInfo = Scopes[i].ResolveConstant(node.Value);
-				if (constInfo != null)
+				var symbol = Scopes[i].ResolveStorable(node.Value);
+				if (symbol != null)
 				{
-					return constInfo;
+					return symbol;
 				}
 			}
-			throw new sunUndeclaredVariableException(node);
+			return null;
+		}
+		public sunVariableSymbol ResolveVariable(sunIdentifier node)
+		{
+			for (int i = Scopes.Count - 1; i >= 0; --i)
+			{
+				var symbol = Scopes[i].ResolveVariable(node.Value);
+				if (symbol != null)
+				{
+					return symbol;
+				}
+			}
+			return null;
+		}
+		public sunConstantSymbol ResolveConstant(sunIdentifier node)
+		{
+			for (int i = Scopes.Count - 1; i >= 0; --i)
+			{
+				var symbol = Scopes[i].ResolveConstant(node.Value);
+				if (symbol != null)
+				{
+					return symbol;
+				}
+			}
+			return null;
+		}
+		public sunStorableSymbol MustResolveStorable(sunIdentifier node)
+		{
+			var symbol = ResolveStorable(node);
+			if (symbol == null)
+			{
+				throw new sunUndeclaredVariableException(node);
+			}
+			return symbol;
+		}
+		public sunVariableSymbol MustResolveVariable(sunIdentifier node)
+		{
+			var symbol = ResolveVariable(node);
+			if (symbol == null)
+			{
+				throw new sunUndeclaredVariableException(node);
+			}
+			return symbol;
+		}
+		public sunConstantSymbol MustResolveConstant(sunIdentifier node)
+		{
+			var symbol = ResolveConstant(node);
+			if (symbol == null)
+			{
+				throw new sunUndeclaredVariableException(node);
+			}
+			return symbol;
 		}
 
-		public void ResolveVariableOrConstant(sunIdentifier node, out sunVariableSymbol variableInfo, out sunConstInfo constInfo)
-		{
-			variableInfo = null;
-			constInfo = null;
-			// walk the stack backwards to resolve to the latest declaration
-			for (int i = Scopes.Count - 1; i >= 0; --i)
-			{
-				var variable = Scopes[i].ResolveVariable(node.Value);
-				if (variable != null)
-				{
-					variableInfo = variable;
-				}
-				var constant = Scopes[i].ResolveConstant(node.Value);
-				if (constant != null)
-				{
-					constInfo = constant;
-				}
-			}
-			throw new sunUndeclaredVariableException(node);
-		}
+		public sunVariableSymbol DeclareParameter(string name) { return Scopes.DeclareVariable(name); }
 
 		void WriteHeader()
 		{

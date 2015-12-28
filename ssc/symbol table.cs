@@ -54,6 +54,8 @@ namespace arookas
 			Name = name;
 		}
 
+		public abstract void Compile(sunContext context);
+
 		public virtual int WriteSymbolTable(aBinaryWriter writer, int ofs)
 		{
 			writer.WriteS32((int)Type);
@@ -88,8 +90,6 @@ namespace arookas
 
 		public abstract void OpenCallSite(sunContext context, int argumentCount);
 		public abstract void CloseCallSites(sunContext context);
-
-		public abstract void Compile(sunContext context);
 	}
 
 	class sunBuiltinSymbol : sunCallableSymbol
@@ -196,7 +196,35 @@ namespace arookas
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
 
-	class sunVariableSymbol : sunSymbol
+	abstract class sunStorableSymbol : sunSymbol
+	{
+		protected sunStorableSymbol(string name)
+			: base(name)
+		{
+
+		}
+
+		public override void Compile(sunContext context)
+		{
+			CompileGet(context); // compile get by default
+		}
+		public abstract void CompileGet(sunContext context);
+		public abstract void CompileSet(sunContext context);
+		public virtual void CompileInc(sunContext context)
+		{
+			CompileGet(context);
+			context.Text.PushInt(1);
+			context.Text.Add();
+		}
+		public virtual void CompileDec(sunContext context)
+		{
+			CompileGet(context);
+			context.Text.PushInt(1);
+			context.Text.Sub();
+		}
+	}
+
+	class sunVariableSymbol : sunStorableSymbol
 	{
 		public int Display { get; private set; }
 		public int Index { get; private set; }
@@ -214,6 +242,22 @@ namespace arookas
 			Index = index;
 		}
 
+		public override void CompileGet(sunContext context)
+		{
+			context.Text.PushVariable(Display, Index);
+		}
+		public override void CompileSet(sunContext context)
+		{
+			context.Text.StoreVariable(Display, Index);
+		}
+		public override void CompileInc(sunContext context)
+		{
+			context.Text.IncVariable(Display, Index);
+		}
+		public override void CompileDec(sunContext context)
+		{
+			context.Text.DecVariable(Display, Index);
+		}
 		public override int WriteSymbolTable(aBinaryWriter writer, int ofs)
 		{
 			base.WriteSymbolTable(writer, ofs);
@@ -225,10 +269,40 @@ namespace arookas
 		}
 	}
 
+	class sunConstantSymbol : sunStorableSymbol
+	{
+		sunExpression Expression { get; set; }
+
+		// symbol table
+		public override sunSymbolType Type { get { return sunSymbolType.Constant; } }
+		public override uint Data { get { return 0; } }
+
+		public sunConstantSymbol(string name, sunExpression expression)
+			: base(name)
+		{
+			if (expression == null)
+			{
+				throw new ArgumentNullException("expression");
+			}
+			Expression = expression;
+		}
+
+		public override void CompileGet(sunContext context)
+		{
+			Expression.Compile(context);
+		}
+		public override void CompileSet(sunContext context)
+		{
+			// checks against this have to be implemented at a higher level
+			throw new InvalidOperationException();
+		}
+	}
+
 	enum sunSymbolType
 	{
 		Builtin,
 		Function,
 		Variable,
+		Constant,
 	}
 }

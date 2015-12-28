@@ -7,8 +7,8 @@ namespace arookas
 	class sunScopeStack : IEnumerable<sunScope>
 	{
 		List<sunScope> stack = new List<sunScope>(8);
-		int GlobalCount { get { return stack.Where(i => i.Type == sunScopeType.Script).Sum(i => i.VariableCount); } }
-		int LocalCount { get { return stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.VariableCount); } }
+		int GlobalCount { get { return stack.Where(i => i.Type == sunScopeType.Script).Sum(i => i.StorableCount); } }
+		int LocalCount { get { return stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.StorableCount); } }
 
 		public int Count { get { return stack.Count; } }
 
@@ -73,8 +73,7 @@ namespace arookas
 
 	class sunScope
 	{
-		List<sunVariableSymbol> variables = new List<sunVariableSymbol>(10);
-		List<sunConstInfo> constants = new List<sunConstInfo>(10);
+		List<sunStorableSymbol> storables = new List<sunStorableSymbol>(10);
 		public sunScopeType Type { get; private set; }
 
 		public sunScope(sunScopeType type)
@@ -82,34 +81,36 @@ namespace arookas
 			Type = type;
 		}
 
-		public int VariableCount { get { return variables.Count; } }
-		public int ConstantCount { get { return constants.Count; } }
+		public int StorableCount { get { return storables.Count; } }
+		public int VariableCount { get { return storables.OfType<sunVariableSymbol>().Count(); } }
+		public int ConstantCount { get { return storables.OfType<sunConstantSymbol>().Count(); } }
 
-		public bool GetIsVariableDeclared(string name) { return variables.Any(v => v.Name == name); }
+		public bool GetIsDeclared(string name) { return storables.Any(v => v.Name == name); }
+
 		public sunVariableSymbol DeclareVariable(string name, int display, int index)
 		{
-			if (GetIsVariableDeclared(name) || GetIsConstantDeclared(name))
+			if (GetIsDeclared(name))
 			{
 				return null;
 			}
 			var variableInfo = new sunVariableSymbol(name, display, index);
-			variables.Add(variableInfo);
+			storables.Add(variableInfo);
 			return variableInfo;
 		}
-		public sunVariableSymbol ResolveVariable(string name) { return variables.FirstOrDefault(v => v.Name == name); }
-
-		public bool GetIsConstantDeclared(string name) { return constants.Any(c => c.Name == name); }
-		public sunConstInfo DeclareConstant(string name, sunExpression expression)
+		public sunConstantSymbol DeclareConstant(string name, sunExpression expression)
 		{
-			if (GetIsVariableDeclared(name) || GetIsConstantDeclared(name))
+			if (GetIsDeclared(name))
 			{
 				return null;
 			}
-			var constInfo = new sunConstInfo(name, expression);
-			constants.Add(constInfo);
-			return constInfo;
+			var constantSymbol = new sunConstantSymbol(name, expression);
+			storables.Add(constantSymbol);
+			return constantSymbol;
 		}
-		public sunConstInfo ResolveConstant(string name) { return constants.FirstOrDefault(c => c.Name == name); }
+		
+		public sunStorableSymbol ResolveStorable(string name) { return storables.FirstOrDefault(i => i.Name == name); }
+		public sunVariableSymbol ResolveVariable(string name) { return storables.OfType<sunVariableSymbol>().FirstOrDefault(i => i.Name == name); }
+		public sunConstantSymbol ResolveConstant(string name) { return storables.OfType<sunConstantSymbol>().FirstOrDefault(i => i.Name == name); }
 	}
 
 	enum sunScopeType

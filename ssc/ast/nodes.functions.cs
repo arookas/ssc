@@ -53,7 +53,7 @@ namespace arookas
 
 		public override void Compile(sunContext context)
 		{
-			var callableInfo = context.ResolveCallable(this);
+			var callableInfo = context.MustResolveCallable(this);
 			if (!callableInfo.Parameters.ValidateArgumentCount(Arguments.Count))
 			{
 				throw new sunArgumentCountException(this, callableInfo);

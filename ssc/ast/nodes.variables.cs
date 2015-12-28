@@ -1,10 +1,10 @@
 ﻿namespace arookas
 {
-	class sunVariableReference : sunNode
+	class sunStorableReference : sunNode
 	{
-		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
+		public sunIdentifier Storable { get { return this[0] as sunIdentifier; } }
 
-		public sunVariableReference(sunSourceLocation location)
+		public sunStorableReference(sunSourceLocation location)
 			: base(location)
 		{
 
@@ -12,23 +12,13 @@
 
 		public override void Compile(sunContext context)
 		{
-			sunVariableSymbol variableInfo;
-			sunConstInfo constInfo;
-			context.ResolveVariableOrConstant(Variable, out variableInfo, out constInfo);
-			if (variableInfo != null)
-			{
-				context.Text.PushVariable(variableInfo);
-			}
-			if (constInfo != null)
-			{
-				constInfo.Expression.Compile(context);
-			}
+			context.MustResolveStorable(Storable).Compile(context);
 		}
 	}
 
 	class sunVariableDeclaration : sunNode
 	{
-		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
+		public sunIdentifier Storable { get { return this[0] as sunIdentifier; } }
 
 		public sunVariableDeclaration(sunSourceLocation location)
 			: base(location)
@@ -38,7 +28,7 @@
 
 		public override void Compile(sunContext context)
 		{
-			var variableInfo = context.DeclareVariable(Variable);
+			context.DeclareVariable(Storable);
 		}
 	}
 
@@ -52,7 +42,7 @@
 
 		public override void Compile(sunContext context)
 		{
-			var variableInfo = context.DeclareVariable(Variable);
+			context.DeclareVariable(Storable);
 			base.Compile(context);
 		}
 	}
@@ -70,8 +60,12 @@
 
 		public override void Compile(sunContext context)
 		{
-			var variableInfo = context.ResolveVariable(Variable);
-			Operator.Compile(context, variableInfo, Expression);
+			var symbol = context.MustResolveStorable(Storable);
+			if (symbol is sunConstantSymbol)
+			{
+				throw new sunAssignConstantException(Storable);
+			}
+			Operator.Compile(context, symbol as sunVariableSymbol, Expression);
 		}
 	}
 
@@ -88,7 +82,7 @@
 
 		public override void Compile(sunContext context)
 		{
-			var constInfo = context.DeclareConstant(Constant, Expression);
+			context.DeclareConstant(Constant, Expression);
 		}
 	}
 }
