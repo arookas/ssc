@@ -116,8 +116,8 @@ namespace arookas
 				case __sunConstants.STRING: return new sunStringLiteral(location, token);
 				case __sunConstants.IDENTIFIER: return new sunIdentifier(location, token);
 				case __sunConstants.ELLIPSIS: return new sunEllipsis(location);
-				case __sunConstants.TRUE: return new sunTrue(location, token);
-				case __sunConstants.FALSE: return new sunFalse(location, token);
+				case __sunConstants.TRUE: return new sunTrue(location);
+				case __sunConstants.FALSE: return new sunFalse(location);
 			}
 
 			// operators

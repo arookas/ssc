@@ -6,13 +6,16 @@ namespace arookas
 {
 	class sunIntLiteral : sunToken<int> // base-10 integer
 	{
-		public sunIntLiteral(sunSourceLocation location, string token)
-			: base(location, token)
+		public sunIntLiteral(sunSourceLocation location, string literal)
+			: base(location)
 		{
-
+			Value = Int32.Parse(literal);
 		}
-
-		protected override int ParseValue(string token) { return Int32.Parse(token); }
+		protected sunIntLiteral(sunSourceLocation location)
+			: base(location)
+		{
+			// this overload lets protected classes set the value to something else
+		}
 
 		public override void Compile(sunContext context)
 		{
@@ -22,37 +25,29 @@ namespace arookas
 
 	class sunHexLiteral : sunIntLiteral // base-16 integer
 	{
-		public sunHexLiteral(sunSourceLocation location, string token)
-			: base(location, token)
-		{
-
-		}
-
-		protected override int ParseValue(string token)
+		public sunHexLiteral(sunSourceLocation location, string literal)
+			: base(location)
 		{
 			// because .NET's hex parsing is gay and doesn't support
 			// leading signs, manually detect negative literals
-			var neg = (token[0] == '-');
+			var neg = (literal[0] == '-');
 			var trim = neg ? 3 : 2;
-			var digits = token.Substring(trim); // trim the '0x' prefix before parsing
-			var value = Int32.Parse(token.Substring(2), NumberStyles.AllowHexSpecifier);
+			var digits = literal.Substring(trim); // trim the '0x' prefix before parsing
+			Value = Int32.Parse(literal.Substring(2), NumberStyles.AllowHexSpecifier);
 			if (neg)
 			{
-				value = -value;
+				Value = -Value;
 			}
-			return value;
 		}
 	}
 
 	class sunFloatLiteral : sunToken<float>
 	{
-		public sunFloatLiteral(sunSourceLocation location, string token)
-			: base(location, token)
+		public sunFloatLiteral(sunSourceLocation location, string literal)
+			: base(location)
 		{
-
+			Value = Single.Parse(literal);
 		}
-
-		protected override float ParseValue(string image) { return Single.Parse(image); }
 
 		public override void Compile(sunContext context)
 		{
@@ -62,13 +57,11 @@ namespace arookas
 
 	class sunStringLiteral : sunToken<string>
 	{
-		public sunStringLiteral(sunSourceLocation location, string token)
-			: base(location, token)
+		public sunStringLiteral(sunSourceLocation location, string literal)
+			: base(location)
 		{
-
+			Value = UnescapeString(literal.Substring(1, literal.Length - 2)); // remove enclosing quotes
 		}
-
-		protected override string ParseValue(string image) { return UnescapeString(image.Substring(1, image.Length - 2)); } // remove enclosing quotes
 
 		public override void Compile(sunContext context)
 		{
@@ -162,16 +155,17 @@ namespace arookas
 		}
 	}
 
-	class sunIdentifier : sunRawToken
+	class sunIdentifier : sunToken<string>
 	{
-		public sunIdentifier(sunSourceLocation location, string token)
-			: base(location, token)
+		public sunIdentifier(sunSourceLocation location, string identifier)
+			: base(location)
 		{
 			// make sure it is a valid identifier name (i.e. not a keyword)
-			if (sunParser.IsKeyword(Value))
+			if (sunParser.IsKeyword(identifier))
 			{
 				throw new sunIdentifierException(this);
 			}
+			Value = identifier;
 		}
 
 		// identifiers are compiled on a per-context basis (i.e. at a higher level)
@@ -179,23 +173,19 @@ namespace arookas
 
 	class sunTrue : sunIntLiteral
 	{
-		public sunTrue(sunSourceLocation location, string token)
-			: base(location, token)
+		public sunTrue(sunSourceLocation location)
+			: base(location)
 		{
-
+			Value = 1;
 		}
-
-		protected override int ParseValue(string token) { return 1; }
 	}
 
 	class sunFalse : sunIntLiteral
 	{
-		public sunFalse(sunSourceLocation location, string token)
-			: base(location, token)
+		public sunFalse(sunSourceLocation location)
+			: base(location)
 		{
-
+			Value = 0;
 		}
-
-		protected override int ParseValue(string token) { return 0; }
 	}
 }

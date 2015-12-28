@@ -132,25 +132,12 @@ namespace arookas
 
 	abstract class sunToken<TValue> : sunNode
 	{
-		public TValue Value { get; private set; }
+		public TValue Value { get; protected set; }
 
-		protected sunToken(sunSourceLocation location, string token)
+		protected sunToken(sunSourceLocation location)
 			: base(location)
 		{
-			Value = ParseValue(token);
-		}
-
-		protected abstract TValue ParseValue(string token);
-	}
-
-	abstract class sunRawToken : sunToken<string>
-	{
-		protected sunRawToken(sunSourceLocation location, string token)
-			: base(location, token)
-		{
 
 		}
-
-		protected override string ParseValue(string token) { return token; }
 	}
 }
