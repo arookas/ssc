@@ -8,7 +8,7 @@ namespace arookas {
 			"builtin", "function", "var", "const",
 			"if", "while", "do", "for",
 			"return", "break", "continue",
-			"yield", "exit", "dump", "lock", "unlock", "int", "float", "typeof", "print",
+			"yield", "exit", "lock", "unlock", "int", "float", "typeof",
 			"true", "false",
 		};
 
@@ -83,10 +83,8 @@ namespace arookas {
 
 				case __sunConstants.YIELD_STATEMENT: return new sunYield(location);
 				case __sunConstants.EXIT_STATEMENT: return new sunExit(location);
-				case __sunConstants.DUMP_STATEMENT: return new sunDump(location);
 				case __sunConstants.LOCK_STATEMENT: return new sunLock(location);
 				case __sunConstants.UNLOCK_STATEMENT: return new sunUnlock(location);
-				case __sunConstants.PRINT_STATEMENT: return new sunPrint(location);
 			}
 
 			// literals
@@ -234,13 +232,11 @@ namespace arookas {
 
 				case __sunConstants.YIELD:
 				case __sunConstants.EXIT:
-				case __sunConstants.DUMP:
 				case __sunConstants.LOCK:
 				case __sunConstants.UNLOCK:
 				case __sunConstants.INT:
 				case __sunConstants.FLOAT:
 				case __sunConstants.TYPEOF:
-				case __sunConstants.PRINT:
 
 				case __sunConstants.TRUE:
 				case __sunConstants.FALSE:

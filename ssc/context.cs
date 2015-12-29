@@ -59,13 +59,11 @@ namespace arookas {
 			// add system builtins
 			DeclareSystemBuiltin("yield", false);
 			DeclareSystemBuiltin("exit", false);
-			DeclareSystemBuiltin("dump", false);
 			DeclareSystemBuiltin("lock", false);
 			DeclareSystemBuiltin("unlock", false);
 			DeclareSystemBuiltin("int", false, "x");
 			DeclareSystemBuiltin("float", false, "x");
 			DeclareSystemBuiltin("typeof", false, "x");
-			DeclareSystemBuiltin("print", true);
 		}
 		public void Close() {
 			if (!mOpen) {

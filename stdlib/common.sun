@@ -10,6 +10,10 @@ const TYPE_INT		= 0;
 const TYPE_FLOAT	= 1;
 const TYPE_STRING	= 2;
 
+// debug
+builtin dump();
+builtin print(...);
+
 import "system.sun";
 import "talk.sun";
 import "sound.sun";

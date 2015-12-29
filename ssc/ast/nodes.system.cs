@@ -18,16 +18,6 @@
 			var builtinInfo = context.ResolveSystemBuiltin("exit");
 			context.Text.WriteFUNC(builtinInfo.Index, 0);
 			context.Text.WritePOP();
-		}
-	}
-
-	class sunDump : sunNode {
-		public sunDump(sunSourceLocation location)
-			: base(location) { }
-
-		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("dump");
-			context.Text.WriteFUNC(builtinInfo.Index, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -94,20 +84,6 @@
 
 		public override void Compile(sunContext context) {
 			Compile(context, context.ResolveSystemBuiltin("typeof"));
-		}
-	}
-
-	class sunPrint : sunNode {
-		public sunNode ArgumentList { get { return this[0]; } }
-
-		public sunPrint(sunSourceLocation location)
-			: base(location) { }
-
-		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("print");
-			ArgumentList.Compile(context);
-			context.Text.WriteFUNC(builtinInfo.Index, ArgumentList.Count);
-			context.Text.WritePOP();
 		}
 	}
 }

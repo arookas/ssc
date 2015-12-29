@@ -41,13 +41,11 @@ CONTINUE						= "continue"
 
 YIELD							= "yield"
 EXIT							= "exit"
-DUMP							= "dump"
 LOCK							= "lock"
 UNLOCK							= "unlock"
 INT								= "int"
 FLOAT							= "float"
 TYPEOF							= "typeof"
-PRINT							= "print"
 
 TRUE							= "true"
 FALSE							= "false"
@@ -131,7 +129,6 @@ statement						=
 								continue_statement SEMICOLON |
 								yield_statement SEMICOLON |
 								exit_statement SEMICOLON |
-								dump_statement SEMICOLON |
 								lock_statement SEMICOLON |
 								unlock_statement SEMICOLON |
 								statement_block;
@@ -142,17 +139,14 @@ compound_statement_item			=
 								variable_declaration |
 								variable_assignment |
 								variable_augment |
-								print_statement |
 								function_call;
 statement_block					= L_BRACE {statement} R_BRACE;
 
 import_statement				= IMPORT STRING;
 yield_statement					= YIELD;
 exit_statement					= EXIT;
-dump_statement					= DUMP;
 lock_statement					= LOCK;
 unlock_statement				= UNLOCK;
-print_statement					= PRINT argument_list;
 
 name_label						= IDENTIFIER COLON;
 
