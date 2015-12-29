@@ -28,23 +28,29 @@ namespace arookas {
 	}
 
 	abstract class sunLoop : sunNode {
-		public bool IsNamed { get { return NameLabel != null; } }
-		public sunNameLabel NameLabel { get { return this[0] as sunNameLabel; } }
-
 		protected sunLoop(sunSourceLocation location)
 			: base(location) { }
+
+		public void PushLoop(sunContext context) {
+			var name = context.PopNameLabel();
+			if (name == null) {
+				context.Loops.Push();
+			}
+			else {
+				context.Loops.Push(name.Label.Value);
+			}
+		}
 	}
 
-	class sunWhile : sunLoop
-	{
-		public sunExpression Condition { get { return this[Count - 2] as sunExpression; } }
-		public sunNode Body { get { return this[Count - 1]; } }
+	class sunWhile : sunLoop {
+		public sunExpression Condition { get { return this[0] as sunExpression; } }
+		public sunNode Body { get { return this[1]; } }
 
 		public sunWhile(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			context.Loops.Push(IsNamed ? NameLabel.Label.Value : null);
+			PushLoop(context);
 			var bodyPrologue = context.Text.OpenPoint();
 			var continuePoint = context.Text.OpenPoint();
 			Condition.Compile(context);
@@ -57,16 +63,15 @@ namespace arookas {
 		}
 	}
 
-	class sunDo : sunLoop
-	{
-		public sunNode Body { get { return this[Count - 2]; } }
-		public sunExpression Condition { get { return this[Count - 1] as sunExpression; } }
+	class sunDo : sunLoop {
+		public sunNode Body { get { return this[0]; } }
+		public sunExpression Condition { get { return this[1] as sunExpression; } }
 
 		public sunDo(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			context.Loops.Push(IsNamed ? NameLabel.Label.Value : null);
+			PushLoop(context);
 			var bodyPrologue = context.Text.OpenPoint();
 			Body.Compile(context);
 			var continuePoint = context.Text.OpenPoint();
@@ -89,8 +94,8 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			context.Scopes.Push(context.Scopes.Top.Type);
-			context.Loops.Push(IsNamed ? NameLabel.Label.Value : null);
+			context.Scopes.Push();
+			PushLoop(context);
 			TryCompile(Declaration, context);
 			var bodyPrologue = context.Text.OpenPoint();
 			TryCompile(Condition, context);

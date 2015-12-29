@@ -123,9 +123,9 @@ root_statement					=
 statement						=
 								compound_statement SEMICOLON |
 								if_statement |
-								while_statement |
-								do_statement SEMICOLON |
-								for_statement |
+								[name_label] while_statement |
+								[name_label] do_statement SEMICOLON |
+								[name_label] for_statement |
 								return_statement SEMICOLON |
 								break_statement SEMICOLON |
 								continue_statement SEMICOLON |
@@ -219,9 +219,9 @@ builtin_declaration				= BUILTIN IDENTIFIER parameter_list;
 
 // flow control
 if_statement					= IF expression statement [ELSE statement];
-while_statement					= [name_label] WHILE expression statement;
-do_statement					= [name_label] DO statement WHILE expression;
-for_statement					= [name_label] FOR L_PAREN [for_declaration] SEMICOLON [for_condition] SEMICOLON [for_iteration] R_PAREN statement;
+while_statement					= WHILE expression statement;
+do_statement					= DO statement WHILE expression;
+for_statement					= FOR L_PAREN [for_declaration] SEMICOLON [for_condition] SEMICOLON [for_iteration] R_PAREN statement;
 for_declaration					= compound_statement;
 for_condition					= expression;
 for_iteration					= compound_statement;

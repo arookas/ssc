@@ -35,5 +35,9 @@
 
 		public sunNameLabel(sunSourceLocation location)
 			: base(location) { }
+
+		public override void Compile(sunContext context) {
+			context.PushNameLabel(this);
+		}
 	}
 }
