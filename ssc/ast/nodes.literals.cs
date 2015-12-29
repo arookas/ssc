@@ -13,7 +13,7 @@ namespace arookas {
 		protected sunIntLiteral(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.PushInt(Value); }
+		public override void Compile(sunContext context) { context.Text.WriteINT(Value); }
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
 			return sunExpressionFlags.Literals;
@@ -42,7 +42,7 @@ namespace arookas {
 		}
 
 		public override void Compile(sunContext context) {
-			context.Text.PushFloat(Value);
+			context.Text.WriteFLT(Value);
 		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
@@ -57,7 +57,7 @@ namespace arookas {
 		}
 
 		public override void Compile(sunContext context) {
-			context.Text.PushData(context.DataTable.Add(Value));
+			context.Text.WriteSTR(context.DataTable.Add(Value));
 		}
 
 		// string unescaping utility

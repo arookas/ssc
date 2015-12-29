@@ -44,7 +44,7 @@ namespace arookas {
 			Arguments.Compile(context);
 			callableInfo.OpenCallSite(context, Arguments.Count);
 			if (IsStatement) {
-				context.Text.Pop();
+				context.Text.WritePOP();
 			}
 		}
 		

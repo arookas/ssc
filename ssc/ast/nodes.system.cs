@@ -5,8 +5,8 @@
 
 		public override void Compile(sunContext context) {
 			var builtinInfo = context.ResolveSystemBuiltin("yield");
-			context.Text.CallBuiltin(builtinInfo.Index, 0);
-			context.Text.Pop();
+			context.Text.WriteFUNC(builtinInfo.Index, 0);
+			context.Text.WritePOP();
 		}
 	}
 
@@ -16,8 +16,8 @@
 
 		public override void Compile(sunContext context) {
 			var builtinInfo = context.ResolveSystemBuiltin("exit");
-			context.Text.CallBuiltin(builtinInfo.Index, 0);
-			context.Text.Pop();
+			context.Text.WriteFUNC(builtinInfo.Index, 0);
+			context.Text.WritePOP();
 		}
 	}
 
@@ -27,8 +27,8 @@
 
 		public override void Compile(sunContext context) {
 			var builtinInfo = context.ResolveSystemBuiltin("dump");
-			context.Text.CallBuiltin(builtinInfo.Index, 0);
-			context.Text.Pop();
+			context.Text.WriteFUNC(builtinInfo.Index, 0);
+			context.Text.WritePOP();
 		}
 	}
 
@@ -38,8 +38,8 @@
 
 		public override void Compile(sunContext context) {
 			var builtinInfo = context.ResolveSystemBuiltin("lock");
-			context.Text.CallBuiltin(builtinInfo.Index, 0);
-			context.Text.Pop();
+			context.Text.WriteFUNC(builtinInfo.Index, 0);
+			context.Text.WritePOP();
 		}
 	}
 
@@ -49,8 +49,8 @@
 
 		public override void Compile(sunContext context) {
 			var builtinInfo = context.ResolveSystemBuiltin("unlock");
-			context.Text.CallBuiltin(builtinInfo.Index, 0);
-			context.Text.Pop();
+			context.Text.WriteFUNC(builtinInfo.Index, 0);
+			context.Text.WritePOP();
 		}
 	}
 
@@ -62,7 +62,7 @@
 
 		protected void Compile(sunContext context, sunBuiltinSymbol symbol) {
 			Argument.Compile(context);
-			context.Text.CallBuiltin(symbol.Index, 1);
+			context.Text.WriteFUNC(symbol.Index, 1);
 		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
@@ -106,8 +106,8 @@
 		public override void Compile(sunContext context) {
 			var builtinInfo = context.ResolveSystemBuiltin("print");
 			ArgumentList.Compile(context);
-			context.Text.CallBuiltin(builtinInfo.Index, ArgumentList.Count);
-			context.Text.Pop();
+			context.Text.WriteFUNC(builtinInfo.Index, ArgumentList.Count);
+			context.Text.WritePOP();
 		}
 	}
 }

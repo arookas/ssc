@@ -118,9 +118,9 @@ namespace arookas {
 
 		public override void Compile(sunContext context) {
 			Condition.Compile(context);
-			var falsePrologue = context.Text.GotoIfZero();
+			var falsePrologue = context.Text.WriteJNE();
 			TrueBody.Compile(context);
-			var trueEpilogue = context.Text.Goto();
+			var trueEpilogue = context.Text.WriteJMP();
 			context.Text.ClosePoint(falsePrologue);
 			FalseBody.Compile(context);
 			context.Text.ClosePoint(trueEpilogue);

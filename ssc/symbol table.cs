@@ -99,7 +99,7 @@ namespace arookas {
 			throw new InvalidOperationException("Cannot compile builtins.");
 		}
 		public override void OpenCallSite(sunContext context, int argumentCount) {
-			context.Text.CallBuiltin(Index, argumentCount);
+			context.Text.WriteFUNC(Index, argumentCount);
 		}
 		public override void CloseCallSites(sunContext context) { }
 	}
@@ -124,14 +124,14 @@ namespace arookas {
 			foreach (var parameter in Parameters) {
 				context.Scopes.DeclareVariable(parameter); // since there is no AST node for these, they won't affect MaxLocalCount
 			}
-			context.Text.StoreDisplay(1);
-			context.Text.DeclareLocal(Body.MaxLocalCount);
+			context.Text.WriteMKDS(1);
+			context.Text.WriteMKFR(Body.MaxLocalCount);
 			Body.Compile(context);
-			context.Text.ReturnVoid();
+			context.Text.WriteRET0();
 			context.Scopes.Pop();
 		}
 		public override void OpenCallSite(sunContext context, int argumentCount) {
-			var point = context.Text.CallFunction(argumentCount);
+			var point = context.Text.WriteCALL(argumentCount);
 			CallSites.Add(point);
 		}
 		public override void CloseCallSites(sunContext context) {
@@ -178,13 +178,13 @@ namespace arookas {
 		public abstract void CompileSet(sunContext context);
 		public virtual void CompileInc(sunContext context) {
 			CompileGet(context);
-			context.Text.PushInt(1);
-			context.Text.Add();
+			context.Text.WriteINT(1);
+			context.Text.WriteADD();
 		}
 		public virtual void CompileDec(sunContext context) {
 			CompileGet(context);
-			context.Text.PushInt(1);
-			context.Text.Sub();
+			context.Text.WriteINT(1);
+			context.Text.WriteSUB();
 		}
 	}
 
@@ -202,10 +202,10 @@ namespace arookas {
 			Index = index;
 		}
 
-		public override void CompileGet(sunContext context) { context.Text.PushVariable(Display, Index); }
-		public override void CompileSet(sunContext context) { context.Text.StoreVariable(Display, Index); }
-		public override void CompileInc(sunContext context) { context.Text.IncVariable(Display, Index); }
-		public override void CompileDec(sunContext context) { context.Text.DecVariable(Display, Index); }
+		public override void CompileGet(sunContext context) { context.Text.WriteVAR(Display, Index); }
+		public override void CompileSet(sunContext context) { context.Text.WriteASS(Display, Index); }
+		public override void CompileInc(sunContext context) { context.Text.WriteINC(Display, Index); }
+		public override void CompileDec(sunContext context) { context.Text.WriteDEC(Display, Index); }
 	}
 
 	class sunConstantSymbol : sunStorableSymbol {

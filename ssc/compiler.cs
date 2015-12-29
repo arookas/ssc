@@ -26,7 +26,7 @@ namespace arookas {
 				if (result != sunImportResult.Loaded) {
 					throw new sunImportException(name, result);
 				}
-				context.Text.Terminate(); // NOTETOSELF: don't do this via sunNode.Compile because imported files will add this as well
+				context.Text.WriteEND(); // NOTETOSELF: don't do this via sunNode.Compile because imported files will add this as well
 				foreach (var function in context.SymbolTable.Functions) {
 					function.Compile(context);
 				}

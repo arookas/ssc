@@ -12,11 +12,11 @@ namespace arookas {
 
 		public override void Compile(sunContext context) {
 			Condition.Compile(context);
-			var trueBodyEpilogue = context.Text.GotoIfZero();
+			var trueBodyEpilogue = context.Text.WriteJNE();
 			TrueBody.Compile(context);
 			var falseBody = FalseBody;
 			if (falseBody != null) {
-				var falseBodyEpilogue = context.Text.Goto();
+				var falseBodyEpilogue = context.Text.WriteJMP();
 				context.Text.ClosePoint(trueBodyEpilogue);
 				falseBody.Compile(context);
 				context.Text.ClosePoint(falseBodyEpilogue);
@@ -54,9 +54,9 @@ namespace arookas {
 			var bodyPrologue = context.Text.OpenPoint();
 			var continuePoint = context.Text.OpenPoint();
 			Condition.Compile(context);
-			var bodyEpilogue = context.Text.GotoIfZero();
+			var bodyEpilogue = context.Text.WriteJNE();
 			Body.Compile(context);
-			context.Text.Goto(bodyPrologue);
+			context.Text.WriteJMP(bodyPrologue);
 			context.Text.ClosePoint(bodyEpilogue);
 			var breakPoint = context.Text.OpenPoint();
 			context.Loops.Pop(context, breakPoint, continuePoint);
@@ -76,8 +76,8 @@ namespace arookas {
 			Body.Compile(context);
 			var continuePoint = context.Text.OpenPoint();
 			Condition.Compile(context);
-			var bodyEpilogue = context.Text.GotoIfZero();
-			context.Text.Goto(bodyPrologue);
+			var bodyEpilogue = context.Text.WriteJNE();
+			context.Text.WriteJMP(bodyPrologue);
 			context.Text.ClosePoint(bodyEpilogue);
 			var breakPoint = context.Text.OpenPoint();
 			context.Loops.Pop(context, breakPoint, continuePoint);
@@ -99,11 +99,11 @@ namespace arookas {
 			TryCompile(Declaration, context);
 			var bodyPrologue = context.Text.OpenPoint();
 			TryCompile(Condition, context);
-			var bodyEpilogue = context.Text.GotoIfZero();
+			var bodyEpilogue = context.Text.WriteJNE();
 			Body.Compile(context);
 			var continuePoint = context.Text.OpenPoint();
 			TryCompile(Iteration, context);
-			context.Text.Goto(bodyPrologue);
+			context.Text.WriteJMP(bodyPrologue);
 			context.Text.ClosePoint(bodyEpilogue);
 			var breakPoint = context.Text.OpenPoint();
 			context.Loops.Pop(context, breakPoint, continuePoint);
@@ -133,10 +133,10 @@ namespace arookas {
 			var expression = Expression;
 			if (expression != null) {
 				expression.Compile(context);
-				context.Text.ReturnValue();
+				context.Text.WriteRET();
 			}
 			else {
-				context.Text.ReturnVoid();
+				context.Text.WriteRET0();
 			}
 		}
 	}
@@ -149,7 +149,7 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var point = context.Text.Goto();
+			var point = context.Text.WriteJMP();
 			if (!context.Loops.AddBreak(point, IsNamed ? NameLabel.Value : null)) {
 				throw new sunBreakException(this);
 			}
@@ -164,7 +164,7 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var point = context.Text.Goto();
+			var point = context.Text.WriteJMP();
 			if (!context.Loops.AddContinue(point, IsNamed ? NameLabel.Value : null)) {
 				throw new sunContinueException(this);
 			}

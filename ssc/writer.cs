@@ -2,153 +2,143 @@
 
 namespace arookas {
 	class sunWriter {
-		aBinaryWriter writer;
+		aBinaryWriter mWriter;
 
-		public uint Offset { get { return (uint)writer.Position; } }
+		public uint Offset { get { return (uint)mWriter.Position; } }
 
 		public sunWriter(aBinaryWriter writer) {
-			this.writer = writer;
+			this.mWriter = writer;
 		}
 
 		public sunPoint OpenPoint() { return new sunPoint(Offset); }
-		public void ClosePoint(sunPoint point) { ClosePoint(point, (uint)writer.Position); }
+		public void ClosePoint(sunPoint point) { ClosePoint(point, (uint)mWriter.Position); }
 		public void ClosePoint(sunPoint point, uint offset) {
-			writer.Keep();
-			writer.Goto(point.Offset);
-			writer.Write32(offset);
-			writer.Back();
+			mWriter.Keep();
+			mWriter.Goto(point.Offset);
+			mWriter.Write32(offset);
+			mWriter.Back();
 		}
 
-		public void PushInt(int value) {
+		public void WriteINT(int value) {
 			switch (value) { // shortcut commands
-				case 0: writer.Write8(0x25); return;
-				case 1: writer.Write8(0x26); return;
+				case 0: WriteINT0(); return;
+				case 1: WriteINT1(); return;
 			}
-			writer.Write8(0x00);
-			writer.WriteS32(value);
+			mWriter.Write8(0x00);
+			mWriter.WriteS32(value);
 		}
-		public void PushFloat(float value) {
-			writer.Write8(0x01);
-			writer.WriteF32(value);
+		public void WriteFLT(float value) {
+			mWriter.Write8(0x01);
+			mWriter.WriteF32(value);
 		}
-		public void PushData(int dataIndex) {
-			writer.Write8(0x02);
-			writer.WriteS32(dataIndex);
+		public void WriteSTR(int index) {
+			mWriter.Write8(0x02);
+			mWriter.WriteS32(index);
 		}
-		public void PushAddress(int value) {
-			writer.Write8(0x03);
-			writer.WriteS32(value);
+		public void WriteADR(int value) {
+			mWriter.Write8(0x03);
+			mWriter.WriteS32(value);
 		}
-		public void PushVariable(sunVariableSymbol variableInfo) { PushVariable(variableInfo.Display, variableInfo.Index); }
-		public void PushVariable(int display, int variableIndex) {
-			writer.Write8(0x04);
-			writer.WriteS32(display);
-			writer.WriteS32(variableIndex);
+		public void WriteVAR(int display, int index) {
+			mWriter.Write8(0x04);
+			mWriter.WriteS32(display);
+			mWriter.WriteS32(index);
 		}
-		public void Nop() { writer.Write8(0x05); }
-		public void IncVariable(sunVariableSymbol variableInfo) { IncVariable(variableInfo.Display, variableInfo.Index); }
-		public void DecVariable(sunVariableSymbol variableInfo) { DecVariable(variableInfo.Display, variableInfo.Index); }
-		public void IncVariable(int display, int variableIndex) {
-			writer.Write8(0x06);
-			writer.WriteS32(display);
-			writer.WriteS32(variableIndex);
+		public void WriteNOP() { mWriter.Write8(0x05); }
+		public void WriteINC(int display, int index) {
+			mWriter.Write8(0x06);
+			mWriter.WriteS32(display);
+			mWriter.WriteS32(index);
 		}
-		public void DecVariable(int display, int variableIndex) {
-			writer.Write8(0x07);
-			writer.WriteS32(display);
-			writer.WriteS32(variableIndex);
+		public void WriteDEC(int display, int index) {
+			mWriter.Write8(0x07);
+			mWriter.WriteS32(display);
+			mWriter.WriteS32(index);
 		}
-
-		public void Add() { writer.Write8(0x08); }
-		public void Sub() { writer.Write8(0x09); }
-		public void Mul() { writer.Write8(0x0A); }
-		public void Div() { writer.Write8(0x0B); }
-		public void Mod() { writer.Write8(0x0C); }
-
-		public void StoreVariable(sunVariableSymbol variableInfo) { StoreVariable(variableInfo.Display, variableInfo.Index); }
-		public void StoreVariable(int display, int variableIndex) {
-			writer.Write8(0x0D);
-			writer.Write8(0x04); // unused (skipped over by TSpcInterp)
-			writer.WriteS32(display);
-			writer.WriteS32(variableIndex);
+		public void WriteADD() { mWriter.Write8(0x08); }
+		public void WriteSUB() { mWriter.Write8(0x09); }
+		public void WriteMUL() { mWriter.Write8(0x0A); }
+		public void WriteDIV() { mWriter.Write8(0x0B); }
+		public void WriteMOD() { mWriter.Write8(0x0C); }
+		public void WriteASS(int display, int index) {
+			mWriter.Write8(0x0D);
+			mWriter.Write8(0x04); // unused (skipped over by TSpcInterp)
+			mWriter.WriteS32(display);
+			mWriter.WriteS32(index);
 		}
-
-		public void Eq() { writer.Write8(0x0E); }
-		public void NtEq() { writer.Write8(0x0F); }
-		public void Gt() { writer.Write8(0x10); }
-		public void Lt() { writer.Write8(0x11); }
-		public void GtEq() { writer.Write8(0x12); }
-		public void LtEq() { writer.Write8(0x13); }
-		public void Neg() { writer.Write8(0x14); }
-		public void LogNOT() { writer.Write8(0x15); }
-		public void LogAND() { writer.Write8(0x16); }
-		public void LogOR() { writer.Write8(0x17); }
-		public void BitAND() { writer.Write8(0x18); }
-		public void BitOR() { writer.Write8(0x19); }
-		public void ShL() { writer.Write8(0x1A); }
-		public void ShR() { writer.Write8(0x1B); }
-
-		public sunPoint CallFunction(int argumentCount) {
-			writer.Write8(0x1C);
+		public void WriteEQ() { mWriter.Write8(0x0E); }
+		public void WriteNE() { mWriter.Write8(0x0F); }
+		public void WriteGT() { mWriter.Write8(0x10); }
+		public void WriteLT() { mWriter.Write8(0x11); }
+		public void WriteGE() { mWriter.Write8(0x12); }
+		public void WriteLE() { mWriter.Write8(0x13); }
+		public void WriteNEG() { mWriter.Write8(0x14); }
+		public void WriteNOT() { mWriter.Write8(0x15); }
+		public void WriteAND() { mWriter.Write8(0x16); }
+		public void WriteOR() { mWriter.Write8(0x17); }
+		public void WriteBAND() { mWriter.Write8(0x18); }
+		public void WriteBOR() { mWriter.Write8(0x19); }
+		public void WriteSHL() { mWriter.Write8(0x1A); }
+		public void WriteSHR() { mWriter.Write8(0x1B); }
+		public sunPoint WriteCALL(int count) {
+			mWriter.Write8(0x1C);
 			sunPoint point = OpenPoint();
-			writer.Write32(0); // dummy
-			writer.WriteS32(argumentCount);
+			mWriter.Write32(0); // dummy
+			mWriter.WriteS32(count);
 			return point;
 		}
-		public void CallFunction(sunPoint point, int argumentCount) {
-			writer.Write8(0x1C);
-			writer.Write32(point.Offset);
-			writer.WriteS32(argumentCount);
+		public void WriteCALL(sunPoint point, int count) {
+			mWriter.Write8(0x1C);
+			mWriter.Write32(point.Offset);
+			mWriter.WriteS32(count);
 		}
-		public void CallBuiltin(int symbolIndex, int argumentCount) {
-			writer.Write8(0x1D);
-			writer.WriteS32(symbolIndex);
-			writer.WriteS32(argumentCount);
+		public void WriteFUNC(int index, int count) {
+			mWriter.Write8(0x1D);
+			mWriter.WriteS32(index);
+			mWriter.WriteS32(count);
 		}
-
-		public void DeclareLocal(int count) {
-			writer.Write8(0x1E);
-			writer.WriteS32(count);
+		public void WriteMKFR(int count) {
+			mWriter.Write8(0x1E);
+			mWriter.WriteS32(count);
 		}
-		public void StoreDisplay(int display) {
-			writer.Write8(0x1F);
-			writer.WriteS32(display);
+		public void WriteMKDS(int display) {
+			mWriter.Write8(0x1F);
+			mWriter.WriteS32(display);
 		}
-
-		public void ReturnValue() { writer.Write8(0x20); }
-		public void ReturnVoid() { writer.Write8(0x21); }
-
-		public sunPoint GotoIfZero() {
-			writer.Write8(0x22);
+		public void WriteRET() { mWriter.Write8(0x20); }
+		public void WriteRET0() { mWriter.Write8(0x21); }
+		public sunPoint WriteJNE() {
+			mWriter.Write8(0x22);
 			sunPoint point = OpenPoint();
-			writer.Write32(0); // dummy
+			mWriter.Write32(0); // dummy
 			return point;
 		}
-		public sunPoint Goto() {
-			writer.Write8(0x23);
+		public sunPoint WriteJMP() {
+			mWriter.Write8(0x23);
 			sunPoint point = OpenPoint();
-			writer.Write32(0); // dummy
+			mWriter.Write32(0); // dummy
 			return point;
 		}
-		public void GotoIfZero(sunPoint point) {
-			writer.Write8(0x22);
-			writer.Write32(point.Offset);
+		public void WriteJNE(sunPoint point) {
+			mWriter.Write8(0x22);
+			mWriter.Write32(point.Offset);
 		}
-		public void Goto(sunPoint point) {
-			writer.Write8(0x23);
-			writer.Write32(point.Offset);
+		public void WriteJMP(sunPoint point) {
+			mWriter.Write8(0x23);
+			mWriter.Write32(point.Offset);
 		}
-		public void Pop() { writer.Write8(0x24); }
-
-		public void Terminate() { writer.Write8(0x27); }
+		public void WritePOP() { mWriter.Write8(0x24); }
+		public void WriteINT0() { mWriter.Write8(0x25); }
+		public void WriteINT1() { mWriter.Write8(0x26); }
+		public void WriteEND() { mWriter.Write8(0x27); }
 	}
 
 	struct sunPoint {
-		readonly uint offset;
-		public uint Offset { get { return offset; } }
+		readonly uint mOffset;
+		public uint Offset { get { return mOffset; } }
 
 		public sunPoint(uint offset) {
-			this.offset = offset;
+			mOffset = offset;
 		}
 	}
 }
