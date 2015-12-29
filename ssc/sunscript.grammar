@@ -218,7 +218,7 @@ argument						= expression;
 builtin_declaration				= BUILTIN IDENTIFIER parameter_list;
 
 // flow control
-if_statement					= [name_label] IF expression statement [ELSE statement];
+if_statement					= IF expression statement [ELSE statement];
 while_statement					= [name_label] WHILE expression statement;
 do_statement					= [name_label] DO statement WHILE expression;
 for_statement					= [name_label] FOR L_PAREN [for_declaration] SEMICOLON [for_condition] SEMICOLON [for_iteration] R_PAREN statement;
