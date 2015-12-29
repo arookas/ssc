@@ -4,8 +4,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("yield");
-			context.Text.WriteFUNC(builtinInfo.Index, 0);
+			context.Text.WriteFUNC((int)sunSystemBuiltins.Yield, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -15,9 +14,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("exit");
-			context.Text.WriteFUNC(builtinInfo.Index, 0);
-			context.Text.WritePOP();
+			context.Text.WriteFUNC((int)sunSystemBuiltins.Exit, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -27,8 +24,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("lock");
-			context.Text.WriteFUNC(builtinInfo.Index, 0);
+			context.Text.WriteFUNC((int)sunSystemBuiltins.Lock, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -38,8 +34,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var builtinInfo = context.ResolveSystemBuiltin("unlock");
-			context.Text.WriteFUNC(builtinInfo.Index, 0);
+			context.Text.WriteFUNC((int)sunSystemBuiltins.Unlock, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -50,9 +45,9 @@
 		protected sunCast(sunSourceLocation location)
 			: base(location) { }
 
-		protected void Compile(sunContext context, sunBuiltinSymbol symbol) {
+		protected void Compile(sunContext context, int index) {
 			Argument.Compile(context);
-			context.Text.WriteFUNC(symbol.Index, 1);
+			context.Text.WriteFUNC(index, 1);
 		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
@@ -65,7 +60,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			Compile(context, context.ResolveSystemBuiltin("int"));
+			Compile(context, (int)sunSystemBuiltins.Int);
 		}
 	}
 
@@ -74,7 +69,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			Compile(context, context.ResolveSystemBuiltin("float"));
+			Compile(context, (int)sunSystemBuiltins.Float);
 		}
 	}
 
@@ -83,7 +78,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			Compile(context, context.ResolveSystemBuiltin("typeof"));
+			Compile(context, (int)sunSystemBuiltins.Typeof);
 		}
 	}
 }

@@ -90,6 +90,10 @@ namespace arookas {
 		public override sunSymbolType Type { get { return sunSymbolType.Builtin; } }
 		public override uint Data { get { return (uint)Index; } }
 
+		public sunBuiltinSymbol(string name, int index)
+			: base(name, null) {
+			Index = index;
+		}
 		public sunBuiltinSymbol(string name, sunParameterInfo parameters, int index)
 			: base(name, parameters) {
 			Index = index;

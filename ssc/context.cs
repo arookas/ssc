@@ -55,15 +55,16 @@ namespace arookas {
 			// begin text block
 			mTextOffset = (uint)mWriter.Position;
 			mWriter.PushAnchor(); // match code offsets and writer offsets
+			
+			// add system builtins (must be same order as constants)
+			AddSystemBuiltin("yield");
+			AddSystemBuiltin("exit");
+			AddSystemBuiltin("lock");
+			AddSystemBuiltin("unlock");
+			AddSystemBuiltin("int");
+			AddSystemBuiltin("float");
+			AddSystemBuiltin("typeof");
 
-			// add system builtins
-			DeclareSystemBuiltin("yield", false);
-			DeclareSystemBuiltin("exit", false);
-			DeclareSystemBuiltin("lock", false);
-			DeclareSystemBuiltin("unlock", false);
-			DeclareSystemBuiltin("int", false, "x");
-			DeclareSystemBuiltin("float", false, "x");
-			DeclareSystemBuiltin("typeof", false, "x");
 		}
 		public void Close() {
 			if (!mOpen) {
@@ -134,18 +135,6 @@ namespace arookas {
 				throw new sunUndefinedFunctionException(node);
 			}
 			return symbol;
-		}
-
-		public sunBuiltinSymbol DeclareSystemBuiltin(string name, bool variadic, params string[] parameters) {
-			var symbol = SymbolTable.Builtins.FirstOrDefault(i => i.Name == name);
-			if (symbol == null) {
-				symbol = new sunBuiltinSymbol(name, new sunParameterInfo(parameters, variadic), SymbolTable.Count);
-				SymbolTable.Add(symbol);
-			}
-			return symbol;
-		}
-		public sunBuiltinSymbol ResolveSystemBuiltin(string name) {
-			return SymbolTable.Builtins.FirstOrDefault(i => i.Name == name);
 		}
 
 		// storables
@@ -230,6 +219,9 @@ namespace arookas {
 			return null;
 		}
 
+		void AddSystemBuiltin(string name) {
+			SymbolTable.Add(new sunBuiltinSymbol(name, SymbolTable.Count));
+		}
 		void WriteHeader() {
 			mWriter.WriteString("SPCB");
 			mWriter.Write32(mTextOffset);
@@ -239,5 +231,15 @@ namespace arookas {
 			mWriter.WriteS32(SymbolTable.Count);
 			mWriter.WriteS32(SymbolTable.VariableCount);
 		}
+	}
+
+	enum sunSystemBuiltins {
+		Yield,
+		Exit,
+		Lock,
+		Unlock,
+		Int,
+		Float,
+		Typeof,
 	}
 }
