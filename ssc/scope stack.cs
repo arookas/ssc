@@ -27,6 +27,7 @@ namespace arookas {
 			Push(sunScopeType.Script); // push global scope
 		}
 
+		public void Push() { Push(Top.Type); }
 		public void Push(sunScopeType type) {
 			Stack.Add(new sunScope(type));
 		}
