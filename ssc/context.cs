@@ -1,5 +1,6 @@
 ﻿using arookas.IO.Binary;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace arookas {
 		bool mOpen;
 		aBinaryWriter mWriter;
 		uint mTextOffset, mDataOffset, mSymbolOffset;
+		Stack<sunNameLabel> mNameStack;
 
 		public sunWriter Text { get; private set; }
 		public sunDataTable DataTable { get; private set; }
@@ -22,6 +24,7 @@ namespace arookas {
 			SymbolTable = new sunSymbolTable();
 			Scopes = new sunScopeStack();
 			Loops = new sunLoopStack();
+			mNameStack = new Stack<sunNameLabel>(5);
 		}
 
 		// open/close
@@ -41,6 +44,7 @@ namespace arookas {
 			SymbolTable.Clear();
 			Scopes.Clear();
 			Loops.Clear();
+			mNameStack.Clear();
 			ImportResolver = importResolver;
 			mWriter = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
 			Text = new sunWriter(mWriter);
@@ -213,6 +217,19 @@ namespace arookas {
 				throw new sunUndeclaredVariableException(node);
 			}
 			return symbol;
+		}
+
+		public void PushNameLabel(sunNameLabel label) {
+			if (label == null) {
+				throw new ArgumentNullException("label");
+			}
+			mNameStack.Push(label);
+		}
+		public sunNameLabel PopNameLabel() {
+			if (mNameStack.Count > 0) {
+				return mNameStack.Pop();
+			}
+			return null;
 		}
 
 		void WriteHeader() {
