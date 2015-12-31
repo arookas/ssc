@@ -44,6 +44,7 @@ The script generates a solution with the following projects:
 
  - **ssc**, the base _ssc_ API library
  - **frontend**, the basic command-line frontend
+ - **sbdump**, a tool which dumps disassembly and other information on compiled SPC binaries
 
 Simply run the script through premake5 and build the resulting solution.
 There are also several compile-time options which are able to be configured via the premake5 command line:
