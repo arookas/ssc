@@ -19,6 +19,15 @@ namespace arookas {
 		public sunLoopStack Loops { get; private set; }
 		public sunImportResolver ImportResolver { get; private set; }
 
+		// system builtins
+		public sunCallableSymbol Yield { get; private set; }
+		public sunCallableSymbol Exit { get; private set; }
+		public sunCallableSymbol Lock { get; private set; }
+		public sunCallableSymbol Unlock { get; private set; }
+		public sunCallableSymbol Int { get; private set; }
+		public sunCallableSymbol Float { get; private set; }
+		public sunCallableSymbol Typeof { get; private set; }
+
 		public sunContext() {
 			DataTable = new sunDataTable();
 			SymbolTable = new sunSymbolTable();
@@ -56,14 +65,14 @@ namespace arookas {
 			mTextOffset = (uint)mWriter.Position;
 			mWriter.PushAnchor(); // match code offsets and writer offsets
 			
-			// add system builtins (must be same order as constants)
-			AddSystemBuiltin("yield");
-			AddSystemBuiltin("exit");
-			AddSystemBuiltin("lock");
-			AddSystemBuiltin("unlock");
-			AddSystemBuiltin("int");
-			AddSystemBuiltin("float");
-			AddSystemBuiltin("typeof");
+			// add system builtins
+			Yield = AddSystemBuiltin("yield");
+			Exit = AddSystemBuiltin("exit");
+			Lock = AddSystemBuiltin("lock");
+			Unlock = AddSystemBuiltin("unlock");
+			Int = AddSystemBuiltin("int");
+			Float = AddSystemBuiltin("float");
+			Typeof = AddSystemBuiltin("typeof");
 
 		}
 		public void Close() {
@@ -219,8 +228,10 @@ namespace arookas {
 			return null;
 		}
 
-		void AddSystemBuiltin(string name) {
-			SymbolTable.Add(new sunBuiltinSymbol(name, SymbolTable.Count));
+		sunCallableSymbol AddSystemBuiltin(string name) {
+			var symbol = new sunBuiltinSymbol(name, SymbolTable.Count);
+			SymbolTable.Add(symbol);
+			return symbol;
 		}
 		void WriteHeader() {
 			mWriter.WriteString("SPCB");
@@ -231,15 +242,5 @@ namespace arookas {
 			mWriter.WriteS32(SymbolTable.Count);
 			mWriter.WriteS32(SymbolTable.VariableCount);
 		}
-	}
-
-	enum sunSystemBuiltins {
-		Yield,
-		Exit,
-		Lock,
-		Unlock,
-		Int,
-		Float,
-		Typeof,
 	}
 }

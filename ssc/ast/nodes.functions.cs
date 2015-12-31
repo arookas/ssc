@@ -37,12 +37,12 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			var callableInfo = context.MustResolveCallable(this);
-			if (!callableInfo.Parameters.ValidateArgumentCount(Arguments.Count)) {
-				throw new sunArgumentCountException(this, callableInfo);
+			var symbol = context.MustResolveCallable(this);
+			if (!symbol.Parameters.ValidateArgumentCount(Arguments.Count)) {
+				throw new sunArgumentCountException(this, symbol);
 			}
 			Arguments.Compile(context);
-			callableInfo.OpenCallSite(context, Arguments.Count);
+			symbol.OpenCallSite(context, Arguments.Count);
 			if (IsStatement) {
 				context.Text.WritePOP();
 			}
@@ -60,7 +60,7 @@ namespace arookas {
 
 		public sunParameterList(sunSourceLocation location)
 			: base(location) {
-			int count = this.Count(i => i is sunEllipsis);
+			var count = this.Count(i => i is sunEllipsis);
 			if (count > 1 || (count > 0 && !(this[Count - 1] is sunEllipsis))) {
 				throw new sunVariadicParameterListException(this);
 			}

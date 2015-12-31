@@ -4,7 +4,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			context.Text.WriteFUNC((int)sunSystemBuiltins.Yield, 0);
+			context.Yield.OpenCallSite(context, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -14,7 +14,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			context.Text.WriteFUNC((int)sunSystemBuiltins.Exit, 0);
+			context.Exit.OpenCallSite(context, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -24,7 +24,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			context.Text.WriteFUNC((int)sunSystemBuiltins.Lock, 0);
+			context.Lock.OpenCallSite(context, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -34,7 +34,7 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			context.Text.WriteFUNC((int)sunSystemBuiltins.Unlock, 0);
+			context.Unlock.OpenCallSite(context, 0);
 			context.Text.WritePOP();
 		}
 	}
@@ -44,11 +44,6 @@
 
 		protected sunCast(sunSourceLocation location)
 			: base(location) { }
-
-		protected void Compile(sunContext context, int index) {
-			Argument.Compile(context);
-			context.Text.WriteFUNC(index, 1);
-		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
 			return sunExpressionFlags.Casts | Argument.Analyze(context);
@@ -60,7 +55,8 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			Compile(context, (int)sunSystemBuiltins.Int);
+			Argument.Compile(context);
+			context.Int.OpenCallSite(context, 1);
 		}
 	}
 
@@ -69,7 +65,8 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			Compile(context, (int)sunSystemBuiltins.Float);
+			Argument.Compile(context);
+			context.Float.OpenCallSite(context, 1);
 		}
 	}
 
@@ -78,7 +75,8 @@
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			Compile(context, (int)sunSystemBuiltins.Typeof);
+			Argument.Compile(context);
+			context.Typeof.OpenCallSite(context, 1);
 		}
 	}
 }
