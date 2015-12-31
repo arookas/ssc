@@ -30,8 +30,8 @@ namespace arookas {
 				foreach (var function in context.SymbolTable.Functions) {
 					function.Compile(context);
 				}
-				foreach (var function in context.SymbolTable.Functions) {
-					function.CloseCallSites(context);
+				foreach (var callable in context.SymbolTable.Callables) {
+					callable.CloseCallSites(context);
 				}
 				results.DataCount = context.DataTable.Count;
 				results.SymbolCount = context.SymbolTable.Count;
