@@ -80,3 +80,22 @@ workspace "ssc"
 			"{RMDIR} \"%{cfg.buildtarget.directory}ssc\"",
 			"{COPY} \"%{wks.location}stdlib\" \"%{cfg.buildtarget.directory}ssc\"",
 		}
+
+	-- sbdump utility
+	project "sbdump"
+		kind "ConsoleApp"
+		language "C#"
+		entrypoint "arookas.sbdump"
+		namespace "arookas"
+		location "sbdump"
+		
+		links { "System", "arookas" }
+		
+		files {
+			"sbdump/**.cs",
+		}
+		
+		excludes {
+			"sbdump/bin/**",
+			"sbdump/obj/**",
+		}
