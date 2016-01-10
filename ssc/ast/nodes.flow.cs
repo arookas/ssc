@@ -1,4 +1,3 @@
-﻿using PerCederberg.Grammatica.Runtime;
 using System.Linq;
 
 namespace arookas {
@@ -27,8 +26,8 @@ namespace arookas {
 		}
 	}
 
-	abstract class sunLoop : sunNode {
-		protected sunLoop(sunSourceLocation location)
+	abstract class sunLoopNode : sunNode {
+		protected sunLoopNode(sunSourceLocation location)
 			: base(location) { }
 
 		public void PushLoop(sunContext context) {
@@ -42,7 +41,7 @@ namespace arookas {
 		}
 	}
 
-	class sunWhile : sunLoop {
+	class sunWhile : sunLoopNode {
 		public sunExpression Condition { get { return this[0] as sunExpression; } }
 		public sunNode Body { get { return this[1]; } }
 
@@ -63,7 +62,7 @@ namespace arookas {
 		}
 	}
 
-	class sunDo : sunLoop {
+	class sunDo : sunLoopNode {
 		public sunNode Body { get { return this[0]; } }
 		public sunExpression Condition { get { return this[1] as sunExpression; } }
 
@@ -84,7 +83,7 @@ namespace arookas {
 		}
 	}
 
-	class sunFor : sunLoop {
+	class sunFor : sunLoopNode {
 		public sunForDeclaration Declaration { get { return this.FirstOrDefault(i => i is sunForDeclaration) as sunForDeclaration; } }
 		public sunForCondition Condition { get { return this.FirstOrDefault(i => i is sunForCondition) as sunForCondition; } }
 		public sunForIteration Iteration { get { return this.FirstOrDefault(i => i is sunForIteration) as sunForIteration; } }
