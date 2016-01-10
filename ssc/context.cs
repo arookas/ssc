@@ -233,6 +233,11 @@ namespace arookas {
 			SymbolTable.Add(symbol);
 			return symbol;
 		}
+		sunStorableSymbol AddSystemVariable(string name) {
+			var symbol = Scopes.DeclareVariable(name);
+			SymbolTable.Add(symbol);
+			return symbol;
+		}
 		void WriteHeader() {
 			mWriter.WriteString("SPCB");
 			mWriter.Write32(mTextOffset);
