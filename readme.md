@@ -43,7 +43,7 @@ This repository contains a [premake5](https://premake.github.io/) [configuration
 The script generates a solution with the following projects:
 
  - **ssc**, the base _ssc_ API library
- - **frontend**, the basic command-line frontend
+ - **frontend**, a basic command-line frontend
  - **sbdump**, a tool which dumps disassembly and other information on compiled SPC binaries
 
 Simply run the script through premake5 and build the resulting solution.
