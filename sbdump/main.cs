@@ -176,7 +176,7 @@ namespace arookas {
 			var symbol = FetchSymbol(i => i.Data == ofs);
 			if (ofs > 0 && symbol != null) {
 				var name = FetchSymbolName(symbol);
-				sWriter.Write(" {0} + ${1:X4} # ${2:X8}", name, dest - ofs, ofs);
+				sWriter.Write(" {0} + ${1:X4} # ${2:X8}", name, dest - ofs, dest);
 			}
 			else {
 				sWriter.Write(" ${0:X8}", dest);
