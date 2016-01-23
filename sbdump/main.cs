@@ -130,10 +130,7 @@ namespace arookas {
 						break;
 					}
 					case 0x03: sWriter.Write(" ${0:X8}", sReader.Read32()); break;
-					case 0x04: {
-						var display = sReader.ReadS32();
-						sWriter.Write(" {0}", FetchSymbolName(FetchSymbol(sReader.ReadS32()))); break;
-					}
+					case 0x04: WriteVar(); break;
 					case 0x06: WriteVar(); break;
 					case 0x07: WriteVar(); break;
 					case 0x0D: {
