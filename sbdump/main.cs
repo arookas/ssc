@@ -167,9 +167,11 @@ namespace arookas {
 		}
 		static void WriteVar() {
 			var display = sReader.ReadS32();
+			var data = sReader.ReadS32();
+			sWriter.Write(" {0} {1}", display, data);
 			switch (display) {
-				case 0: sWriter.Write(" {0}", FetchSymbolName(FetchSymbol(sReader.ReadS32()))); break;
-				case 1: sWriter.Write(" locl{0}", sReader.ReadS32()); break;
+				case 0: sWriter.Write(" # {0}", FetchSymbolName(FetchSymbol(i => i.Type == SymbolType.Variable && i.Data == data))); break;
+				case 1: sWriter.Write(" # local{0}", data); break;
 			}
 		}
 		static void WriteJmp(uint ofs) {
