@@ -21,7 +21,7 @@ namespace arookas {
 			foreach (var param in cmd) {
 				switch (param.Name) {
 					case "-in": mInput = param[0]; continue;
-					case "-out": mInput = param[0]; continue;
+					case "-out": mOutput = param[0]; continue;
 					case "-H": mOutputHeader = true; continue;
 					case "-h": mOutputHeader = false; continue;
 					case "-T": mOutputText = true; continue;
