@@ -54,7 +54,6 @@ namespace arookas {
 					case __sunConstants.AUGMENT_OPERATOR:
 					case __sunConstants.TERM:
 					case __sunConstants.PARAMETER:
-					case __sunConstants.ARGUMENT_LIST:
 					case __sunConstants.ARGUMENT: {
 							return ast[0];
 						}
@@ -252,7 +251,7 @@ namespace arookas {
 				case __sunConstants.SEMICOLON:
 				case __sunConstants.COMMA:
 				case __sunConstants.DOT:
-				// case __sunConstants.ELLIPSIS: // do not exclude ellipsis for variadic parameters
+				case __sunConstants.ELLIPSIS:
 				case __sunConstants.QMARK: {
 						return null;
 					}
