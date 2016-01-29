@@ -9,3 +9,7 @@ builtin startBGM(num);
 builtin stopBGM(num);
 
 builtin startSE(num);
+builtin startEventSE(num);
+
+builtin startMontemanBGM();
+builtin startMontemanFanfare();
