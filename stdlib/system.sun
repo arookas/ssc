@@ -5,10 +5,12 @@
  * 2015-2016 arookas
 \* ================================================= */
 
-// builtins
+// ================================================= \\
+// FLAGS
+// ================================================= \\
+
 builtin getSystemFlag(flag);
 builtin setSystemFlag(flag, value);
 
-// functions
 function setOnSystemFlag(flag) { setSystemFlag(flag, true); }
 function setOffSystemFlag(flag) { setSystemFlag(flag, false); }

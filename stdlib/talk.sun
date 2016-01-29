@@ -16,9 +16,11 @@ const TALKF_CLOSE	= (1 << 0);
 // builtins
 builtin getTalkMode();
 builtin isTalkModeNow();
+
+builtin setTalkMsgID(msgID, flags);
+
 builtin getTalkNPC();
 builtin getTalkNPCName();
-builtin setTalkMsgID(msgID, flags);
 
 // functions
 function waitTalkStart(name) {
@@ -85,8 +87,8 @@ function select(msgID, flags) {
 	return getTalkSelectedValue();
 }
 
-function talkAndSelect(msgID)			{ select(msgID, TALKF_WAIT); }
-function talkAndSelectClose(msgID)		{ select(msgID, TALKF_CLOSE); }
+function talkAndSelect(msgID)				{ return select(msgID, TALKF_WAIT); }
+function talkAndSelectClose(msgID)	{ return select(msgID, TALKF_CLOSE); }
 
 // ================================================= \\
 // FORCE
