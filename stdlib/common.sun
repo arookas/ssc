@@ -17,3 +17,4 @@ builtin print(...);
 import "system.sun";
 import "talk.sun";
 import "sound.sun";
+import "scene.sun";
