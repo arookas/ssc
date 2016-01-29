@@ -21,6 +21,14 @@ builtin setSystemFlag(flag, value);
 function setOnSystemFlag(flag) { setSystemFlag(flag, true); }
 function setOffSystemFlag(flag) { setSystemFlag(flag, false); }
 
+// [arookas] custom utility
+function incSystemFlag(flag) {
+	setSystemFlag(flag, getSystemFlag(flag) + 1);
+}
+function decSystemFlag(flag) {
+	setSystemFlag(flag, getSystemFlag(flag) - 1);
+}
+
 // ================================================= \\
 // POLLUTION
 // ================================================= \\
