@@ -9,6 +9,12 @@
 // FLAGS
 // ================================================= \\
 
+// known flags here
+const SYS_MARIOLIVES									= 0x20001;
+
+const SYS_BLUECOINNUM									= 0x40001;
+const SYS_GOLDCOINNUM									= 0x40002;
+
 builtin getSystemFlag(flag);
 builtin setSystemFlag(flag, value);
 
