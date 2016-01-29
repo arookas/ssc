@@ -97,6 +97,7 @@ function talkAndSelectClose(msgID)	{ return select(msgID, TALKF_CLOSE); }
 // builtins
 builtin __forceStartTalk(handle);
 builtin __forceStartTalkExceptNpc(handle);
+builtin forceCloseTalk();
 
 // functions
 function forceTalk(handle) {
