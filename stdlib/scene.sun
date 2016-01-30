@@ -7,7 +7,7 @@
 
 builtin setNextStage(num, b);
 
-buitlin getAddressFromViewObjName(name);
+builtin getAddressFromViewObjName(name);
 builtin getNameRefHandle(name);
 builtin getNameRefName(handle);
 
