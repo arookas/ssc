@@ -28,6 +28,9 @@ namespace arookas {
 		public sunCallableSymbol Float { get; private set; }
 		public sunCallableSymbol Typeof { get; private set; }
 
+		// system variables
+		public sunStorableSymbol Switch { get; private set; }
+
 		public sunContext() {
 			DataTable = new sunDataTable();
 			SymbolTable = new sunSymbolTable();
@@ -74,6 +77,8 @@ namespace arookas {
 			Float = AddSystemBuiltin("float");
 			Typeof = AddSystemBuiltin("typeof");
 
+			// add system variables
+			Switch = AddSystemVariable("$switch"); // storage for switch statements
 		}
 		public void Close() {
 			if (!mOpen) {
