@@ -1,3 +1,4 @@
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace arookas {
@@ -30,14 +31,19 @@ namespace arookas {
 		protected sunLoopNode(sunSourceLocation location)
 			: base(location) { }
 
-		public void PushLoop(sunContext context) {
+		public sunLoop PushLoop(sunContext context) {
 			var name = context.PopNameLabel();
 			if (name == null) {
-				context.Loops.Push();
+				return context.Loops.Push();
 			}
-			else {
-				context.Loops.Push(name.Label.Value);
+			return context.Loops.Push(name.Label.Value);
+		}
+		public sunLoop PushLoop(sunContext context, sunLoopFlags flags) {
+			var name = context.PopNameLabel();
+			if (name == null) {
+				return context.Loops.Push(flags);
 			}
+			return context.Loops.Push(name.Label.Value, flags);
 		}
 	}
 
@@ -49,16 +55,16 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			PushLoop(context);
+			var loop = PushLoop(context);
 			var bodyPrologue = context.Text.OpenPoint();
-			var continuePoint = context.Text.OpenPoint();
+			loop.ContinuePoint = context.Text.OpenPoint();
 			Condition.Compile(context);
 			var bodyEpilogue = context.Text.WriteJNE();
 			Body.Compile(context);
 			context.Text.WriteJMP(bodyPrologue);
 			context.Text.ClosePoint(bodyEpilogue);
-			var breakPoint = context.Text.OpenPoint();
-			context.Loops.Pop(context, breakPoint, continuePoint);
+			loop.BreakPoint = context.Text.OpenPoint();
+			context.Loops.Pop(context);
 		}
 	}
 
@@ -70,16 +76,16 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunContext context) {
-			PushLoop(context);
+			var loop = PushLoop(context);
 			var bodyPrologue = context.Text.OpenPoint();
 			Body.Compile(context);
-			var continuePoint = context.Text.OpenPoint();
+			loop.ContinuePoint = context.Text.OpenPoint();
 			Condition.Compile(context);
 			var bodyEpilogue = context.Text.WriteJNE();
 			context.Text.WriteJMP(bodyPrologue);
 			context.Text.ClosePoint(bodyEpilogue);
-			var breakPoint = context.Text.OpenPoint();
-			context.Loops.Pop(context, breakPoint, continuePoint);
+			loop.BreakPoint = context.Text.OpenPoint();
+			context.Loops.Pop(context);
 		}
 	}
 
@@ -94,18 +100,18 @@ namespace arookas {
 
 		public override void Compile(sunContext context) {
 			context.Scopes.Push();
-			PushLoop(context);
+			var loop = PushLoop(context);
 			TryCompile(Declaration, context);
 			var bodyPrologue = context.Text.OpenPoint();
 			TryCompile(Condition, context);
 			var bodyEpilogue = context.Text.WriteJNE();
 			Body.Compile(context);
-			var continuePoint = context.Text.OpenPoint();
+			loop.ContinuePoint = context.Text.OpenPoint();
 			TryCompile(Iteration, context);
 			context.Text.WriteJMP(bodyPrologue);
 			context.Text.ClosePoint(bodyEpilogue);
-			var breakPoint = context.Text.OpenPoint();
-			context.Loops.Pop(context, breakPoint, continuePoint);
+			loop.BreakPoint = context.Text.OpenPoint();
+			context.Loops.Pop(context);
 			context.Scopes.Pop();
 		}
 	}

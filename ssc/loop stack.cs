@@ -1,27 +1,48 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace arookas {
 	class sunLoopStack {
-		Stack<sunLoop> loops = new Stack<sunLoop>(5);
-		sunLoop Top { get { return loops.Peek(); } }
+		Stack<sunLoop> mLoops;
 
-		sunLoop this[string name] { get { return loops.FirstOrDefault(i => i.Name == name); } }
-		public int Count { get { return loops.Count; } }
+		sunLoop Top { get { return mLoops.Peek(); } }
+		sunLoop this[string name] { get { return mLoops.FirstOrDefault(i => i.Name == name); } }
+		public int Count { get { return mLoops.Count; } }
 
-		public void Push() { Push(null); }
-		public void Push(string name) { loops.Push(new sunLoop(name)); }
-		public void Pop(sunContext context, sunPoint breakPoint, sunPoint continuePoint) {
-			foreach (var _break in Top.Breaks) {
-				context.Text.ClosePoint(_break, breakPoint.Offset);
-			}
-			foreach (var _continue in Top.Continues) {
-				context.Text.ClosePoint(_continue, continuePoint.Offset);
-			}
-			loops.Pop();
+		public sunLoopStack() {
+			mLoops = new Stack<sunLoop>(5);
 		}
 
-		public void Clear() { loops.Clear(); }
+		public sunLoop Push() {
+			return Push(new sunLoop());
+		}
+		public sunLoop Push(sunLoopFlags flags) {
+			return Push(new sunLoop(flags));
+		}
+		public sunLoop Push(string name) {
+			return Push(new sunLoop(name));
+		}
+		public sunLoop Push(string name, sunLoopFlags flags) {
+			return Push(new sunLoop(name, flags));
+		}
+		sunLoop Push(sunLoop loop) {
+			if (loop == null) {
+				throw new ArgumentNullException("loop");
+			}
+			mLoops.Push(loop);
+			return loop;
+		}
+		public void Pop(sunContext context) {
+			if (Count < 1) {
+				return;
+			}
+			mLoops.Pop().Close(context);
+		}
+
+		public void Clear() {
+			mLoops.Clear();
+		}
 
 		public bool AddBreak(sunPoint point) { return AddBreak(point, null); }
 		public bool AddContinue(sunPoint point) { return AddContinue(point, null); }
@@ -33,7 +54,7 @@ namespace arookas {
 			if (loop == null) {
 				return false;
 			}
-			loop.Breaks.Add(point);
+			loop.AddBreak(point);
 			return true;
 		}
 		public bool AddContinue(sunPoint point, string name) {
@@ -44,24 +65,76 @@ namespace arookas {
 			if (loop == null) {
 				return false;
 			}
-			loop.Continues.Add(point);
+			loop.AddContinue(point);
 			return true;
 		}
 
-		class sunLoop {
-			public string Name { get; private set; }
-			public List<sunPoint> Breaks { get; private set; }
-			public List<sunPoint> Continues { get; private set; }
+	}
 
-			public sunLoop()
-				: this(null) {
+	class sunLoop {
+		string mName;
+		List<sunPoint> mBreaks, mContinues;
+		sunLoopFlags mFlags;
+		sunPoint mBreakPoint, mContinuePoint;
 
+		public string Name { get { return mName; } }
+		public bool HasName { get { return Name != null; } }
+		public sunPoint BreakPoint { get { return mBreakPoint; } set { mBreakPoint = value; } }
+		public sunPoint ContinuePoint { get { return mContinuePoint; } set { mContinuePoint = value; } }
+
+		public sunLoop() {
+			mName = null;
+			mBreaks = new List<sunPoint>(5);
+			mContinues = new List<sunPoint>(5);
+			mFlags = sunLoopFlags.ConsumeBreak | sunLoopFlags.ConsumeContinue;
+		}
+		public sunLoop(sunLoopFlags flags) {
+			mFlags = flags;
+		}
+		public sunLoop(string name) {
+			mName = name;
+		}
+		public sunLoop(string name, sunLoopFlags flags) {
+			mName = name;
+			mFlags = flags;
+		}
+
+		bool HasFlag(sunLoopFlags flags) {
+			return (mFlags & flags) != 0;
+		}
+
+		public bool AddBreak(sunPoint point) {
+			if (!HasFlag(sunLoopFlags.ConsumeBreak)) {
+				return false;
 			}
-			public sunLoop(string name) {
-				Name = name;
-				Breaks = new List<sunPoint>(5);
-				Continues = new List<sunPoint>(5);
+			mBreaks.Add(point);
+			return true;
+		}
+		public bool AddContinue(sunPoint point) {
+			if (!HasFlag(sunLoopFlags.ConsumeContinue)) {
+				return false;
+			}
+			mContinues.Add(point);
+			return true;
+		}
+		public void Close(sunContext context) {
+			if (HasFlag(sunLoopFlags.ConsumeBreak)) {
+				foreach (var b in mBreaks) {
+					context.Text.ClosePoint(b, mBreakPoint.Offset);
+				}
+			}
+			if (HasFlag(sunLoopFlags.ConsumeContinue)) {
+				foreach (var c in mContinues) {
+					context.Text.ClosePoint(c, mContinuePoint.Offset);
+				}
 			}
 		}
+	}
+
+	[Flags]
+	enum sunLoopFlags {
+		None = 0,
+		ConsumeBreak = 1,
+		ConsumeContinue = 2,
 	}
 }
