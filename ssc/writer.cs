@@ -10,13 +10,23 @@ namespace arookas {
 			this.mWriter = writer;
 		}
 
+		public void Keep() {
+			mWriter.Keep();
+		}
+		public void Back() {
+			mWriter.Back();
+		}
+		public void Goto(uint offset) {
+			mWriter.Goto(offset);
+		}
+
 		public sunPoint OpenPoint() { return new sunPoint(Offset); }
 		public void ClosePoint(sunPoint point) { ClosePoint(point, (uint)mWriter.Position); }
 		public void ClosePoint(sunPoint point, uint offset) {
-			mWriter.Keep();
-			mWriter.Goto(point.Offset);
+			Keep();
+			Goto(point.Offset);
 			mWriter.Write32(offset);
-			mWriter.Back();
+			Back();
 		}
 
 		public void WriteINT(int value) {
