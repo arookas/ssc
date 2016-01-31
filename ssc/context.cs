@@ -61,6 +61,7 @@ namespace arookas {
 			mWriter = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
 			Text = new sunWriter(mWriter);
 			mWriter.PushAnchor();
+			AddSystemSymbols();
 
 			WriteHeader(); // dummy header
 
@@ -68,17 +69,6 @@ namespace arookas {
 			mTextOffset = (uint)mWriter.Position;
 			mWriter.PushAnchor(); // match code offsets and writer offsets
 			
-			// add system builtins
-			Yield = AddSystemBuiltin("yield");
-			Exit = AddSystemBuiltin("exit");
-			Lock = AddSystemBuiltin("lock");
-			Unlock = AddSystemBuiltin("unlock");
-			Int = AddSystemBuiltin("int");
-			Float = AddSystemBuiltin("float");
-			Typeof = AddSystemBuiltin("typeof");
-
-			// add system variables
-			Switch = AddSystemVariable("$switch"); // storage for switch statements
 		}
 		public void Close() {
 			if (!mOpen) {
@@ -233,6 +223,20 @@ namespace arookas {
 			return null;
 		}
 
+		// system symbols
+		void AddSystemSymbols() {
+			// add system builtins
+			Yield = AddSystemBuiltin("yield");
+			Exit = AddSystemBuiltin("exit");
+			Lock = AddSystemBuiltin("lock");
+			Unlock = AddSystemBuiltin("unlock");
+			Int = AddSystemBuiltin("int");
+			Float = AddSystemBuiltin("float");
+			Typeof = AddSystemBuiltin("typeof");
+
+			// add system variables
+			Switch = AddSystemVariable("$switch"); // storage for switch statements
+		}
 		sunCallableSymbol AddSystemBuiltin(string name) {
 			var symbol = new sunBuiltinSymbol(name, SymbolTable.Count);
 			SymbolTable.Add(symbol);
