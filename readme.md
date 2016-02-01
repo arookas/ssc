@@ -52,6 +52,7 @@ There are also several compile-time options which are able to be configured via 
 |Option|Description|
 |------|-----------|
 |var-alloc|Affects how variables are allocated slices. Available values are _pack_ and _inc_.|
+|clean-symbols|Cleans symbol table of unused symbols.|
 
 _**Note:** A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.
 For more information, see Grammatica's official [installation documentation](http://grammatica.percederberg.net/doc/release/install.html)._

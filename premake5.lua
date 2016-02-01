@@ -9,6 +9,11 @@ newoption {
 	}
 }
 
+newoption {
+	trigger = "clean-symbols",
+	description = "Cleans up the symbol table from unused symbols"
+}
+
 -- main workspace
 workspace "ssc"
 	configurations { "Debug", "Release" }
@@ -37,6 +42,8 @@ workspace "ssc"
 		-- apply options
 		filter "options:var-alloc=pack"
 			defines { "SSC_PACK_VARS" }
+		filter "options:clean-symbols"
+			defines { "SSC_CLEAN_SYMBOLS" }
 		filter {}
 
 		files {
