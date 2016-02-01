@@ -23,6 +23,10 @@ namespace arookas {
 		public IEnumerable<sunVariableSymbol> Variables { get { return mSymbols.OfType<sunVariableSymbol>(); } }
 		public IEnumerable<sunConstantSymbol> Constants { get { return mSymbols.OfType<sunConstantSymbol>(); } }
 
+		public sunSymbol this[int index] {
+			get { return mSymbols[index]; }
+		}
+
 		public sunSymbolTable() {
 			mSymbols = new List<sunSymbol>(10);
 		}
