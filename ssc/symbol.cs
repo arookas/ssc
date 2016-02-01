@@ -43,6 +43,9 @@ namespace arookas {
 			}
 			mSymbols.Remove(symbol);
 		}
+		public void RemoveAt(int index) {
+			mSymbols.RemoveAt(index);
+		}
 		public void Clear() {
 			mSymbols.Clear();
 		}
