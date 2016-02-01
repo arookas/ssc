@@ -5,8 +5,15 @@ using System.Linq;
 
 namespace arookas {
 	public abstract class sunImportResolver {
-		static sunImportResolver defaultResolver = new sunDefaultImportResolver();
-		public static sunImportResolver Default { get { return defaultResolver; } }
+		static sunImportResolver sDefaultResolver;
+
+		public static sunImportResolver Default {
+			get { return sDefaultResolver; }
+		}
+
+		static sunImportResolver() {
+			sDefaultResolver = new sunDefaultImportResolver();
+		}
 
 		public abstract void EnterFile(sunScriptFile file);
 		public abstract void ExitFile(sunScriptFile file);
@@ -14,21 +21,35 @@ namespace arookas {
 
 		// default implementation
 		sealed class sunDefaultImportResolver : sunImportResolver {
-			List<sunScriptFile> imports = new List<sunScriptFile>(10);
-			Stack<sunScriptFile> current = new Stack<sunScriptFile>(5);
-			string rootDirectory, currentDirectory;
-			string CurrentDirectory { get { return current.Count > 0 ? Path.GetDirectoryName(current.Peek().Name) : currentDirectory; } }
+			List<sunScriptFile> mImports;
+			Stack<sunScriptFile> mFiles;
+			string mRootDirectory, mCurrentDirectory;
 
-			public sunDefaultImportResolver() {
-				rootDirectory = AppDomain.CurrentDomain.BaseDirectory;
-				currentDirectory = Directory.GetCurrentDirectory();
+			string CurrentDirectory {
+				get {
+					if (mFiles.Count > 0) {
+						return Path.GetDirectoryName(mFiles.Peek().Name);
+					}
+					return mCurrentDirectory;
+				}
 			}
 
-			public override void EnterFile(sunScriptFile file) { current.Push(file); }
-			public override void ExitFile(sunScriptFile file) { current.Pop(); }
+			public sunDefaultImportResolver() {
+				mImports = new List<sunScriptFile>(10);
+				mFiles = new Stack<sunScriptFile>(5);
+				mRootDirectory = AppDomain.CurrentDomain.BaseDirectory;
+				mCurrentDirectory = Directory.GetCurrentDirectory();
+			}
+
+			public override void EnterFile(sunScriptFile file) {
+				mFiles.Push(file);
+			}
+			public override void ExitFile(sunScriptFile file) {
+				mFiles.Pop();
+			}
 			public override sunImportResult ResolveImport(string name, out sunScriptFile file) {
 				file = null;
-				string fullPath;
+				var fullPath = "";
 				if (Path.IsPathRooted(name)) {
 					// if the path is absolute, just use it directly
 					fullPath = name;
@@ -41,14 +62,14 @@ namespace arookas {
 					// if it's not there, check the root directory
 					fullPath = Path.Combine(CurrentDirectory, name);
 					if (!File.Exists(fullPath)) {
-						fullPath = Path.Combine(rootDirectory, name);
+						fullPath = Path.Combine(mRootDirectory, name);
 						if (!File.Exists(fullPath)) {
 							return sunImportResult.Missing;
 						}
 					}
 				}
 				// make sure the file has not been imported yet
-				if (imports.Any(i => i.Name == fullPath)) {
+				if (mImports.Any(i => i.Name == fullPath)) {
 					return sunImportResult.Skipped;
 				}
 				// open the file
@@ -58,7 +79,7 @@ namespace arookas {
 				catch {
 					return sunImportResult.FailedToLoad;
 				}
-				imports.Add(file);
+				mImports.Add(file);
 				return sunImportResult.Loaded;
 			}
 		}
@@ -72,8 +93,15 @@ namespace arookas {
 	}
 
 	public class sunScriptFile : IDisposable {
-		public string Name { get; private set; }
-		public Stream Stream { get; private set; }
+		string mName;
+		Stream mStream;
+
+		public string Name {
+			get { return mName; }
+		}
+		public Stream Stream {
+			get { return mStream; }
+		}
 
 		public sunScriptFile(string name, Stream stream) {
 			if (name == null) {
@@ -85,16 +113,16 @@ namespace arookas {
 			if (!stream.CanRead) {
 				throw new ArgumentException("Stream does not support reading.", "stream");
 			}
-			Name = name;
-			Stream = stream;
+			mName = name;
+			mStream = stream;
 		}
 
 		public void Dispose() {
-			Stream.Dispose();
+			mStream.Dispose();
 		}
 
 		public TextReader GetReader() {
-			return new StreamReader(Stream);
+			return new StreamReader(mStream);
 		}
 	}
 }
