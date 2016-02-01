@@ -12,15 +12,15 @@ namespace arookas {
 		public sunExpression(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			Stack<sunOperator> operatorStack = new Stack<sunOperator>(32);
-			CompileExpression(context, this, operatorStack);
+		public override void Compile(sunCompiler compiler) {
+			var operatorStack = new Stack<sunOperator>(32);
+			CompileExpression(compiler, this, operatorStack);
 		}
 		public sunExpressionFlags Analyze(sunContext context) {
 			return AnalyzeExpression(context, this);
 		}
 
-		static void CompileExpression(sunContext context, sunExpression expression, Stack<sunOperator> operatorStack) {
+		static void CompileExpression(sunCompiler compiler, sunExpression expression, Stack<sunOperator> operatorStack) {
 			// this implementation assumes that the expression production child list alternates between operand and operator
 			// we can safely assume this as the grammar "operand {binary_operator operand}" enforces it
 			int stackCount = operatorStack.Count;
@@ -31,14 +31,14 @@ namespace arookas {
 					// term
 					var term = operand.Term;
 					if (term is sunExpression) {
-						CompileExpression(context, term as sunExpression, operatorStack);
+						CompileExpression(compiler, term as sunExpression, operatorStack);
 					}
 					else {
-						term.Compile(context);
+						term.Compile(compiler);
 					}
 					var unaryOperators = operand.UnaryOperators;
 					if (unaryOperators != null) {
-						unaryOperators.Compile(context);
+						unaryOperators.Compile(compiler);
 					}
 				}
 				else if (node is sunOperator) {
@@ -46,17 +46,17 @@ namespace arookas {
 					while (operatorStack.Count > stackCount &&
 						(operatorNode.IsLeftAssociative && operatorNode.Precedence <= operatorStack.Peek().Precedence) ||
 						(operatorNode.IsRightAssociative && operatorNode.Precedence < operatorStack.Peek().Precedence)) {
-						operatorStack.Pop().Compile(context);
+						operatorStack.Pop().Compile(compiler);
 					}
 					operatorStack.Push(operatorNode);
 				}
 			}
 			while (operatorStack.Count > stackCount) {
-				operatorStack.Pop().Compile(context);
+				operatorStack.Pop().Compile(compiler);
 			}
 		}
 		static sunExpressionFlags AnalyzeExpression(sunContext context, sunExpression expression) {
-			sunExpressionFlags flags = sunExpressionFlags.None;
+			var flags = sunExpressionFlags.None;
 			foreach (var operand in expression.OfType<sunOperand>()) {
 				var term = operand.Term as sunTerm;
 				if (term != null) {
@@ -100,10 +100,10 @@ namespace arookas {
 		public sunUnaryOperatorList(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
+		public override void Compile(sunCompiler compiler) {
 			foreach (var child in this.Reverse()) {
 				// compile unary operators in reverse order
-				child.Compile(context);
+				child.Compile(compiler);
 			}
 		}
 	}
@@ -116,14 +116,14 @@ namespace arookas {
 		public sunTernaryOperator(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			Condition.Compile(context);
-			var falsePrologue = context.Text.WriteJNE();
-			TrueBody.Compile(context);
-			var trueEpilogue = context.Text.WriteJMP();
-			context.Text.ClosePoint(falsePrologue);
-			FalseBody.Compile(context);
-			context.Text.ClosePoint(trueEpilogue);
+		public override void Compile(sunCompiler compiler) {
+			Condition.Compile(compiler);
+			var falsePrologue = compiler.Binary.WriteJNE();
+			TrueBody.Compile(compiler);
+			var trueEpilogue = compiler.Binary.WriteJMP();
+			compiler.Binary.ClosePoint(falsePrologue);
+			FalseBody.Compile(compiler);
+			compiler.Binary.ClosePoint(trueEpilogue);
 		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
@@ -139,15 +139,15 @@ namespace arookas {
 		public sunPostfixAugment(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			var symbol = context.MustResolveStorable(Variable);
+		public override void Compile(sunCompiler compiler) {
+			var symbol = compiler.Context.MustResolveStorable(Variable);
 			if (symbol is sunConstantSymbol) {
 				throw new sunAssignConstantException(Variable);
 			}
 			if (Parent is sunOperand) {
-				symbol.CompileGet(context);
+				symbol.CompileGet(compiler);
 			}
-			Augment.Compile(context, symbol);
+			Augment.Compile(compiler, symbol);
 		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
@@ -162,14 +162,14 @@ namespace arookas {
 		public sunPrefixAugment(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			var symbol = context.MustResolveStorable(Variable);
+		public override void Compile(sunCompiler compiler) {
+			var symbol = compiler.Context.MustResolveStorable(Variable);
 			if (symbol is sunConstantSymbol) {
 				throw new sunAssignConstantException(Variable);
 			}
-			Augment.Compile(context, symbol);
+			Augment.Compile(compiler, symbol);
 			if (Parent is sunOperand) {
-				symbol.CompileGet(context);
+				symbol.CompileGet(compiler);
 			}
 		}
 		
@@ -182,16 +182,16 @@ namespace arookas {
 		protected sunAugment(sunSourceLocation location)
 			: base(location) { }
 
-		public abstract void Compile(sunContext context, sunStorableSymbol symbol);
+		public abstract void Compile(sunCompiler compiler, sunStorableSymbol symbol);
 	}
 
 	class sunIncrement : sunAugment {
 		public sunIncrement(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol) {
-			symbol.CompileInc(context);
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol) {
+			symbol.CompileInc(compiler);
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -199,9 +199,9 @@ namespace arookas {
 		public sunDecrement(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol) {
-			symbol.CompileDec(context);
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol) {
+			symbol.CompileDec(compiler);
+			symbol.CompileSet(compiler);
 		}
 	}
 }

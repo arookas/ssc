@@ -33,11 +33,11 @@ namespace arookas {
 			mLoops.Push(loop);
 			return loop;
 		}
-		public void Pop(sunContext context) {
+		public void Pop(sunCompiler compiler) {
 			if (Count < 1) {
 				return;
 			}
-			mLoops.Pop().Close(context);
+			mLoops.Pop().Close(compiler);
 		}
 
 		public void Clear() {
@@ -117,15 +117,15 @@ namespace arookas {
 			mContinues.Add(point);
 			return true;
 		}
-		public void Close(sunContext context) {
+		public void Close(sunCompiler compiler) {
 			if (HasFlag(sunLoopFlags.ConsumeBreak)) {
 				foreach (var b in mBreaks) {
-					context.Text.ClosePoint(b, mBreakPoint.Offset);
+					compiler.Binary.ClosePoint(b, mBreakPoint);
 				}
 			}
 			if (HasFlag(sunLoopFlags.ConsumeContinue)) {
 				foreach (var c in mContinues) {
-					context.Text.ClosePoint(c, mContinuePoint.Offset);
+					compiler.Binary.ClosePoint(c, mContinuePoint);
 				}
 			}
 		}

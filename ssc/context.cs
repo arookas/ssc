@@ -7,17 +7,12 @@ using System.Text;
 
 namespace arookas {
 	class sunContext {
-		bool mOpen;
-		aBinaryWriter mWriter;
-		uint mTextOffset, mDataOffset, mSymbolOffset;
 		Stack<sunNameLabel> mNameStack;
 
-		public sunWriter Text { get; private set; }
 		public sunDataTable DataTable { get; private set; }
 		public sunSymbolTable SymbolTable { get; private set; }
 		public sunScopeStack Scopes { get; private set; }
 		public sunLoopStack Loops { get; private set; }
-		public sunImportResolver ImportResolver { get; private set; }
 
 		// system builtins
 		public sunCallableSymbol Yield { get; private set; }
@@ -37,73 +32,18 @@ namespace arookas {
 			Scopes = new sunScopeStack();
 			Loops = new sunLoopStack();
 			mNameStack = new Stack<sunNameLabel>(5);
+			AddSystemSymbols();
 		}
 
-		// open/close
-		public void Open(Stream output) { Open(output, sunImportResolver.Default); }
-		public void Open(Stream output, sunImportResolver importResolver) {
-			if (mOpen) {
-				throw new InvalidOperationException();
-			}
-			if (output == null) {
-				throw new ArgumentNullException("output");
-			}
-			if (importResolver == null) {
-				throw new ArgumentNullException("importResolver");
-			}
-			mOpen = true;
+		public void Clear() {
 			DataTable.Clear();
 			SymbolTable.Clear();
 			Scopes.Clear();
 			Loops.Clear();
 			mNameStack.Clear();
-			ImportResolver = importResolver;
-			mWriter = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
-			Text = new sunWriter(mWriter);
-			mWriter.PushAnchor();
+
+			// reinstall system symbols
 			AddSystemSymbols();
-
-			WriteHeader(); // dummy header
-
-			// begin text block
-			mTextOffset = (uint)mWriter.Position;
-			mWriter.PushAnchor(); // match code offsets and writer offsets
-			
-		}
-		public void Close() {
-			if (!mOpen) {
-				throw new InvalidOperationException();
-			}
-			mWriter.PopAnchor();
-			mDataOffset = (uint)mWriter.Position;
-			DataTable.Write(mWriter);
-			mSymbolOffset = (uint)mWriter.Position;
-			SymbolTable.Write(mWriter);
-			mWriter.Goto(0);
-			WriteHeader();
-			mOpen = false;
-		}
-
-		// imports/compilation
-		public sunImportResult Import(string name) {
-			if (name == null) {
-				throw new ArgumentNullException("name");
-			}
-			sunScriptFile file;
-			var result = ImportResolver.ResolveImport(name, out file);
-			if (result == sunImportResult.Loaded) {
-				try {
-					ImportResolver.EnterFile(file);
-					var parser = new sunParser();
-					var tree = parser.Parse(file);
-					tree.Compile(this);
-					ImportResolver.ExitFile(file);
-				}
-				finally {
-					file.Dispose();
-				}
-			}
-			return result;
 		}
 
 		// callables
@@ -210,6 +150,7 @@ namespace arookas {
 			return symbol;
 		}
 
+		// name labels
 		public void PushNameLabel(sunNameLabel label) {
 			if (label == null) {
 				throw new ArgumentNullException("label");
@@ -246,15 +187,6 @@ namespace arookas {
 			var symbol = Scopes.DeclareVariable(name);
 			SymbolTable.Add(symbol);
 			return symbol;
-		}
-		void WriteHeader() {
-			mWriter.WriteString("SPCB");
-			mWriter.Write32(mTextOffset);
-			mWriter.Write32(mDataOffset);
-			mWriter.WriteS32(DataTable.Count);
-			mWriter.Write32(mSymbolOffset);
-			mWriter.WriteS32(SymbolTable.Count);
-			mWriter.WriteS32(SymbolTable.VariableCount);
 		}
 	}
 }

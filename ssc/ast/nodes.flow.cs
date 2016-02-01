@@ -10,19 +10,19 @@ namespace arookas {
 		public sunIf(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			Condition.Compile(context);
-			var trueBodyEpilogue = context.Text.WriteJNE();
-			TrueBody.Compile(context);
+		public override void Compile(sunCompiler compiler) {
+			Condition.Compile(compiler);
+			var trueBodyEpilogue = compiler.Binary.WriteJNE();
+			TrueBody.Compile(compiler);
 			var falseBody = FalseBody;
 			if (falseBody != null) {
-				var falseBodyEpilogue = context.Text.WriteJMP();
-				context.Text.ClosePoint(trueBodyEpilogue);
-				falseBody.Compile(context);
-				context.Text.ClosePoint(falseBodyEpilogue);
+				var falseBodyEpilogue = compiler.Binary.WriteJMP();
+				compiler.Binary.ClosePoint(trueBodyEpilogue);
+				falseBody.Compile(compiler);
+				compiler.Binary.ClosePoint(falseBodyEpilogue);
 			}
 			else {
-				context.Text.ClosePoint(trueBodyEpilogue);
+				compiler.Binary.ClosePoint(trueBodyEpilogue);
 			}
 		}
 	}
@@ -54,17 +54,17 @@ namespace arookas {
 		public sunWhile(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			var loop = PushLoop(context);
-			var bodyPrologue = context.Text.OpenPoint();
-			loop.ContinuePoint = context.Text.OpenPoint();
-			Condition.Compile(context);
-			var bodyEpilogue = context.Text.WriteJNE();
-			Body.Compile(context);
-			context.Text.WriteJMP(bodyPrologue);
-			context.Text.ClosePoint(bodyEpilogue);
-			loop.BreakPoint = context.Text.OpenPoint();
-			context.Loops.Pop(context);
+		public override void Compile(sunCompiler compiler) {
+			var loop = PushLoop(compiler.Context);
+			var bodyPrologue = compiler.Binary.OpenPoint();
+			loop.ContinuePoint = compiler.Binary.OpenPoint();
+			Condition.Compile(compiler);
+			var bodyEpilogue = compiler.Binary.WriteJNE();
+			Body.Compile(compiler);
+			compiler.Binary.WriteJMP(bodyPrologue);
+			compiler.Binary.ClosePoint(bodyEpilogue);
+			loop.BreakPoint = compiler.Binary.OpenPoint();
+			compiler.Context.Loops.Pop(compiler);
 		}
 	}
 
@@ -75,17 +75,17 @@ namespace arookas {
 		public sunDo(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			var loop = PushLoop(context);
-			var bodyPrologue = context.Text.OpenPoint();
-			Body.Compile(context);
-			loop.ContinuePoint = context.Text.OpenPoint();
-			Condition.Compile(context);
-			var bodyEpilogue = context.Text.WriteJNE();
-			context.Text.WriteJMP(bodyPrologue);
-			context.Text.ClosePoint(bodyEpilogue);
-			loop.BreakPoint = context.Text.OpenPoint();
-			context.Loops.Pop(context);
+		public override void Compile(sunCompiler compiler) {
+			var loop = PushLoop(compiler.Context);
+			var bodyPrologue = compiler.Binary.OpenPoint();
+			Body.Compile(compiler);
+			loop.ContinuePoint = compiler.Binary.OpenPoint();
+			Condition.Compile(compiler);
+			var bodyEpilogue = compiler.Binary.WriteJNE();
+			compiler.Binary.WriteJMP(bodyPrologue);
+			compiler.Binary.ClosePoint(bodyEpilogue);
+			loop.BreakPoint = compiler.Binary.OpenPoint();
+			compiler.Context.Loops.Pop(compiler);
 		}
 	}
 
@@ -98,21 +98,21 @@ namespace arookas {
 		public sunFor(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.Scopes.Push();
-			var loop = PushLoop(context);
-			TryCompile(Declaration, context);
-			var bodyPrologue = context.Text.OpenPoint();
-			TryCompile(Condition, context);
-			var bodyEpilogue = context.Text.WriteJNE();
-			Body.Compile(context);
-			loop.ContinuePoint = context.Text.OpenPoint();
-			TryCompile(Iteration, context);
-			context.Text.WriteJMP(bodyPrologue);
-			context.Text.ClosePoint(bodyEpilogue);
-			loop.BreakPoint = context.Text.OpenPoint();
-			context.Loops.Pop(context);
-			context.Scopes.Pop();
+		public override void Compile(sunCompiler compiler) {
+			compiler.Context.Scopes.Push();
+			var loop = PushLoop(compiler.Context);
+			TryCompile(Declaration, compiler);
+			var bodyPrologue = compiler.Binary.OpenPoint();
+			TryCompile(Condition, compiler);
+			var bodyEpilogue = compiler.Binary.WriteJNE();
+			Body.Compile(compiler);
+			loop.ContinuePoint = compiler.Binary.OpenPoint();
+			TryCompile(Iteration, compiler);
+			compiler.Binary.WriteJMP(bodyPrologue);
+			compiler.Binary.ClosePoint(bodyEpilogue);
+			loop.BreakPoint = compiler.Binary.OpenPoint();
+			compiler.Context.Loops.Pop(compiler);
+			compiler.Context.Scopes.Pop();
 		}
 	}
 	class sunForDeclaration : sunNode {
@@ -134,14 +134,14 @@ namespace arookas {
 		public sunReturn(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
+		public override void Compile(sunCompiler compiler) {
 			var expression = Expression;
 			if (expression != null) {
-				expression.Compile(context);
-				context.Text.WriteRET();
+				expression.Compile(compiler);
+				compiler.Binary.WriteRET();
 			}
 			else {
-				context.Text.WriteRET0();
+				compiler.Binary.WriteRET0();
 			}
 		}
 	}
@@ -153,9 +153,9 @@ namespace arookas {
 		public sunBreak(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			var point = context.Text.WriteJMP();
-			if (!context.Loops.AddBreak(point, IsNamed ? NameLabel.Value : null)) {
+		public override void Compile(sunCompiler compiler) {
+			var point = compiler.Binary.WriteJMP();
+			if (!compiler.Context.Loops.AddBreak(point, IsNamed ? NameLabel.Value : null)) {
 				throw new sunBreakException(this);
 			}
 		}
@@ -168,9 +168,9 @@ namespace arookas {
 		public sunContinue(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			var point = context.Text.WriteJMP();
-			if (!context.Loops.AddContinue(point, IsNamed ? NameLabel.Value : null)) {
+		public override void Compile(sunCompiler compiler) {
+			var point = compiler.Binary.WriteJMP();
+			if (!compiler.Context.Loops.AddContinue(point, IsNamed ? NameLabel.Value : null)) {
 				throw new sunContinueException(this);
 			}
 		}

@@ -31,24 +31,6 @@ namespace arookas {
 		public void Add(sunSymbol symbol) { Symbols.Add(symbol); }
 		public void Clear() { Symbols.Clear(); }
 
-		public void Write(aBinaryWriter writer) {
-			int ofs = 0;
-			foreach (var sym in this) {
-				writer.WriteS32((int)sym.Type);
-				writer.WriteS32(ofs);
-				writer.Write32(sym.Data);
-
-				// runtime fields
-				writer.WriteS32(0);
-				writer.WriteS32(0);
-
-				ofs += writer.Encoding.GetByteCount(sym.Name) + 1; // include null terminator
-			}
-			foreach (var sym in this) {
-				writer.WriteString(sym.Name, aBinaryStringFormat.NullTerminated);
-			}
-		}
-
 		public IEnumerator<sunSymbol> GetEnumerator() { return Symbols.GetEnumerator(); }
 		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
 	}
@@ -64,7 +46,7 @@ namespace arookas {
 			Name = name;
 		}
 
-		public abstract void Compile(sunContext context);
+		public abstract void Compile(sunCompiler compiler);
 	}
 
 	abstract class sunCallableSymbol : sunSymbol {
@@ -79,8 +61,8 @@ namespace arookas {
 			CallSites = new List<sunPoint>(10);
 		}
 
-		public abstract void OpenCallSite(sunContext context, int argumentCount);
-		public abstract void CloseCallSites(sunContext context);
+		public abstract void OpenCallSite(sunCompiler compiler, int argumentCount);
+		public abstract void CloseCallSites(sunCompiler compiler);
 	}
 
 	class sunBuiltinSymbol : sunCallableSymbol {
@@ -99,13 +81,13 @@ namespace arookas {
 			Index = index;
 		}
 
-		public override void Compile(sunContext context) {
-			throw new InvalidOperationException("Cannot compile builtins.");
+		public override void Compile(sunCompiler compiler) {
+			// don't compile builtins
 		}
-		public override void OpenCallSite(sunContext context, int argumentCount) {
-			context.Text.WriteFUNC(Index, argumentCount);
+		public override void OpenCallSite(sunCompiler compiler, int argumentCount) {
+			compiler.Binary.WriteFUNC(Index, argumentCount);
 		}
-		public override void CloseCallSites(sunContext context) { }
+		public override void CloseCallSites(sunCompiler compiler) { }
 	}
 
 	class sunFunctionSymbol : sunCallableSymbol {
@@ -121,26 +103,26 @@ namespace arookas {
 			Body = body;
 		}
 
-		public override void Compile(sunContext context) {
-			Offset = context.Text.Offset;
-			context.Scopes.Push(sunScopeType.Function);
-			context.Scopes.ResetLocalCount();
+		public override void Compile(sunCompiler compiler) {
+			Offset = compiler.Binary.Offset;
+			compiler.Context.Scopes.Push(sunScopeType.Function);
+			compiler.Context.Scopes.ResetLocalCount();
 			foreach (var parameter in Parameters) {
-				context.Scopes.DeclareVariable(parameter); // since there is no AST node for these, they won't affect MaxLocalCount
+				compiler.Context.Scopes.DeclareVariable(parameter); // since there is no AST node for these, they won't affect MaxLocalCount
 			}
-			context.Text.WriteMKDS(1);
-			context.Text.WriteMKFR(Body.MaxLocalCount);
-			Body.Compile(context);
-			context.Text.WriteRET0();
-			context.Scopes.Pop();
+			compiler.Binary.WriteMKDS(1);
+			compiler.Binary.WriteMKFR(Body.MaxLocalCount);
+			Body.Compile(compiler);
+			compiler.Binary.WriteRET0();
+			compiler.Context.Scopes.Pop();
 		}
-		public override void OpenCallSite(sunContext context, int argumentCount) {
-			var point = context.Text.WriteCALL(argumentCount);
+		public override void OpenCallSite(sunCompiler compiler, int argumentCount) {
+			var point = compiler.Binary.WriteCALL(argumentCount);
 			CallSites.Add(point);
 		}
-		public override void CloseCallSites(sunContext context) {
+		public override void CloseCallSites(sunCompiler compiler) {
 			foreach (var callSite in CallSites) {
-				context.Text.ClosePoint(callSite, Offset);
+				compiler.Binary.ClosePoint(callSite, Offset);
 			}
 		}
 	}
@@ -177,18 +159,20 @@ namespace arookas {
 		protected sunStorableSymbol(string name)
 			: base(name) { }
 
-		public override void Compile(sunContext context) { CompileGet(context); } // compile get by default
-		public abstract void CompileGet(sunContext context);
-		public abstract void CompileSet(sunContext context);
-		public virtual void CompileInc(sunContext context) {
-			CompileGet(context);
-			context.Text.WriteINT(1);
-			context.Text.WriteADD();
+		public override void Compile(sunCompiler compiler) {
+			CompileGet(compiler);
 		}
-		public virtual void CompileDec(sunContext context) {
-			CompileGet(context);
-			context.Text.WriteINT(1);
-			context.Text.WriteSUB();
+		public abstract void CompileGet(sunCompiler compiler);
+		public abstract void CompileSet(sunCompiler compiler);
+		public virtual void CompileInc(sunCompiler compiler) {
+			CompileGet(compiler);
+			compiler.Binary.WriteINT(1);
+			compiler.Binary.WriteADD();
+		}
+		public virtual void CompileDec(sunCompiler compiler) {
+			CompileGet(compiler);
+			compiler.Binary.WriteINT(1);
+			compiler.Binary.WriteSUB();
 		}
 	}
 
@@ -206,10 +190,10 @@ namespace arookas {
 			Index = index;
 		}
 
-		public override void CompileGet(sunContext context) { context.Text.WriteVAR(Display, Index); }
-		public override void CompileSet(sunContext context) { context.Text.WriteASS(Display, Index); }
-		public override void CompileInc(sunContext context) { context.Text.WriteINC(Display, Index); }
-		public override void CompileDec(sunContext context) { context.Text.WriteDEC(Display, Index); }
+		public override void CompileGet(sunCompiler compiler) { compiler.Binary.WriteVAR(Display, Index); }
+		public override void CompileSet(sunCompiler compiler) { compiler.Binary.WriteASS(Display, Index); }
+		public override void CompileInc(sunCompiler compiler) { compiler.Binary.WriteINC(Display, Index); }
+		public override void CompileDec(sunCompiler compiler) { compiler.Binary.WriteDEC(Display, Index); }
 	}
 
 	class sunConstantSymbol : sunStorableSymbol {
@@ -227,10 +211,10 @@ namespace arookas {
 			Expression = expression;
 		}
 
-		public override void CompileGet(sunContext context) {
-			Expression.Compile(context);
+		public override void CompileGet(sunCompiler compiler) {
+			Expression.Compile(compiler);
 		}
-		public override void CompileSet(sunContext context) {
+		public override void CompileSet(sunCompiler compiler) {
 			// checks against this have to be implemented at a higher level
 			throw new InvalidOperationException();
 		}

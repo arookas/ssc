@@ -8,10 +8,10 @@
 		public sunStatementBlock(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.Scopes.Push(context.Scopes.Top.Type);
-			base.Compile(context);
-			context.Scopes.Pop();
+		public override void Compile(sunCompiler compiler) {
+			compiler.Context.Scopes.Push(compiler.Context.Scopes.Top.Type);
+			base.Compile(compiler);
+			compiler.Context.Scopes.Pop();
 		}
 	}
 
@@ -21,11 +21,13 @@
 		public sunImport(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			var result = context.Import(ImportFile.Value);
+		public override void Compile(sunCompiler compiler) {
+			var result = compiler.Import(ImportFile.Value);
 			switch (result) {
 				case sunImportResult.Missing:
-				case sunImportResult.FailedToLoad: throw new sunMissingImportException(this);
+				case sunImportResult.FailedToLoad: {
+					throw new sunMissingImportException(this);
+				}
 			}
 		}
 	}
@@ -36,8 +38,8 @@
 		public sunNameLabel(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.PushNameLabel(this);
+		public override void Compile(sunCompiler compiler) {
+			compiler.Context.PushNameLabel(this);
 		}
 	}
 }

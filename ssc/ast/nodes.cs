@@ -2,8 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace arookas
-{
+namespace arookas {
 	public class sunSourceLocation {
 		public string File { get; private set; }
 		public int Line { get; private set; }
@@ -36,8 +35,8 @@ namespace arookas
 
 		public int MaxLocalCount {
 			get {
-				int locals = 0;
-				int maxChildLocals = 0;
+				var locals = 0;
+				var maxChildLocals = 0;
 				foreach (var child in this) {
 					if (child is sunVariableDeclaration || child is sunVariableDefinition) {
 						++locals;
@@ -46,7 +45,7 @@ namespace arookas
 						locals += child.MaxLocalCount; // HACK: compound statements aren't their own scope
 					}
 					else if (!(child is sunFunctionDefinition)) { // don't recurse into function bodies
-						int childLocals = child.MaxLocalCount;
+						var childLocals = child.MaxLocalCount;
 						if (childLocals > maxChildLocals) {
 							maxChildLocals = childLocals;
 						}
@@ -87,20 +86,17 @@ namespace arookas
 			mChildren.Clear();
 		}
 
-		public virtual void Compile(sunContext context) {
-			// Simply compile all children nodes by default. This is here for the transcient nodes' implementations
-			// (sunStatement, sunCompoundStatement, etc.) so I only have to type this once. sunExpression is careful
-			// to override this with the custom shunting-yard algorithm implementation.
+		public virtual void Compile(sunCompiler compiler) {
 			foreach (var child in this) {
-				child.Compile(context);
+				child.Compile(compiler);
 			}
 		}
-		protected bool TryCompile(sunNode node, sunContext context) {
-			if (node != null) {
-				node.Compile(context);
-				return true;
+		protected bool TryCompile(sunNode node, sunCompiler compiler) {
+			if (node == null) {
+				return false;
 			}
-			return false;
+			node.Compile(compiler);
+			return true;
 		}
 
 		public IEnumerator<sunNode> GetEnumerator() { return mChildren.GetEnumerator(); }

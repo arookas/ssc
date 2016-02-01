@@ -9,8 +9,8 @@ namespace arookas {
 		public sunBuiltinDeclaration(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.DeclareBuiltin(this);
+		public override void Compile(sunCompiler compiler) {
+			compiler.Context.DeclareBuiltin(this);
 		}
 	}
 
@@ -22,8 +22,10 @@ namespace arookas {
 		public sunFunctionDefinition(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.DefineFunction(this); // possibly counter intuitively, this defines the function in the context; it doesn't compile the definition body
+		public override void Compile(sunCompiler compiler) {
+			// this defines the function in the context
+			// it doesn't compile the definition body
+			compiler.Context.DefineFunction(this);
 		}
 	}
 
@@ -36,15 +38,15 @@ namespace arookas {
 		public sunFunctionCall(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			var symbol = context.MustResolveCallable(this);
+		public override void Compile(sunCompiler compiler) {
+			var symbol = compiler.Context.MustResolveCallable(this);
 			if (!symbol.Parameters.ValidateArgumentCount(Arguments.Count)) {
 				throw new sunArgumentCountException(this, symbol);
 			}
-			Arguments.Compile(context);
-			symbol.OpenCallSite(context, Arguments.Count);
+			Arguments.Compile(compiler);
+			symbol.OpenCallSite(compiler, Arguments.Count);
 			if (IsStatement) {
-				context.Text.WritePOP();
+				compiler.Binary.WritePOP();
 			}
 		}
 		

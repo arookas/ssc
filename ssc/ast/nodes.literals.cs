@@ -13,7 +13,9 @@ namespace arookas {
 		protected sunIntLiteral(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteINT(Value); }
+		public override void Compile(sunCompiler compiler) {
+			compiler.Binary.WriteINT(Value);
+		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
 			return sunExpressionFlags.Literals;
@@ -41,8 +43,8 @@ namespace arookas {
 			Value = Single.Parse(literal);
 		}
 
-		public override void Compile(sunContext context) {
-			context.Text.WriteFLT(Value);
+		public override void Compile(sunCompiler compiler) {
+			compiler.Binary.WriteFLT(Value);
 		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
@@ -56,8 +58,9 @@ namespace arookas {
 			Value = UnescapeString(literal.Substring(1, literal.Length - 2)); // remove enclosing quotes
 		}
 
-		public override void Compile(sunContext context) {
-			context.Text.WriteSTR(context.DataTable.Add(Value));
+		public override void Compile(sunCompiler compiler) {
+			var index = compiler.Context.DataTable.Add(Value);
+			compiler.Binary.WriteSTR(index);
 		}
 
 		// string unescaping utility

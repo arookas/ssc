@@ -4,6 +4,20 @@ using System.IO;
 
 namespace arookas {
 	public class sunCompiler {
+		sunContext mContext;
+		sunBinary mBinary;
+		sunImportResolver mResolver;
+
+		internal sunContext Context {
+			get { return mContext; }
+		}
+		internal sunBinary Binary {
+			get { return mBinary; }
+		}
+		internal sunImportResolver ImportResolver {
+			get { return mResolver; }
+		}
+
 		public sunCompilerResults Compile(string name, Stream output) {
 			return Compile(name, output, sunImportResolver.Default);
 		}
@@ -17,28 +31,35 @@ namespace arookas {
 			if (resolver == null) {
 				throw new ArgumentNullException("resolver");
 			}
-			var context = new sunContext();
 			var results = new sunCompilerResults();
 			var timer = Stopwatch.StartNew();
 			try {
-				context.Open(output, resolver);
-				var result = context.Import(name);
-				if (result != sunImportResult.Loaded) {
-					throw new sunImportException(name, result);
+				mResolver = resolver;
+				mContext = new sunContext();
+				using (mBinary = new sunBinary(output)) {
+					var result = Import(name);
+					if (result != sunImportResult.Loaded) {
+						throw new sunImportException(name, result);
+					}
+					mBinary.WriteEND(); // NOTETOSELF: don't do this via sunNode.Compile because imported files will add this as well
+					foreach (var callable in mContext.SymbolTable.Callables) {
+						callable.Compile(this);
+					}
+					foreach (var callable in mContext.SymbolTable.Callables) {
+						callable.CloseCallSites(this);
+					}
+					foreach (var data in mContext.DataTable) {
+						mBinary.WriteData(data);
+					}
+					foreach (var symbol in mContext.SymbolTable) {
+						mBinary.WriteSymbol(symbol.Type, symbol.Name, symbol.Data);
+					}
 				}
-				context.Text.WriteEND(); // NOTETOSELF: don't do this via sunNode.Compile because imported files will add this as well
-				foreach (var function in context.SymbolTable.Functions) {
-					function.Compile(context);
-				}
-				foreach (var callable in context.SymbolTable.Callables) {
-					callable.CloseCallSites(context);
-				}
-				results.DataCount = context.DataTable.Count;
-				results.SymbolCount = context.SymbolTable.Count;
-				results.BuiltinCount = context.SymbolTable.BuiltinCount;
-				results.FunctionCount = context.SymbolTable.FunctionCount;
-				results.VariableCount = context.SymbolTable.VariableCount;
-				context.Close();
+				results.DataCount = mContext.DataTable.Count;
+				results.SymbolCount = mContext.SymbolTable.Count;
+				results.BuiltinCount = mContext.SymbolTable.BuiltinCount;
+				results.FunctionCount = mContext.SymbolTable.FunctionCount;
+				results.VariableCount = mContext.SymbolTable.VariableCount;
 			}
 			catch (sunCompilerException ex) {
 				results.Error = ex;
@@ -46,6 +67,27 @@ namespace arookas {
 			timer.Stop();
 			results.CompileTime = timer.Elapsed;
 			return results;
+		}
+
+		internal sunImportResult Import(string name) {
+			if (name == null) {
+				throw new ArgumentNullException("name");
+			}
+			sunScriptFile file;
+			var result = ImportResolver.ResolveImport(name, out file);
+			if (result == sunImportResult.Loaded) {
+				try {
+					ImportResolver.EnterFile(file);
+					var parser = new sunParser();
+					var tree = parser.Parse(file);
+					tree.Compile(this);
+					ImportResolver.ExitFile(file);
+				}
+				finally {
+					file.Dispose();
+				}
+			}
+			return result;
 		}
 	}
 

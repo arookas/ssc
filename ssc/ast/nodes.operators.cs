@@ -24,7 +24,7 @@ namespace arookas {
 		public sunLogOR(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteOR(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteOR(); }
 	}
 
 	// precedence 1
@@ -34,7 +34,7 @@ namespace arookas {
 		public sunLogAND(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteAND(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteAND(); }
 	}
 
 	// precedence 2
@@ -44,7 +44,7 @@ namespace arookas {
 		public sunBitOR(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteBOR(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteBOR(); }
 	}
 
 	// precedence 3
@@ -54,7 +54,7 @@ namespace arookas {
 		public sunBitAND(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteBAND(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteBAND(); }
 	}
 
 	// precedence 4
@@ -64,7 +64,7 @@ namespace arookas {
 		public sunEq(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteEQ(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteEQ(); }
 	}
 
 	class sunNtEq : sunOperator {
@@ -73,7 +73,7 @@ namespace arookas {
 		public sunNtEq(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteNE(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteNE(); }
 	}
 
 	// precedence 5
@@ -83,7 +83,7 @@ namespace arookas {
 		public sunLt(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteLT(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteLT(); }
 	}
 
 	class sunLtEq : sunOperator {
@@ -92,7 +92,7 @@ namespace arookas {
 		public sunLtEq(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteLE(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteLE(); }
 	}
 
 	class sunGt : sunOperator {
@@ -101,7 +101,7 @@ namespace arookas {
 		public sunGt(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteGT(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteGT(); }
 	}
 
 	class sunGtEq : sunOperator {
@@ -110,7 +110,7 @@ namespace arookas {
 		public sunGtEq(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteGE(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteGE(); }
 	}
 
 	// precedence 6
@@ -120,7 +120,7 @@ namespace arookas {
 		public sunBitLsh(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteSHL(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteSHL(); }
 	}
 
 	class sunBitRsh : sunOperator {
@@ -129,7 +129,7 @@ namespace arookas {
 		public sunBitRsh(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteSHR(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteSHR(); }
 	}
 
 	// precedence 7
@@ -139,7 +139,7 @@ namespace arookas {
 		public sunAdd(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteADD(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteADD(); }
 	}
 
 	class sunSub : sunOperator {
@@ -148,7 +148,7 @@ namespace arookas {
 		public sunSub(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteSUB(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteSUB(); }
 	}
 
 	// precedence 8
@@ -158,7 +158,7 @@ namespace arookas {
 		public sunMul(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteMUL(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteMUL(); }
 	}
 
 	class sunDiv : sunOperator {
@@ -167,7 +167,7 @@ namespace arookas {
 		public sunDiv(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteDIV(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteDIV(); }
 	}
 
 	class sunMod : sunOperator {
@@ -176,7 +176,7 @@ namespace arookas {
 		public sunMod(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteMOD(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteMOD(); }
 	}
 
 	// precedence 9
@@ -186,7 +186,7 @@ namespace arookas {
 		public sunLogNOT(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteNOT(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteNOT(); }
 	}
 	class sunNeg : sunOperator {
 		public override int Precedence { get { return 9; } }
@@ -194,7 +194,7 @@ namespace arookas {
 		public sunNeg(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) { context.Text.WriteNEG(); }
+		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteNEG(); }
 	}
 
 	// assignment operators
@@ -205,9 +205,9 @@ namespace arookas {
 		public sunAssign(sunSourceLocation location)
 			: base(location) { }
 
-		public virtual void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			expression.Compile(context);
-			symbol.CompileSet(context);
+		public virtual void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			expression.Compile(compiler);
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -215,11 +215,11 @@ namespace arookas {
 		public sunAssignAdd(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteADD();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteADD();
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -227,11 +227,11 @@ namespace arookas {
 		public sunAssignSub(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteSUB();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteSUB();
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -239,11 +239,11 @@ namespace arookas {
 		public sunAssignMul(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteMUL();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteMUL();
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -251,11 +251,11 @@ namespace arookas {
 		public sunAssignDiv(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteDIV();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteDIV();
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -263,11 +263,11 @@ namespace arookas {
 		public sunAssignMod(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteMOD();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteMOD();
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -275,11 +275,11 @@ namespace arookas {
 		public sunAssignBitAND(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteBAND();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteBAND();
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -287,11 +287,11 @@ namespace arookas {
 		public sunAssignBitOR(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteBOR();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteBOR();
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -299,11 +299,11 @@ namespace arookas {
 		public sunAssignBitLsh(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteSHL();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteSHL();
+			symbol.CompileSet(compiler);
 		}
 	}
 
@@ -311,11 +311,11 @@ namespace arookas {
 		public sunAssignBitRsh(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context, sunStorableSymbol symbol, sunExpression expression) {
-			symbol.CompileGet(context);
-			expression.Compile(context);
-			context.Text.WriteSHR();
-			symbol.CompileSet(context);
+		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
+			symbol.CompileGet(compiler);
+			expression.Compile(compiler);
+			compiler.Binary.WriteSHR();
+			symbol.CompileSet(compiler);
 		}
 	}
 }

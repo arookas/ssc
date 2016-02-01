@@ -3,9 +3,9 @@
 		public sunYield(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.Yield.OpenCallSite(context, 0);
-			context.Text.WritePOP();
+		public override void Compile(sunCompiler compiler) {
+			compiler.Context.Yield.OpenCallSite(compiler, 0);
+			compiler.Binary.WritePOP();
 		}
 	}
 
@@ -13,9 +13,9 @@
 		public sunExit(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.Exit.OpenCallSite(context, 0);
-			context.Text.WritePOP();
+		public override void Compile(sunCompiler compiler) {
+			compiler.Context.Exit.OpenCallSite(compiler, 0);
+			compiler.Binary.WritePOP();
 		}
 	}
 
@@ -23,9 +23,9 @@
 		public sunLock(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.Lock.OpenCallSite(context, 0);
-			context.Text.WritePOP();
+		public override void Compile(sunCompiler compiler) {
+			compiler.Context.Lock.OpenCallSite(compiler, 0);
+			compiler.Binary.WritePOP();
 		}
 	}
 
@@ -33,9 +33,9 @@
 		public sunUnlock(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			context.Unlock.OpenCallSite(context, 0);
-			context.Text.WritePOP();
+		public override void Compile(sunCompiler compiler) {
+			compiler.Context.Unlock.OpenCallSite(compiler, 0);
+			compiler.Binary.WritePOP();
 		}
 	}
 
@@ -54,9 +54,9 @@
 		public sunIntCast(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			Argument.Compile(context);
-			context.Int.OpenCallSite(context, 1);
+		public override void Compile(sunCompiler compiler) {
+			Argument.Compile(compiler);
+			compiler.Context.Int.OpenCallSite(compiler, 1);
 		}
 	}
 
@@ -64,9 +64,9 @@
 		public sunFloatCast(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			Argument.Compile(context);
-			context.Float.OpenCallSite(context, 1);
+		public override void Compile(sunCompiler compiler) {
+			Argument.Compile(compiler);
+			compiler.Context.Float.OpenCallSite(compiler, 1);
 		}
 	}
 
@@ -74,9 +74,9 @@
 		public sunTypeofCast(sunSourceLocation location)
 			: base(location) { }
 
-		public override void Compile(sunContext context) {
-			Argument.Compile(context);
-			context.Typeof.OpenCallSite(context, 1);
+		public override void Compile(sunCompiler compiler) {
+			Argument.Compile(compiler);
+			compiler.Context.Typeof.OpenCallSite(compiler, 1);
 		}
 	}
 }
