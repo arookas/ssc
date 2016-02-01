@@ -121,10 +121,6 @@ namespace arookas {
 			set { mIndex = value; }
 		}
 
-		public override bool HasCallSites {
-			get { return mCallSites.Count > 0; }
-		}
-
 		// symbol table
 		public override sunSymbolType Type { get { return sunSymbolType.Builtin; } }
 		public override uint Data { get { return (uint)Index; } }
