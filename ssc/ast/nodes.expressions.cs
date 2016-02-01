@@ -67,7 +67,7 @@ namespace arookas {
 		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
-			return Analyze(context);
+			return AnalyzeExpression(context, this);
 		}
 	}
 
