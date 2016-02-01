@@ -155,7 +155,14 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			var point = compiler.Binary.WriteJMP();
-			if (!compiler.Context.Loops.AddBreak(point, IsNamed ? NameLabel.Value : null)) {
+			var success = true;
+			if (IsNamed) {
+				success = compiler.Context.Loops.AddBreak(point, NameLabel.Value);
+			}
+			else {
+				success = compiler.Context.Loops.AddBreak(point);
+			}
+			if (!success) {
 				throw new sunBreakException(this);
 			}
 		}
@@ -170,7 +177,14 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			var point = compiler.Binary.WriteJMP();
-			if (!compiler.Context.Loops.AddContinue(point, IsNamed ? NameLabel.Value : null)) {
+			var success = true;
+			if (IsNamed) {
+				success = compiler.Context.Loops.AddContinue(point, NameLabel.Value);
+			}
+			else {
+				success = compiler.Context.Loops.AddContinue(point);
+			}
+			if (!success) {
 				throw new sunContinueException(this);
 			}
 		}
