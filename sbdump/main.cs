@@ -23,7 +23,9 @@ namespace arookas {
 		};
 
 		static int Main(string[] args) {
+#if !DEBUG
 			try {
+#endif
 				Console.WriteLine(cTitle);
 				ReadCommandLine(args);
 				Console.WriteLine("Opening input file...");
@@ -53,12 +55,14 @@ namespace arookas {
 					Console.WriteLine("Closing input file...");
 				}
 				Console.WriteLine("Done.");
+#if !DEBUG
 			}
 			catch (Exception e) {
 				Console.WriteLine(e.Message);
 				return 1;
 			}
-			return 0;
+#endif
+				return 0;
 		}
 
 		static void ReadCommandLine(string[] args) {
