@@ -59,7 +59,12 @@ namespace arookas {
 		}
 		
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
-			return sunExpressionFlags.Calls | sunExpressionFlags.Dynamic;
+			var symbol = context.MustResolveCallable(this);
+			var flags = sunExpressionFlags.Calls;
+			if ((symbol.Modifiers & sunSymbolModifiers.Constant) == 0) {
+				flags |= sunExpressionFlags.Dynamic;
+			}
+			return flags;
 		}
 	}
 
