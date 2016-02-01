@@ -85,19 +85,19 @@ namespace arookas {
 	}
 
 	class sunRedeclaredBuiltinException : sunNodeException<sunBuiltinDeclaration> {
-		public override string Message { get { return String.Format("Redeclared builtin '{0}'.", Node.Builtin.Value); } }
+		public override string Message { get { return String.Format("Redeclared builtin '{0}'.", Node.Name.Value); } }
 
 		public sunRedeclaredBuiltinException(sunBuiltinDeclaration node)
 			: base(node) { }
 	}
 	class sunUndefinedFunctionException : sunNodeException<sunFunctionCall> {
-		public override string Message { get { return String.Format("Undefined function or builtin '{0}'.", Node.Function.Value); } }
+		public override string Message { get { return String.Format("Undefined function or builtin '{0}'.", Node.Name.Value); } }
 
 		public sunUndefinedFunctionException(sunFunctionCall node)
 			: base(node) { }
 	}
 	class sunRedefinedFunctionException : sunNodeException<sunFunctionDefinition> {
-		public override string Message { get { return String.Format("Redefined function '{0}'.", Node.Function.Value); } }
+		public override string Message { get { return String.Format("Redefined function '{0}'.", Node.Name.Value); } }
 
 		public sunRedefinedFunctionException(sunFunctionDefinition node)
 			: base(node) { }
@@ -133,7 +133,7 @@ namespace arookas {
 			: base(node) { }
 	}
 	class sunVariadicFunctionException : sunNodeException<sunFunctionDefinition> {
-		public override string Message { get { return String.Format("Function '{0}' is defined as a variadic function (only builtins may be variadic).", Node.Function.Value); } }
+		public override string Message { get { return String.Format("Function '{0}' is defined as a variadic function (only builtins may be variadic).", Node.Name.Value); } }
 
 		public sunVariadicFunctionException(sunFunctionDefinition node)
 			: base(node) { }

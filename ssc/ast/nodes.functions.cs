@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace arookas {
 	class sunBuiltinDeclaration : sunNode {
-		public sunIdentifier Builtin { get { return this[1] as sunIdentifier; } }
+		public sunIdentifier Name { get { return this[1] as sunIdentifier; } }
 		public sunParameterList Parameters { get { return this[2] as sunParameterList; } }
 
 		public sunSymbolModifiers Modifiers {
@@ -19,7 +19,7 @@ namespace arookas {
 	}
 
 	class sunFunctionDefinition : sunNode {
-		public sunIdentifier Function { get { return this[1] as sunIdentifier; } }
+		public sunIdentifier Name { get { return this[1] as sunIdentifier; } }
 		public sunParameterList Parameters { get { return this[2] as sunParameterList; } }
 		public sunNode Body { get { return this[3]; } }
 
@@ -38,7 +38,7 @@ namespace arookas {
 	}
 
 	class sunFunctionCall : sunNode, sunTerm {
-		public sunIdentifier Function { get { return this[0] as sunIdentifier; } }
+		public sunIdentifier Name { get { return this[0] as sunIdentifier; } }
 		public sunNode Arguments { get { return this[1] as sunNode; } }
 
 		bool IsStatement { get { return !(Parent is sunOperand); } }
