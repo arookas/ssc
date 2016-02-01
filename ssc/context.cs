@@ -80,7 +80,7 @@ namespace arookas {
 			if (symbol != null) {
 				return symbol;
 			}
-			throw new sunUndefinedFunctionException(node);
+			return null;
 		}
 		public sunCallableSymbol MustResolveCallable(sunFunctionCall node) {
 			var symbol = ResolveCallable(node);
