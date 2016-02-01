@@ -179,13 +179,13 @@ typeof_cast								= TYPEOF L_PAREN expression R_PAREN;
 
 // constants
 const_definition					= const_modifiers IDENTIFIER ASSIGN expression;
-const_modifiers						= [LOCAL] CONST;
+const_modifiers						= CONST [LOCAL];
 
 // variables
 variable_reference				= IDENTIFIER; // used in expressions
 variable_declaration			= variable_modifiers IDENTIFIER;
 variable_definition				= variable_modifiers IDENTIFIER ASSIGN expression;
-variable_modifiers				= [LOCAL] VAR;
+variable_modifiers				= VAR [LOCAL];
 variable_assignment				= IDENTIFIER assignment_operator expression;
 variable_augment					= postfix_augment | prefix_augment;
 
@@ -194,7 +194,7 @@ prefix_augment						= augment_operator IDENTIFIER;
 
 // functions
 function_definition				= function_modifiers IDENTIFIER parameter_list statement_block;
-function_modifiers				= [LOCAL] [CONST] FUNCTION;
+function_modifiers				= FUNCTION [LOCAL] [CONST];
 function_call							= IDENTIFIER argument_list;
 
 parameter_list						= L_PAREN [IDENTIFIER {COMMA IDENTIFIER} [COMMA ELLIPSIS] | ELLIPSIS] R_PAREN; // e.g. (a, b, ...)
@@ -202,7 +202,7 @@ argument_list							= L_PAREN [expression {COMMA expression}] R_PAREN;
 
 // builtins
 builtin_declaration				= builtin_modifiers IDENTIFIER parameter_list;
-builtin_modifiers					= [LOCAL] [CONST] BUILTIN;
+builtin_modifiers					= BUILTIN [LOCAL] [CONST];
 
 // flow control
 if_statement							= IF expression statement [ELSE statement];
