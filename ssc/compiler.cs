@@ -7,6 +7,7 @@ namespace arookas {
 		sunContext mContext;
 		sunBinary mBinary;
 		sunImportResolver mResolver;
+		sunParser mParser;
 
 		internal sunContext Context {
 			get { return mContext; }
@@ -16,6 +17,11 @@ namespace arookas {
 		}
 		internal sunImportResolver ImportResolver {
 			get { return mResolver; }
+		}
+
+		public sunCompiler() {
+			mContext = new sunContext();
+			mParser = new sunParser();
 		}
 
 		public sunCompilerResults Compile(string name, Stream output) {
@@ -35,7 +41,7 @@ namespace arookas {
 			var timer = Stopwatch.StartNew();
 			try {
 				mResolver = resolver;
-				mContext = new sunContext();
+				mContext.Clear();
 				using (mBinary = new sunBinary(output)) {
 					var result = Import(name);
 					if (result != sunImportResult.Loaded) {
@@ -74,16 +80,14 @@ namespace arookas {
 				throw new ArgumentNullException("name");
 			}
 			sunScriptFile file;
-			var result = ImportResolver.ResolveImport(name, out file);
+			var result = mResolver.ResolveImport(name, out file);
 			if (result == sunImportResult.Loaded) {
 				try {
-					ImportResolver.EnterFile(file);
+					mResolver.EnterFile(file);
 					mContext.PushLocal();
-					var parser = new sunParser();
-					var tree = parser.Parse(file);
-					tree.Compile(this);
+					mParser.Parse(file).Compile(this);
 					mContext.PopLocal();
-					ImportResolver.ExitFile(file);
+					mResolver.ExitFile(file);
 				}
 				finally {
 					file.Dispose();
