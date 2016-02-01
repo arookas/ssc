@@ -98,7 +98,7 @@ namespace arookas {
 			return DeclareVariable(node.Name, node.Modifiers);
 		}
 		sunVariableSymbol DeclareVariable(sunIdentifier node, sunSymbolModifiers modifiers) {
-			var name = MangleSymbolName(node.Value, false, false);
+			var name = MangleSymbolName(node.Value, false, (modifiers & sunSymbolModifiers.Local) != 0);
 #if SSC_PACK_VARS
 			if (Scopes.Top.GetIsDeclared(name)) {
 				throw new sunRedeclaredVariableException(node);
