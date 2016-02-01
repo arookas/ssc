@@ -73,17 +73,17 @@ namespace arookas {
 
 	[Flags]
 	enum sunExpressionFlags {
-		// contents
 		None = 0,
-		Literals = 1,
-		Variables = 2,
-		Augments = 4,
-		Casts = 8,
-		Calls = 16,
-		Constants = 32,
+
+		// contents
+		Literals = 1 << 0,
+		Variables = 1 << 1,
+		Augments = 1 << 2,
+		Calls = 1 << 3,
+		Constants = 1 << 4,
 
 		// description
-		Dynamic = 64,
+		Dynamic = 1 << 5,
 	}
 
 	class sunOperand : sunNode {

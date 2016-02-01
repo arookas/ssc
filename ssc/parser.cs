@@ -8,7 +8,7 @@ namespace arookas {
 			"builtin", "function", "var", "const", "local",
 			"if", "while", "do", "for",
 			"return", "break", "continue",
-			"yield", "exit", "lock", "unlock", "int", "float", "typeof",
+			"yield", "exit", "lock", "unlock",
 			"true", "false",
 		};
 
@@ -156,10 +156,6 @@ namespace arookas {
 				case __sunConstants.TERM: return new sunNode(location);
 
 				case __sunConstants.UNARY_OPERATOR_LIST: return new sunUnaryOperatorList(location);
-
-				case __sunConstants.INT_CAST: return new sunIntCast(location);
-				case __sunConstants.FLOAT_CAST: return new sunFloatCast(location);
-				case __sunConstants.TYPEOF_CAST: return new sunTypeofCast(location);
 
 				case __sunConstants.PREFIX_AUGMENT: return new sunPrefixAugment(location);
 				case __sunConstants.POSTFIX_AUGMENT: return new sunPostfixAugment(location);

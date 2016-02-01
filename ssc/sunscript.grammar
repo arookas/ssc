@@ -156,9 +156,6 @@ augment_operator					= INCREMENT | DECREMENT;
 expression								= operand {binary_operator operand};
 operand										= [unary_operator_list] term;
 term											=
-														int_cast |
-														float_cast |
-														typeof_cast |
 														function_call |
 														variable_reference |
 														variable_augment |
@@ -172,10 +169,6 @@ term											=
 														L_BRACKET ternary_operator R_BRACKET; // HACK: the brackets remove ambiguity
 
 unary_operator_list				= unary_operator+;
-
-int_cast									= INT L_PAREN expression R_PAREN;
-float_cast								= FLOAT L_PAREN expression R_PAREN;
-typeof_cast								= TYPEOF L_PAREN expression R_PAREN;
 
 // constants
 const_definition					= const_modifiers IDENTIFIER ASSIGN expression;

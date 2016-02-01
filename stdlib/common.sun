@@ -5,7 +5,11 @@
  * 2015-2016 arookas
 \* ================================================= */
 
-// return values for typeof(x)
+// casting
+builtin const int(x);
+builtin const float(x);
+builtin const typeof(x);
+
 const TYPE_INT		= 0;
 const TYPE_FLOAT	= 1;
 const TYPE_STRING	= 2;

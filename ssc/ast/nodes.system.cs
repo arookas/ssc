@@ -38,45 +38,4 @@
 			compiler.Binary.WritePOP();
 		}
 	}
-
-	abstract class sunCast : sunNode, sunTerm {
-		public sunExpression Argument { get { return this[0] as sunExpression; } }
-
-		protected sunCast(sunSourceLocation location)
-			: base(location) { }
-
-		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
-			return sunExpressionFlags.Casts | Argument.Analyze(context);
-		}
-	}
-
-	class sunIntCast : sunCast {
-		public sunIntCast(sunSourceLocation location)
-			: base(location) { }
-
-		public override void Compile(sunCompiler compiler) {
-			Argument.Compile(compiler);
-			compiler.Context.Int.OpenCallSite(compiler, 1);
-		}
-	}
-
-	class sunFloatCast : sunCast {
-		public sunFloatCast(sunSourceLocation location)
-			: base(location) { }
-
-		public override void Compile(sunCompiler compiler) {
-			Argument.Compile(compiler);
-			compiler.Context.Float.OpenCallSite(compiler, 1);
-		}
-	}
-
-	class sunTypeofCast : sunCast {
-		public sunTypeofCast(sunSourceLocation location)
-			: base(location) { }
-
-		public override void Compile(sunCompiler compiler) {
-			Argument.Compile(compiler);
-			compiler.Context.Typeof.OpenCallSite(compiler, 1);
-		}
-	}
 }
