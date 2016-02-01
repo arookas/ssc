@@ -5,7 +5,7 @@ namespace arookas {
 	class sunParser {
 		static string[] keywords = {
 			"import",
-			"builtin", "function", "var", "const",
+			"builtin", "function", "var", "const", "local",
 			"if", "while", "do", "for",
 			"return", "break", "continue",
 			"yield", "exit", "lock", "unlock", "int", "float", "typeof",
