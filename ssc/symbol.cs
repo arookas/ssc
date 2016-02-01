@@ -102,9 +102,14 @@ namespace arookas {
 
 	abstract class sunCallableSymbol : sunSymbol {
 		sunParameterInfo mParameters;
+		protected int mCompiles;
 
 		public sunParameterInfo Parameters {
 			get { return mParameters; }
+		}
+
+		public int CompileCount {
+			get { return mCompiles; }
 		}
 
 		protected sunCallableSymbol(string name, sunParameterInfo parameterInfo)
@@ -136,6 +141,7 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			// don't compile builtins
+			++mCompiles;
 		}
 		public override sunRelocation CreateCallSite(sunCompiler compiler, int argCount) {
 			return new sunBuiltinCallSite(this, compiler, argCount);
@@ -178,6 +184,7 @@ namespace arookas {
 			mBody.Compile(compiler);
 			compiler.Binary.WriteRET0();
 			compiler.Context.Scopes.Pop();
+			++mCompiles;
 		}
 		public override sunRelocation CreateCallSite(sunCompiler compiler, int argCount) {
 			return new sunFunctionCallSite(this, compiler, argCount);
