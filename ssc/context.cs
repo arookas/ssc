@@ -8,6 +8,8 @@ using System.Text;
 namespace arookas {
 	class sunContext {
 		Stack<sunNameLabel> mNameStack;
+		Stack<long> mLocalStack;
+		long mLocal;
 
 		public sunDataTable DataTable { get; private set; }
 		public sunSymbolTable SymbolTable { get; private set; }
@@ -31,7 +33,8 @@ namespace arookas {
 			SymbolTable = new sunSymbolTable();
 			Scopes = new sunScopeStack();
 			Loops = new sunLoopStack();
-			mNameStack = new Stack<sunNameLabel>(5);
+			mNameStack = new Stack<sunNameLabel>(10);
+			mLocalStack = new Stack<long>(10);
 			AddSystemSymbols();
 		}
 
@@ -41,6 +44,8 @@ namespace arookas {
 			Scopes.Clear();
 			Loops.Clear();
 			mNameStack.Clear();
+			mLocalStack.Clear();
+			mLocal = 0;
 
 			// reinstall system symbols
 			AddSystemSymbols();
@@ -67,11 +72,17 @@ namespace arookas {
 			return symbol;
 		}
 		public sunCallableSymbol ResolveCallable(sunFunctionCall node) {
-			var symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == node.Function.Value);
-			if (symbol == null) {
-				throw new sunUndefinedFunctionException(node);
+			var global = node.Function.Value;
+			var local = MangleSymbolName(global, false, true);
+			var symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == local);
+			if (symbol != null) {
+				return symbol;
 			}
-			return symbol;
+			symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == global);
+			if (symbol != null) {
+				return symbol;
+			}
+			throw new sunUndefinedFunctionException(node);
 		}
 		public sunCallableSymbol MustResolveCallable(sunFunctionCall node) {
 			var symbol = ResolveCallable(node);
@@ -118,16 +129,26 @@ namespace arookas {
 			return Scopes.DeclareConstant(node.Value, expression);
 		}
 		public sunStorableSymbol ResolveStorable(sunIdentifier node) {
+			var global = node.Value;
+			var local = MangleSymbolName(global, false, true);
 			for (int i = Scopes.Count - 1; i >= 0; --i) {
-				var symbol = Scopes[i].ResolveStorable(node.Value);
+				var symbol = Scopes[i].ResolveStorable(local);
+				if (symbol != null) {
+					return symbol;
+				}
+				symbol = Scopes[i].ResolveStorable(global);
 				if (symbol != null) {
 					return symbol;
 				}
 			}
 			return null;
 		}
-		public sunVariableSymbol ResolveVariable(sunIdentifier node) { return ResolveStorable(node) as sunVariableSymbol; }
-		public sunConstantSymbol ResolveConstant(sunIdentifier node) { return ResolveStorable(node) as sunConstantSymbol; }
+		public sunVariableSymbol ResolveVariable(sunIdentifier node) {
+			return ResolveStorable(node) as sunVariableSymbol;
+		}
+		public sunConstantSymbol ResolveConstant(sunIdentifier node) {
+			return ResolveStorable(node) as sunConstantSymbol;
+		}
 		public sunStorableSymbol MustResolveStorable(sunIdentifier node) {
 			var symbol = ResolveStorable(node);
 			if (symbol == null) {
@@ -164,6 +185,16 @@ namespace arookas {
 			return null;
 		}
 
+		// locals
+		public void PushLocal() {
+			mLocalStack.Push(mLocal++);
+		}
+		public void PopLocal() {
+			if (mLocalStack.Count > 0) {
+				mLocalStack.Pop();
+			}
+		}
+
 		// system symbols
 		void AddSystemSymbols() {
 			// add system builtins
@@ -176,7 +207,7 @@ namespace arookas {
 			Typeof = AddSystemBuiltin("typeof");
 
 			// add system variables
-			Switch = AddSystemVariable("$switch"); // storage for switch statements
+			Switch = AddSystemVariable("switch"); // storage for switch statements
 		}
 		sunCallableSymbol AddSystemBuiltin(string name) {
 			var symbol = new sunBuiltinSymbol(name, SymbolTable.Count);
@@ -184,9 +215,25 @@ namespace arookas {
 			return symbol;
 		}
 		sunStorableSymbol AddSystemVariable(string name) {
-			var symbol = Scopes.DeclareVariable(name);
+			var symbol = Scopes.DeclareVariable(MangleSymbolName(name, true, false));
 			SymbolTable.Add(symbol);
 			return symbol;
+		}
+
+		// static util
+		string MangleSymbolName(string basename, bool system, bool local) {
+			var prefix = "";
+			var suffix = "";
+			if (system) {
+				prefix = "$";
+			}
+			if (local) {
+				suffix = String.Format("@{0}", mLocal);
+			}
+			if (prefix == "" && suffix == "") {
+				return basename;
+			}
+			return String.Concat(prefix, basename, suffix);
 		}
 	}
 }
