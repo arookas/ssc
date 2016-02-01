@@ -4,7 +4,9 @@
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			compiler.Context.Yield.OpenCallSite(compiler, 0);
+			var symbol = compiler.Context.Yield;
+			var site = symbol.CreateCallSite(compiler, 0);
+			symbol.OpenRelocation(site);
 			compiler.Binary.WritePOP();
 		}
 	}
@@ -14,7 +16,9 @@
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			compiler.Context.Exit.OpenCallSite(compiler, 0);
+			var symbol = compiler.Context.Exit;
+			var site = symbol.CreateCallSite(compiler, 0);
+			symbol.OpenRelocation(site);
 			compiler.Binary.WritePOP();
 		}
 	}
@@ -24,7 +28,9 @@
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			compiler.Context.Lock.OpenCallSite(compiler, 0);
+			var symbol = compiler.Context.Lock;
+			var site = symbol.CreateCallSite(compiler, 0);
+			symbol.OpenRelocation(site);
 			compiler.Binary.WritePOP();
 		}
 	}
@@ -34,7 +40,9 @@
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			compiler.Context.Unlock.OpenCallSite(compiler, 0);
+			var symbol = compiler.Context.Unlock;
+			var site = symbol.CreateCallSite(compiler, 0);
+			symbol.OpenRelocation(site);
 			compiler.Binary.WritePOP();
 		}
 	}
