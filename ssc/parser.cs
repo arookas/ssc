@@ -257,6 +257,9 @@ namespace arookas {
 			return null;
 		}
 		static __sunConstants GetId(Node node) {
+			if (node == null) {
+				return (__sunConstants)(-1);
+			}
 			return (__sunConstants)node.Id;
 		}
 
