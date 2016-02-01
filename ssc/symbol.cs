@@ -1,5 +1,4 @@
 ﻿using arookas.Collections;
-using arookas.IO.Binary;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,9 +6,9 @@ using System.Linq;
 
 namespace arookas {
 	class sunSymbolTable : IEnumerable<sunSymbol> {
-		List<sunSymbol> Symbols { get; set; }
+		List<sunSymbol> mSymbols;
 
-		public int Count { get { return Symbols.Count; } }
+		public int Count { get { return mSymbols.Count; } }
 		public int CallableCount { get { return Callables.Count(); } }
 		public int BuiltinCount { get { return Builtins.Count(); } }
 		public int FunctionCount { get { return Functions.Count(); } }
@@ -17,22 +16,33 @@ namespace arookas {
 		public int VariableCount { get { return Variables.Count(); } }
 		public int ConstantCount { get { return Constants.Count(); } }
 
-		public IEnumerable<sunCallableSymbol> Callables { get { return Symbols.OfType<sunCallableSymbol>(); } }
-		public IEnumerable<sunBuiltinSymbol> Builtins { get { return Symbols.OfType<sunBuiltinSymbol>(); } }
-		public IEnumerable<sunFunctionSymbol> Functions { get { return Symbols.OfType<sunFunctionSymbol>(); } }
-		public IEnumerable<sunStorableSymbol> Storables { get { return Symbols.OfType<sunStorableSymbol>(); } }
-		public IEnumerable<sunVariableSymbol> Variables { get { return Symbols.OfType<sunVariableSymbol>(); } }
-		public IEnumerable<sunConstantSymbol> Constants { get { return Symbols.OfType<sunConstantSymbol>(); } }
+		public IEnumerable<sunCallableSymbol> Callables { get { return mSymbols.OfType<sunCallableSymbol>(); } }
+		public IEnumerable<sunBuiltinSymbol> Builtins { get { return mSymbols.OfType<sunBuiltinSymbol>(); } }
+		public IEnumerable<sunFunctionSymbol> Functions { get { return mSymbols.OfType<sunFunctionSymbol>(); } }
+		public IEnumerable<sunStorableSymbol> Storables { get { return mSymbols.OfType<sunStorableSymbol>(); } }
+		public IEnumerable<sunVariableSymbol> Variables { get { return mSymbols.OfType<sunVariableSymbol>(); } }
+		public IEnumerable<sunConstantSymbol> Constants { get { return mSymbols.OfType<sunConstantSymbol>(); } }
 
 		public sunSymbolTable() {
-			Symbols = new List<sunSymbol>(10);
+			mSymbols = new List<sunSymbol>(10);
 		}
 
-		public void Add(sunSymbol symbol) { Symbols.Add(symbol); }
-		public void Clear() { Symbols.Clear(); }
+		public void Add(sunSymbol symbol) {
+			if (symbol == null) {
+				throw new ArgumentNullException("symbol");
+			}
+			mSymbols.Add(symbol);
+		}
+		public void Clear() {
+			mSymbols.Clear();
+		}
 
-		public IEnumerator<sunSymbol> GetEnumerator() { return Symbols.GetEnumerator(); }
-		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+		public IEnumerator<sunSymbol> GetEnumerator() {
+			return mSymbols.GetEnumerator();
+		}
+		IEnumerator IEnumerable.GetEnumerator() {
+			return GetEnumerator();
+		}
 	}
 
 	abstract class sunSymbol {
