@@ -3,8 +3,8 @@ using System.Linq;
 
 namespace arookas {
 	class sunBuiltinDeclaration : sunNode {
-		public sunIdentifier Builtin { get { return this[0] as sunIdentifier; } }
-		public sunParameterList Parameters { get { return this[1] as sunParameterList; } }
+		public sunIdentifier Builtin { get { return this[1] as sunIdentifier; } }
+		public sunParameterList Parameters { get { return this[2] as sunParameterList; } }
 
 		public sunBuiltinDeclaration(sunSourceLocation location)
 			: base(location) { }
@@ -15,9 +15,9 @@ namespace arookas {
 	}
 
 	class sunFunctionDefinition : sunNode {
-		public sunIdentifier Function { get { return this[0] as sunIdentifier; } }
-		public sunParameterList Parameters { get { return this[1] as sunParameterList; } }
-		public sunNode Body { get { return this[2]; } }
+		public sunIdentifier Function { get { return this[1] as sunIdentifier; } }
+		public sunParameterList Parameters { get { return this[2] as sunParameterList; } }
+		public sunNode Body { get { return this[3]; } }
 
 		public sunFunctionDefinition(sunSourceLocation location)
 			: base(location) { }

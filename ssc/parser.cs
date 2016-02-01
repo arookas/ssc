@@ -207,52 +207,15 @@ namespace arookas {
 				case __sunConstants.BREAK_STATEMENT: return new sunBreak(location);
 				case __sunConstants.CONTINUE_STATEMENT: return new sunContinue(location);
 			}
-
-			// cleanup keywords punctuation
-			switch (GetId(node)) {
-				// keywords
-				case __sunConstants.IMPORT:
-				case __sunConstants.BUILTIN:
-				case __sunConstants.FUNCTION:
-				case __sunConstants.VAR:
-				case __sunConstants.CONST:
-
-				case __sunConstants.IF:
-				case __sunConstants.ELSE:
-				case __sunConstants.DO:
-				case __sunConstants.WHILE:
-				case __sunConstants.FOR:
-
-				case __sunConstants.RETURN:
-				case __sunConstants.BREAK:
-				case __sunConstants.CONTINUE:
-
-				case __sunConstants.YIELD:
-				case __sunConstants.EXIT:
-				case __sunConstants.LOCK:
-				case __sunConstants.UNLOCK:
-				case __sunConstants.INT:
-				case __sunConstants.FLOAT:
-				case __sunConstants.TYPEOF:
-
-				case __sunConstants.TRUE:
-				case __sunConstants.FALSE:
-
-				// punctuation
-				case __sunConstants.L_BRACE:
-				case __sunConstants.R_BRACE:
-				case __sunConstants.L_PAREN:
-				case __sunConstants.R_PAREN:
-				case __sunConstants.L_BRACKET:
-				case __sunConstants.R_BRACKET:
-				case __sunConstants.COLON:
-				case __sunConstants.SEMICOLON:
-				case __sunConstants.COMMA:
-				case __sunConstants.DOT:
-				case __sunConstants.ELLIPSIS:
-				case __sunConstants.QMARK: {
-						return null;
+			
+			// keywords
+			if (id == __sunConstants.CONST) {
+				switch (parent) {
+					case __sunConstants.FUNCTION_MODIFIERS:
+					case __sunConstants.BUILTIN_MODIFIERS: {
+						return new sunConstKeyword(location);
 					}
+				}
 			}
 
 			// emergency fallback

@@ -22,7 +22,7 @@
 	}
 
 	class sunVariableDeclaration : sunNode {
-		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
+		public sunIdentifier Variable { get { return this[1] as sunIdentifier; } }
 
 		public sunVariableDeclaration(sunSourceLocation location)
 			: base(location) { }
@@ -33,9 +33,9 @@
 	}
 
 	class sunVariableDefinition : sunNode {
-		public sunIdentifier Variable { get { return this[0] as sunIdentifier; } }
-		public sunAssign Operator { get { return this[1] as sunAssign; } }
-		public sunExpression Expression { get { return this[2] as sunExpression; } }
+		public sunIdentifier Variable { get { return this[1] as sunIdentifier; } }
+		public sunAssign Operator { get { return this[2] as sunAssign; } }
+		public sunExpression Expression { get { return this[3] as sunExpression; } }
 
 		public sunVariableDefinition(sunSourceLocation location)
 			: base(location) { }
@@ -47,9 +47,9 @@
 	}
 
 	class sunStorableAssignment : sunNode {
-		public sunIdentifier Storable { get { return this[0] as sunIdentifier; } }
-		public sunAssign Operator { get { return this[1] as sunAssign; } }
-		public sunExpression Expression { get { return this[2] as sunExpression; } }
+		public sunIdentifier Storable { get { return this[1] as sunIdentifier; } }
+		public sunAssign Operator { get { return this[2] as sunAssign; } }
+		public sunExpression Expression { get { return this[3] as sunExpression; } }
 
 		public sunStorableAssignment(sunSourceLocation location)
 			: base(location) { }
@@ -64,8 +64,8 @@
 	}
 
 	class sunConstantDefinition : sunNode {
-		public sunIdentifier Constant { get { return this[0] as sunIdentifier; } }
-		public sunExpression Expression { get { return this[2] as sunExpression; } }
+		public sunIdentifier Constant { get { return this[1] as sunIdentifier; } }
+		public sunExpression Expression { get { return this[3] as sunExpression; } }
 
 		public sunConstantDefinition(sunSourceLocation location)
 			: base(location) { }
