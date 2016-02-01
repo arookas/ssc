@@ -21,9 +21,6 @@ namespace arookas {
 		public sunCallableSymbol Exit { get; private set; }
 		public sunCallableSymbol Lock { get; private set; }
 		public sunCallableSymbol Unlock { get; private set; }
-		public sunCallableSymbol Int { get; private set; }
-		public sunCallableSymbol Float { get; private set; }
-		public sunCallableSymbol Typeof { get; private set; }
 
 		// system variables
 		public sunStorableSymbol Switch { get; private set; }
@@ -214,9 +211,6 @@ namespace arookas {
 			Exit = AddSystemBuiltin("exit");
 			Lock = AddSystemBuiltin("lock");
 			Unlock = AddSystemBuiltin("unlock");
-			Int = AddSystemBuiltin("int");
-			Float = AddSystemBuiltin("float");
-			Typeof = AddSystemBuiltin("typeof");
 
 			// add system variables
 			Switch = AddSystemVariable("switch"); // storage for switch statements
