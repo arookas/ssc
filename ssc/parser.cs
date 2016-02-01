@@ -164,11 +164,13 @@ namespace arookas {
 			// builtins
 			switch (id) {
 				case __sunConstants.BUILTIN_DECLARATION: return new sunBuiltinDeclaration(location);
+				case __sunConstants.BUILTIN_MODIFIERS: return new sunNode(location);
 			}
 
 			// functions
 			switch (id) {
 				case __sunConstants.FUNCTION_DEFINITION: return new sunFunctionDefinition(location);
+				case __sunConstants.FUNCTION_MODIFIERS: return new sunNode(location);
 				case __sunConstants.FUNCTION_CALL: return new sunFunctionCall(location);
 
 				case __sunConstants.PARAMETER_LIST: return new sunParameterList(location);
@@ -180,6 +182,7 @@ namespace arookas {
 				case __sunConstants.VARIABLE_REFERENCE: return new sunStorableReference(location);
 				case __sunConstants.VARIABLE_DECLARATION: return new sunVariableDeclaration(location);
 				case __sunConstants.VARIABLE_DEFINITION: return new sunVariableDefinition(location);
+				case __sunConstants.VARIABLE_MODIFIERS: return new sunNode(location);
 				case __sunConstants.VARIABLE_ASSIGNMENT: return new sunStorableAssignment(location);
 				case __sunConstants.VARIABLE_AUGMENT: return new sunNode(location);
 			}
@@ -187,6 +190,7 @@ namespace arookas {
 			// constants
 			switch (id) {
 				case __sunConstants.CONST_DEFINITION: return new sunConstantDefinition(location);
+				case __sunConstants.CONST_MODIFIERS: return new sunNode(location);
 			}
 
 			// flow control
