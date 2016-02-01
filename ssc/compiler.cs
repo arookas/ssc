@@ -51,8 +51,8 @@ namespace arookas {
 					foreach (var callable in mContext.SymbolTable.Callables) {
 						callable.Compile(this);
 					}
-					foreach (var callable in mContext.SymbolTable.Callables) {
-						callable.CloseCallSites(this);
+					foreach (var symbol in mContext.SymbolTable) {
+						symbol.CloseRelocations(this);
 					}
 					foreach (var data in mContext.DataTable) {
 						mBinary.WriteData(data);
