@@ -43,33 +43,28 @@ namespace arookas {
 			}
 			public override sunImportResult ResolveImport(string name, out sunScriptFile file) {
 				file = null;
-				var fullPath = "";
 				name = name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+				var path = "";
 				if (Path.IsPathRooted(name)) {
-					// if the path is absolute, just use it directly
-					fullPath = name;
-					if (!File.Exists(fullPath)) {
+					path = name;
+					if (!File.Exists(path)) {
 						return sunImportResult.Missing;
 					}
 				}
 				else {
-					// check if the file exists relative to the current one;
-					// if it's not there, check the root directory
-					fullPath = Path.Combine(CurrentDirectory, name);
-					if (!File.Exists(fullPath)) {
-						fullPath = Path.Combine(mRootDirectory, name);
-						if (!File.Exists(fullPath)) {
+					path = Path.Combine(CurrentDirectory, name);
+					if (!File.Exists(path)) {
+						path = Path.Combine(mRootDirectory, name);
+						if (!File.Exists(path)) {
 							return sunImportResult.Missing;
 						}
 					}
 				}
-				// make sure the file has not been imported yet
-				if (mImports.Any(i => i.Name == fullPath)) {
+				if (mImports.Any(i => i.Name == path)) {
 					return sunImportResult.Skipped;
 				}
-				// open the file
 				try {
-					file = new sunScriptFile(name, File.OpenRead(fullPath));
+					file = new sunScriptFile(path, File.OpenRead(path));
 				}
 				catch {
 					return sunImportResult.FailedToLoad;
