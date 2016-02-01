@@ -43,23 +43,11 @@ namespace arookas {
 				mResolver = resolver;
 				mContext.Clear();
 				using (mBinary = new sunBinary(output)) {
-					var result = Import(name);
-					if (result != sunImportResult.Loaded) {
-						throw new sunImportException(name, result);
-					}
-					mBinary.WriteEND(); // NOTETOSELF: don't do this via sunNode.Compile because imported files will add this as well
-					foreach (var callable in mContext.SymbolTable.Callables) {
-						callable.Compile(this);
-					}
-					foreach (var symbol in mContext.SymbolTable) {
-						symbol.CloseRelocations(this);
-					}
-					foreach (var data in mContext.DataTable) {
-						mBinary.WriteData(data);
-					}
-					foreach (var symbol in mContext.SymbolTable) {
-						mBinary.WriteSymbol(symbol.Type, symbol.Name, symbol.Data);
-					}
+					CompileBody(name);
+					CompileFunctions();
+					CompileRelocations();
+					CompileData();
+					CompileSymbols();
 				}
 				results.DataCount = mContext.DataTable.Count;
 				results.SymbolCount = mContext.SymbolTable.Count;
@@ -73,6 +61,34 @@ namespace arookas {
 			timer.Stop();
 			results.CompileTime = timer.Elapsed;
 			return results;
+		}
+
+		void CompileBody(string name) {
+			var result = Import(name);
+			if (result != sunImportResult.Loaded) {
+				throw new sunImportException(name, result);
+			}
+			mBinary.WriteEND();
+		}
+		void CompileFunctions() {
+			foreach (var callable in mContext.SymbolTable.Callables) {
+				callable.Compile(this);
+			}
+		}
+		void CompileRelocations() {
+			foreach (var symbol in mContext.SymbolTable) {
+				symbol.CloseRelocations(this);
+			}
+		}
+		void CompileData() {
+			foreach (var data in mContext.DataTable) {
+				mBinary.WriteData(data);
+			}
+		}
+		void CompileSymbols() {
+			foreach (var symbol in mContext.SymbolTable) {
+				mBinary.WriteSymbol(symbol.Type, symbol.Name, symbol.Data);
+			}
 		}
 
 		internal sunImportResult Import(string name) {
