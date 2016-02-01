@@ -48,6 +48,7 @@ namespace arookas {
 	abstract class sunSymbol {
 		string mName;
 		sunSymbolModifiers mModifiers;
+		List<sunRelocation> mRelocations;
 
 		public string Name {
 			get { return mName; }
@@ -57,15 +58,32 @@ namespace arookas {
 			set { mModifiers = value; }
 		}
 
+		public bool HasRelocations {
+			get { return mRelocations.Count > 0; }
+		}
+
 		// symbol table
 		public abstract sunSymbolType Type { get; }
 		public abstract uint Data { get; }
 
 		protected sunSymbol(string name) {
 			mName = name;
+			mRelocations = new List<sunRelocation>(10);
 		}
 
 		public abstract void Compile(sunCompiler compiler);
+
+		public void OpenRelocation(sunRelocation relocation) {
+			if (relocation == null) {
+				throw new ArgumentNullException("relocation");
+			}
+			mRelocations.Add(relocation);
+		}
+		public void CloseRelocations(sunCompiler compiler) {
+			foreach (var relocation in mRelocations) {
+				relocation.Relocate(compiler);
+			}
+		}
 
 		public static sunSymbolModifiers GetModifiers(sunNode modifierlist) {
 			if (modifierlist == null) {
@@ -89,20 +107,14 @@ namespace arookas {
 			get { return mParameters; }
 		}
 
-		public abstract bool HasCallSites { get; }
-
 		protected sunCallableSymbol(string name, sunParameterInfo parameterInfo)
 			: base(name) {
 			mParameters = parameterInfo;
 		}
-
-		public abstract void OpenCallSite(sunCompiler compiler, int argumentCount);
-		public abstract void CloseCallSites(sunCompiler compiler);
 	}
 
 	class sunBuiltinSymbol : sunCallableSymbol {
 		int mIndex;
-		List<sunBuiltinCallSite> mCallSites;
 
 		public int Index {
 			get { return mIndex; }
@@ -122,55 +134,19 @@ namespace arookas {
 		public sunBuiltinSymbol(string name, sunParameterInfo parameters, int index)
 			: base(name, parameters) {
 			mIndex = index;
-			mCallSites = new List<sunBuiltinCallSite>(10);
 		}
 
 		public override void Compile(sunCompiler compiler) {
 			// don't compile builtins
-		}
-		public override void OpenCallSite(sunCompiler compiler, int argumentCount) {
-			var callSite = new sunBuiltinCallSite(compiler.Binary.OpenPoint(), argumentCount);
-			mCallSites.Add(callSite);
-			compiler.Binary.WriteFUNC(0, 0); // dummy
-		}
-		public override void CloseCallSites(sunCompiler compiler) {
-			compiler.Binary.Keep();
-			foreach (var callSite in mCallSites) {
-				compiler.Binary.Goto(callSite.Point);
-				compiler.Binary.WriteFUNC(mIndex, callSite.ArgCount);
-			}
-			compiler.Binary.Back();
-		}
-
-		struct sunBuiltinCallSite {
-			sunPoint mPoint;
-			int mArgCount;
-
-			public sunPoint Point {
-				get { return mPoint; }
-			}
-			public int ArgCount {
-				get { return mArgCount; }
-			}
-
-			public sunBuiltinCallSite(sunPoint point, int argCount) {
-				mPoint = point;
-				mArgCount = argCount;
-			}
 		}
 	}
 
 	class sunFunctionSymbol : sunCallableSymbol {
 		uint mOffset;
 		sunNode mBody;
-		List<sunPoint> mCallSites;
 
 		public uint Offset {
 			get { return mOffset; }
-		}
-
-		public override bool HasCallSites {
-			get { return mCallSites.Count > 0; }
 		}
 
 		// symbol table
@@ -186,7 +162,6 @@ namespace arookas {
 			if (body == null) {
 				throw new ArgumentNullException("body");
 			}
-			mCallSites = new List<sunPoint>(5);
 			mBody = body;
 		}
 
@@ -202,15 +177,6 @@ namespace arookas {
 			mBody.Compile(compiler);
 			compiler.Binary.WriteRET0();
 			compiler.Context.Scopes.Pop();
-		}
-		public override void OpenCallSite(sunCompiler compiler, int argumentCount) {
-			var point = compiler.Binary.WriteCALL(argumentCount);
-			mCallSites.Add(point);
-		}
-		public override void CloseCallSites(sunCompiler compiler) {
-			foreach (var callSite in mCallSites) {
-				compiler.Binary.ClosePoint(callSite, Offset);
-			}
 		}
 	}
 
