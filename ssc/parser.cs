@@ -217,6 +217,9 @@ namespace arookas {
 					}
 				}
 			}
+			if (id == __sunConstants.LOCAL) {
+				return new sunLocalKeyword(location);
+			}
 
 			// emergency fallback
 			return null;
