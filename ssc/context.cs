@@ -234,7 +234,7 @@ namespace arookas {
 				prefix = "$";
 			}
 			if (local) {
-				suffix = String.Format("@{0}", mLocal);
+				suffix = String.Format("@{0}", mLocalStack.Peek());
 			}
 			if (prefix == "" && suffix == "") {
 				return basename;
