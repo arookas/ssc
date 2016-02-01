@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace arookas {
 	public class sunCompiler {
@@ -71,9 +72,15 @@ namespace arookas {
 			mBinary.WriteEND();
 		}
 		void CompileFunctions() {
-			foreach (var callable in mContext.SymbolTable.Callables) {
+			while (DoCompileFunctions() > 0) ;
+		}
+		int DoCompileFunctions() {
+			var count = 0;
+			foreach (var callable in mContext.SymbolTable.Callables.Where(i => i.HasRelocations && i.CompileCount == 0)) {
 				callable.Compile(this);
+				++count;
 			}
+			return count;
 		}
 		void CompileRelocations() {
 			foreach (var symbol in mContext.SymbolTable) {
