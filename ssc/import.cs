@@ -22,7 +22,7 @@ namespace arookas {
 			string CurrentDirectory {
 				get {
 					if (mFiles.Count > 0) {
-						return Path.GetDirectoryName(mFiles.Peek().Name);
+						return Path.Combine(mCurrentDirectory, Path.GetDirectoryName(mFiles.Peek().Name));
 					}
 					return mCurrentDirectory;
 				}
