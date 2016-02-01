@@ -13,7 +13,7 @@ namespace arookas {
 		};
 
 		public sunNode Parse(sunScriptFile file) {
-			using (var input = file.GetReader()) {
+			using (var input = file.CreateReader()) {
 				try {
 					var parser = new __sunParser(input);
 					var node = parser.Parse();

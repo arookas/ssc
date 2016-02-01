@@ -121,7 +121,7 @@ namespace arookas {
 			mStream.Dispose();
 		}
 
-		public TextReader GetReader() {
+		public TextReader CreateReader() {
 			return new StreamReader(mStream);
 		}
 	}
