@@ -61,12 +61,7 @@ namespace arookas {
 		public sunParameterInfo ParameterInfo { get { return new sunParameterInfo(Parameters, IsVariadic); } }
 
 		public sunParameterList(sunSourceLocation location)
-			: base(location) {
-			var count = this.Count(i => i is sunEllipsis);
-			if (count > 1 || (count > 0 && !(this[Count - 1] is sunEllipsis))) {
-				throw new sunVariadicParameterListException(this);
-			}
-		}
+			: base(location) { }
 	}
 
 	class sunEllipsis : sunNode {

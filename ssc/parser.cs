@@ -52,9 +52,7 @@ namespace arookas {
 					case __sunConstants.BINARY_OPERATOR:
 					case __sunConstants.UNARY_OPERATOR:
 					case __sunConstants.AUGMENT_OPERATOR:
-					case __sunConstants.TERM:
-					case __sunConstants.PARAMETER:
-					case __sunConstants.ARGUMENT: {
+					case __sunConstants.TERM: {
 							return ast[0];
 						}
 				}
@@ -176,9 +174,7 @@ namespace arookas {
 				case __sunConstants.FUNCTION_CALL: return new sunFunctionCall(location);
 
 				case __sunConstants.PARAMETER_LIST: return new sunParameterList(location);
-				case __sunConstants.PARAMETER: return new sunNode(location);
 				case __sunConstants.ARGUMENT_LIST: return new sunNode(location);
-				case __sunConstants.ARGUMENT: return new sunNode(location);
 			}
 
 			// variables

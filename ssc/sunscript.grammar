@@ -193,10 +193,8 @@ prefix_augment						= augment_operator IDENTIFIER;
 function_definition				= FUNCTION IDENTIFIER parameter_list statement_block;
 function_call							= IDENTIFIER argument_list;
 
-parameter_list						= L_PAREN [parameter {COMMA parameter}] R_PAREN; // e.g. (a, b, ...)
-parameter									= IDENTIFIER | ELLIPSIS;
-argument_list							= L_PAREN [argument {COMMA argument}] R_PAREN;
-argument									= expression;
+parameter_list						= L_PAREN [IDENTIFIER {COMMA IDENTIFIER} [COMMA ELLIPSIS] | ELLIPSIS] R_PAREN; // e.g. (a, b, ...)
+argument_list							= L_PAREN [expression {COMMA expression}] R_PAREN;
 
 // builtins
 builtin_declaration				= BUILTIN IDENTIFIER parameter_list;
