@@ -36,14 +36,18 @@ namespace arookas {
 	}
 
 	abstract class sunSymbol {
-		public string Name { get; private set; }
+		string mName;
+
+		public string Name {
+			get { return mName; }
+		}
 
 		// symbol table
 		public abstract sunSymbolType Type { get; }
 		public abstract uint Data { get; }
 
 		protected sunSymbol(string name) {
-			Name = name;
+			mName = name;
 		}
 
 		public abstract void Compile(sunCompiler compiler);
@@ -137,8 +141,12 @@ namespace arookas {
 		}
 
 		// symbol table
-		public override sunSymbolType Type { get { return sunSymbolType.Function; } }
-		public override uint Data { get { return (uint)Offset; } }
+		public override sunSymbolType Type {
+			get { return sunSymbolType.Function; }
+		}
+		public override uint Data {
+			get { return (uint)Offset; }
+		}
 
 		public sunFunctionSymbol(string name, sunParameterInfo parameters, sunNode body)
 			: base(name, parameters) {
@@ -174,9 +182,15 @@ namespace arookas {
 	}
 
 	class sunParameterInfo : IEnumerable<string> {
-		string[] Parameters { get; set; }
-		public int Minimum { get { return Parameters.Length; } }
-		public bool IsVariadic { get; private set; }
+		string[] mParameters;
+		bool mVariadic;
+
+		public int Minimum {
+			get { return mParameters.Length; }
+		}
+		public bool IsVariadic {
+			get { return mVariadic; }
+		}
 
 		public sunParameterInfo(IEnumerable<sunIdentifier> parameters, bool variadic) {
 			// validate parameter names
@@ -184,21 +198,25 @@ namespace arookas {
 			if (duplicate != null) {
 				throw new sunRedeclaredParameterException(duplicate);
 			}
-			Parameters = parameters.Select(i => i.Value).ToArray();
-			IsVariadic = variadic;
+			mParameters = parameters.Select(i => i.Value).ToArray();
+			mVariadic = variadic;
 		}
 		public sunParameterInfo(IEnumerable<string> parameters, bool variadic) {
 			// validate parameter names
-			Parameters = parameters.ToArray();
-			IsVariadic = variadic;
+			mParameters = parameters.ToArray();
+			mVariadic = variadic;
 		}
 
 		public bool ValidateArgumentCount(int count) {
-			return IsVariadic ? count >= Minimum : count == Minimum;
+			return mVariadic ? count >= Minimum : count == Minimum;
 		}
 
-		public IEnumerator<string> GetEnumerator() { return Parameters.GetArrayEnumerator(); }
-		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+		public IEnumerator<string> GetEnumerator() {
+			return mParameters.GetArrayEnumerator();
+		}
+		IEnumerator IEnumerable.GetEnumerator() {
+			return GetEnumerator();
+		}
 	}
 
 	abstract class sunStorableSymbol : sunSymbol {
@@ -223,42 +241,64 @@ namespace arookas {
 	}
 
 	class sunVariableSymbol : sunStorableSymbol {
-		public int Display { get; private set; }
-		public int Index { get; private set; }
+		int mDisplay, mIndex;
+
+		public int Display {
+			get { return mDisplay; }
+		}
+		public int Index {
+			get { return mIndex; }
+		}
 
 		// symbol table
-		public override sunSymbolType Type { get { return sunSymbolType.Variable; } }
-		public override uint Data { get { return (uint)Index; } }
+		public override sunSymbolType Type {
+			get { return sunSymbolType.Variable; }
+		}
+		public override uint Data {
+			get { return (uint)Index; }
+		}
 
 		public sunVariableSymbol(string name, int display, int index)
 			: base(name) {
-			Display = display;
-			Index = index;
+			mDisplay = display;
+			mIndex = index;
 		}
 
-		public override void CompileGet(sunCompiler compiler) { compiler.Binary.WriteVAR(Display, Index); }
-		public override void CompileSet(sunCompiler compiler) { compiler.Binary.WriteASS(Display, Index); }
-		public override void CompileInc(sunCompiler compiler) { compiler.Binary.WriteINC(Display, Index); }
-		public override void CompileDec(sunCompiler compiler) { compiler.Binary.WriteDEC(Display, Index); }
+		public override void CompileGet(sunCompiler compiler) {
+			compiler.Binary.WriteVAR(mDisplay, mIndex);
+		}
+		public override void CompileSet(sunCompiler compiler) {
+			compiler.Binary.WriteASS(mDisplay, mIndex);
+		}
+		public override void CompileInc(sunCompiler compiler) {
+			compiler.Binary.WriteINC(mDisplay, mIndex);
+		}
+		public override void CompileDec(sunCompiler compiler) {
+			compiler.Binary.WriteDEC(mDisplay, mIndex);
+		}
 	}
 
 	class sunConstantSymbol : sunStorableSymbol {
-		sunExpression Expression { get; set; }
+		sunExpression mExpression;
 
 		// symbol table
-		public override sunSymbolType Type { get { return sunSymbolType.Constant; } }
-		public override uint Data { get { return 0; } }
+		public override sunSymbolType Type {
+			get { return sunSymbolType.Constant; }
+		}
+		public override uint Data {
+			get { return 0; }
+		}
 
 		public sunConstantSymbol(string name, sunExpression expression)
 			: base(name) {
 			if (expression == null) {
 				throw new ArgumentNullException("expression");
 			}
-			Expression = expression;
+			mExpression = expression;
 		}
 
 		public override void CompileGet(sunCompiler compiler) {
-			Expression.Compile(compiler);
+			mExpression.Compile(compiler);
 		}
 		public override void CompileSet(sunCompiler compiler) {
 			// checks against this have to be implemented at a higher level
