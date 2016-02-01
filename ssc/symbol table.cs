@@ -59,13 +59,17 @@ namespace arookas {
 	}
 
 	abstract class sunCallableSymbol : sunSymbol {
-		public sunParameterInfo Parameters { get; private set; }
+		sunParameterInfo mParameters;
+
+		public sunParameterInfo Parameters {
+			get { return mParameters; }
+		}
 
 		public abstract bool HasCallSites { get; }
 
 		protected sunCallableSymbol(string name, sunParameterInfo parameterInfo)
 			: base(name) {
-			Parameters = parameterInfo;
+			mParameters = parameterInfo;
 		}
 
 		public abstract void OpenCallSite(sunCompiler compiler, int argumentCount);
