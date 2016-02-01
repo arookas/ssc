@@ -21,9 +21,7 @@ namespace arookas {
 		}
 
 		static void CompileExpression(sunCompiler compiler, sunExpression expression, Stack<sunOperator> operatorStack) {
-			// this implementation assumes that the expression production child list alternates between operand and operator
-			// we can safely assume this as the grammar "operand {binary_operator operand}" enforces it
-			int stackCount = operatorStack.Count;
+			var stackCount = operatorStack.Count;
 			foreach (var node in expression) {
 				if (node is sunOperand) {
 					var operand = node as sunOperand;

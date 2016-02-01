@@ -21,8 +21,8 @@ const SYS_GOLDCOINNUM									= 0x40002;
 builtin getSystemFlag(flag);
 builtin setSystemFlag(flag, value);
 
-function setOnSystemFlag(flag) { setSystemFlag(flag, true); }
-function setOffSystemFlag(flag) { setSystemFlag(flag, false); }
+function setOnSystemFlag(flag)		{ setSystemFlag(flag, true); }
+function setOffSystemFlag(flag)		{ setSystemFlag(flag, false); }
 
 // [arookas] custom utility
 function incSystemFlag(flag) {

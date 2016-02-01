@@ -199,9 +199,7 @@ namespace arookas {
 			mLocalStack.Push(mLocal++);
 		}
 		public void PopLocal() {
-			if (mLocalStack.Count > 0) {
-				mLocalStack.Pop();
-			}
+			mLocalStack.Pop();
 		}
 
 		// system symbols
