@@ -56,6 +56,20 @@ namespace arookas {
 		}
 
 		public abstract void Compile(sunCompiler compiler);
+
+		public static sunSymbolModifiers GetModifiers(sunNode modifierlist) {
+			if (modifierlist == null) {
+				return sunSymbolModifiers.None;
+			}
+			var modifiers = sunSymbolModifiers.None;
+			if (modifierlist.Any(i => i is sunConstKeyword)) {
+				modifiers |= sunSymbolModifiers.Constant;
+			}
+			if (modifierlist.Any(i => i is sunLocalKeyword)) {
+				modifiers |= sunSymbolModifiers.Local;
+			}
+			return modifiers;
+		}
 	}
 
 	abstract class sunCallableSymbol : sunSymbol {
