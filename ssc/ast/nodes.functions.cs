@@ -52,7 +52,7 @@ namespace arookas {
 				throw new sunArgumentCountException(this, symbol);
 			}
 			Arguments.Compile(compiler);
-			symbol.OpenCallSite(compiler, Arguments.Count);
+			symbol.OpenRelocation(symbol.CreateCallSite(compiler, Arguments.Count));
 			if (IsStatement) {
 				compiler.Binary.WritePOP();
 			}
