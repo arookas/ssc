@@ -44,6 +44,7 @@ namespace arookas {
 			public override sunImportResult ResolveImport(string name, out sunScriptFile file) {
 				file = null;
 				var fullPath = "";
+				name = name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 				if (Path.IsPathRooted(name)) {
 					// if the path is absolute, just use it directly
 					fullPath = name;
