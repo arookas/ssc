@@ -262,16 +262,16 @@ namespace arookas {
 		}
 
 		public override void CompileGet(sunCompiler compiler) {
-			compiler.Binary.WriteVAR(mDisplay, mIndex);
+			OpenRelocation(new sunVariableGetSite(this, compiler));
 		}
 		public override void CompileSet(sunCompiler compiler) {
-			compiler.Binary.WriteASS(mDisplay, mIndex);
+			OpenRelocation(new sunVariableSetSite(this, compiler));
 		}
 		public override void CompileInc(sunCompiler compiler) {
-			compiler.Binary.WriteINC(mDisplay, mIndex);
+			OpenRelocation(new sunVariableIncSite(this, compiler));
 		}
 		public override void CompileDec(sunCompiler compiler) {
-			compiler.Binary.WriteDEC(mDisplay, mIndex);
+			OpenRelocation(new sunVariableDecSite(this, compiler));
 		}
 	}
 
