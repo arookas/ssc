@@ -78,9 +78,11 @@ namespace arookas {
 			if (result == sunImportResult.Loaded) {
 				try {
 					ImportResolver.EnterFile(file);
+					mContext.PushLocal();
 					var parser = new sunParser();
 					var tree = parser.Parse(file);
 					tree.Compile(this);
+					mContext.PopLocal();
 					ImportResolver.ExitFile(file);
 				}
 				finally {
