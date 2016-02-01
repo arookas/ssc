@@ -53,26 +53,27 @@ namespace arookas {
 
 		// callables
 		public sunBuiltinSymbol DeclareBuiltin(sunBuiltinDeclaration node) {
-			if (SymbolTable.Callables.Any(i => i.Name == node.Builtin.Value)) {
+			if (SymbolTable.Callables.Any(i => i.Name == node.Name.Value)) {
 				throw new sunRedeclaredBuiltinException(node);
 			}
-			var symbol = new sunBuiltinSymbol(node.Builtin.Value, node.Parameters.ParameterInfo, SymbolTable.Count);
+			var symbol = new sunBuiltinSymbol(node.Name.Value, node.Parameters.ParameterInfo, SymbolTable.Count);
 			SymbolTable.Add(symbol);
 			return symbol;
 		}
 		public sunFunctionSymbol DefineFunction(sunFunctionDefinition node) {
+			var name = MangleSymbolName(node.Name.Value, false, (node.Modifiers & sunSymbolModifiers.Local) != 0);
 			if (node.Parameters.IsVariadic) {
 				throw new sunVariadicFunctionException(node);
 			}
-			if (SymbolTable.Callables.Any(i => i.Name == node.Function.Value)) {
+			if (SymbolTable.Callables.Any(i => i.Name == name)) {
 				throw new sunRedefinedFunctionException(node);
 			}
-			var symbol = new sunFunctionSymbol(node.Function.Value, node.Parameters.ParameterInfo, node.Body);
+			var symbol = new sunFunctionSymbol(name, node.Parameters.ParameterInfo, node.Body);
 			SymbolTable.Add(symbol);
 			return symbol;
 		}
 		public sunCallableSymbol ResolveCallable(sunFunctionCall node) {
-			var global = node.Function.Value;
+			var global = node.Name.Value;
 			var local = MangleSymbolName(global, false, true);
 			var symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == local);
 			if (symbol != null) {
@@ -93,17 +94,24 @@ namespace arookas {
 		}
 
 		// storables
-		public sunVariableSymbol DeclareVariable(sunIdentifier node) {
+		public sunVariableSymbol DeclareVariable(sunVariableDeclaration node) {
+			return DeclareVariable(node.Name, node.Modifiers);
+		}
+		public sunVariableSymbol DeclareVariable(sunVariableDefinition node) {
+			return DeclareVariable(node.Name, node.Modifiers);
+		}
+		sunVariableSymbol DeclareVariable(sunIdentifier node, sunSymbolModifiers modifiers) {
+			var name = MangleSymbolName(node.Value, false, false);
 #if SSC_PACK_VARS
-			if (Scopes.Top.GetIsDeclared(node.Value)) {
+			if (Scopes.Top.GetIsDeclared(name)) {
 				throw new sunRedeclaredVariableException(node);
 			}
 #else
-			if (Scopes.Any(i => i.GetIsDeclared(node.Value))) {
+			if (Scopes.Any(i => i.GetIsDeclared(name))) {
 				throw new sunRedeclaredVariableException(node);
 			}
 #endif
-			var symbol = Scopes.DeclareVariable(node.Value);
+			var symbol = Scopes.DeclareVariable(name);
 			if (Scopes.Top.Type == sunScopeType.Script) { // global-scope variables are added to the symbol table
 #if SSC_PACK_VARS
 				// only add the variable symbol if there isn't one with this index already
@@ -116,17 +124,21 @@ namespace arookas {
 			}
 			return symbol;
 		}
-		public sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression) {
+		public sunConstantSymbol DeclareConstant(sunConstantDefinition node) {
+			return DeclareConstant(node.Name, node.Expression, node.Modifiers);
+		}
+		sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression, sunSymbolModifiers modifiers) {
+			var name = MangleSymbolName(node.Value, false, (modifiers & sunSymbolModifiers.Local) != 0);
 #if SSC_PACK_VARS
-			if (Scopes.Top.GetIsDeclared(node.Value)) {
+			if (Scopes.Top.GetIsDeclared(name)) {
 				throw new sunRedeclaredVariableException(node);
 			}
 #else
-			if (Scopes.Any(i => i.GetIsDeclared(node.Value))) {
+			if (Scopes.Any(i => i.GetIsDeclared(name))) {
 				throw new sunRedeclaredVariableException(node);
 			}
 #endif
-			return Scopes.DeclareConstant(node.Value, expression);
+			return Scopes.DeclareConstant(name, expression);
 		}
 		public sunStorableSymbol ResolveStorable(sunIdentifier node) {
 			var global = node.Value;
