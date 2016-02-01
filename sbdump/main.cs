@@ -175,7 +175,7 @@ namespace arookas {
 				case 1: sWriter.Write(" # local{0}", data); break;
 			}
 		}
-		static void WriteJmp(uint ofs) {
+		static uint WriteJmp(uint ofs) {
 			var dest = sReader.Read32();
 			var symbol = FetchSymbol(i => i.Data == ofs);
 			if (ofs > 0 && symbol != null) {
@@ -185,6 +185,7 @@ namespace arookas {
 			else {
 				sWriter.Write(" ${0:X8}", dest);
 			}
+			return dest;
 		}
 		static void WriteData() {
 			Console.WriteLine("Outputting .data...");
