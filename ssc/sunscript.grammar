@@ -2,16 +2,6 @@
 
 GRAMMARTYPE						= "LL"
 
-DESCRIPTION						= "A grammar for SunScript."
-
-AUTHOR							= "arookas"
-VERSION							= "1.1"
-DATE							= "2015/11/29"
-
-LICENSE							= "No license."
-
-COPYRIGHT						= "Copyright (c) 2015 arookas"
-
 %tokens%
 
 // whitespace
