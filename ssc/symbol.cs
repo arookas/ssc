@@ -33,6 +33,12 @@ namespace arookas {
 			}
 			mSymbols.Add(symbol);
 		}
+		public void Remove(sunSymbol symbol) {
+			if (symbol == null) {
+				throw new ArgumentNullException("symbol");
+			}
+			mSymbols.Remove(symbol);
+		}
 		public void Clear() {
 			mSymbols.Clear();
 		}
