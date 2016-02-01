@@ -6,6 +6,10 @@ namespace arookas {
 		public sunIdentifier Builtin { get { return this[1] as sunIdentifier; } }
 		public sunParameterList Parameters { get { return this[2] as sunParameterList; } }
 
+		public sunSymbolModifiers Modifiers {
+			get { return sunSymbol.GetModifiers(this[0]); }
+		}
+
 		public sunBuiltinDeclaration(sunSourceLocation location)
 			: base(location) { }
 
@@ -18,6 +22,10 @@ namespace arookas {
 		public sunIdentifier Function { get { return this[1] as sunIdentifier; } }
 		public sunParameterList Parameters { get { return this[2] as sunParameterList; } }
 		public sunNode Body { get { return this[3]; } }
+
+		public sunSymbolModifiers Modifiers {
+			get { return sunSymbol.GetModifiers(this[0]); }
+		}
 
 		public sunFunctionDefinition(sunSourceLocation location)
 			: base(location) { }

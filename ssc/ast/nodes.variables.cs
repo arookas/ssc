@@ -24,6 +24,10 @@
 	class sunVariableDeclaration : sunNode {
 		public sunIdentifier Variable { get { return this[1] as sunIdentifier; } }
 
+		public sunSymbolModifiers Modifiers {
+			get { return sunSymbol.GetModifiers(this[0]); }
+		}
+
 		public sunVariableDeclaration(sunSourceLocation location)
 			: base(location) { }
 
@@ -36,6 +40,10 @@
 		public sunIdentifier Variable { get { return this[1] as sunIdentifier; } }
 		public sunAssign Operator { get { return this[2] as sunAssign; } }
 		public sunExpression Expression { get { return this[3] as sunExpression; } }
+
+		public sunSymbolModifiers Modifiers {
+			get { return sunSymbol.GetModifiers(this[0]); }
+		}
 
 		public sunVariableDefinition(sunSourceLocation location)
 			: base(location) { }
@@ -66,6 +74,10 @@
 	class sunConstantDefinition : sunNode {
 		public sunIdentifier Constant { get { return this[1] as sunIdentifier; } }
 		public sunExpression Expression { get { return this[3] as sunExpression; } }
+
+		public sunSymbolModifiers Modifiers {
+			get { return sunSymbol.GetModifiers(this[0]) | sunSymbolModifiers.Constant; }
+		}
 
 		public sunConstantDefinition(sunSourceLocation location)
 			: base(location) { }
