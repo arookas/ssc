@@ -98,26 +98,14 @@ namespace arookas {
 			return DeclareVariable(node.Name, node.Modifiers);
 		}
 		sunVariableSymbol DeclareVariable(sunIdentifier node, sunSymbolModifiers modifiers) {
-			var name = MangleSymbolName(node.Value, false, (modifiers & sunSymbolModifiers.Local) != 0);
-#if SSC_PACK_VARS
-			if (Scopes.Top.GetIsDeclared(name)) {
-				throw new sunRedeclaredVariableException(node);
-			}
-#else
+			var local = (modifiers & sunSymbolModifiers.Local) != 0;
+			var name = MangleSymbolName(node.Value, false, local);
 			if (Scopes.Any(i => i.GetIsDeclared(name))) {
 				throw new sunRedeclaredVariableException(node);
 			}
-#endif
 			var symbol = Scopes.DeclareVariable(name);
 			if (Scopes.Top.Type == sunScopeType.Script) { // global-scope variables are added to the symbol table
-#if SSC_PACK_VARS
-				// only add the variable symbol if there isn't one with this index already
-				if (!SymbolTable.Variables.Any(i => i.Index == symbol.Index)) {
-					SymbolTable.Add(new sunVariableSymbol(String.Format("global{0}", symbol.Index), symbol.Display, symbol.Index));
-				}
-#else
 				SymbolTable.Add(symbol);
-#endif
 			}
 			return symbol;
 		}
@@ -125,27 +113,29 @@ namespace arookas {
 			return DeclareConstant(node.Name, node.Expression, node.Modifiers);
 		}
 		sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression, sunSymbolModifiers modifiers) {
-			var name = MangleSymbolName(node.Value, false, (modifiers & sunSymbolModifiers.Local) != 0);
-#if SSC_PACK_VARS
-			if (Scopes.Top.GetIsDeclared(name)) {
-				throw new sunRedeclaredVariableException(node);
-			}
-#else
+			var local = (modifiers & sunSymbolModifiers.Local) != 0;
+			var name = MangleSymbolName(node.Value, false, local);
 			if (Scopes.Any(i => i.GetIsDeclared(name))) {
 				throw new sunRedeclaredVariableException(node);
 			}
-#endif
 			return Scopes.DeclareConstant(name, expression);
 		}
 		public sunStorableSymbol ResolveStorable(sunIdentifier node) {
 			var global = node.Value;
 			var local = MangleSymbolName(global, false, true);
+			var symbol = ResolveStorable(local);
+			if (symbol != null) {
+				return symbol;
+			}
+			symbol = ResolveStorable(global);
+			if (symbol != null) {
+				return symbol;
+			}
+			return null;
+		}
+		sunStorableSymbol ResolveStorable(string name) {
 			for (int i = Scopes.Count - 1; i >= 0; --i) {
-				var symbol = Scopes[i].ResolveStorable(local);
-				if (symbol != null) {
-					return symbol;
-				}
-				symbol = Scopes[i].ResolveStorable(global);
+				var symbol = Scopes[i].ResolveStorable(name);
 				if (symbol != null) {
 					return symbol;
 				}
