@@ -5,14 +5,8 @@ using System.Linq;
 
 namespace arookas {
 	public abstract class sunImportResolver {
-		static sunImportResolver sDefaultResolver;
-
 		public static sunImportResolver Default {
-			get { return sDefaultResolver; }
-		}
-
-		static sunImportResolver() {
-			sDefaultResolver = new sunDefaultImportResolver();
+			get { return new sunDefaultImportResolver(); }
 		}
 
 		public abstract void EnterFile(sunScriptFile file);
