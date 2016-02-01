@@ -1,215 +1,215 @@
 %header%
 
-GRAMMARTYPE						= "LL"
+GRAMMARTYPE								= "LL"
 
 %tokens%
 
 // whitespace
-WHITESPACE						= <<[ \t\r\n]+>> %ignore%
+WHITESPACE								= <<[ \t\r\n]+>> %ignore%
 
 // comments
 SINGLE_LINE_COMMENT				= <<//.*>> %ignore%
 MULTI_LINE_COMMENT				= <</\*([^*]|\*+[^*/])*\*+/>> %ignore%
 
 // keywords
-IMPORT							= "import"
+IMPORT										= "import"
 
-BUILTIN							= "builtin"
-FUNCTION						= "function"
-VAR								= "var"
-CONST							= "const"
+BUILTIN										= "builtin"
+FUNCTION									= "function"
+VAR												= "var"
+CONST											= "const"
 
-IF								= "if"
-ELSE							= "else"
-DO								= "do"
-WHILE							= "while"
-FOR								= "for"
+IF												= "if"
+ELSE											= "else"
+DO												= "do"
+WHILE											= "while"
+FOR												= "for"
 
-RETURN							= "return"
-BREAK							= "break"
-CONTINUE						= "continue"
+RETURN										= "return"
+BREAK											= "break"
+CONTINUE									= "continue"
 
-YIELD							= "yield"
-EXIT							= "exit"
-LOCK							= "lock"
-UNLOCK							= "unlock"
-INT								= "int"
-FLOAT							= "float"
-TYPEOF							= "typeof"
+YIELD											= "yield"
+EXIT											= "exit"
+LOCK											= "lock"
+UNLOCK										= "unlock"
+INT												= "int"
+FLOAT											= "float"
+TYPEOF										= "typeof"
 
-TRUE							= "true"
-FALSE							= "false"
+TRUE											= "true"
+FALSE											= "false"
 
 // punctuation
-L_BRACE							= "{"
-R_BRACE							= "}"
-L_PAREN							= "("
-R_PAREN							= ")"
-L_BRACKET						= "["
-R_BRACKET						= "]"
-COLON							= ":"
-SEMICOLON						= ";"
-COMMA							= ","
-DOT								= "."
-ELLIPSIS						= "..."
-QMARK							= "?"
+L_BRACE										= "{"
+R_BRACE										= "}"
+L_PAREN										= "("
+R_PAREN										= ")"
+L_BRACKET									= "["
+R_BRACKET									= "]"
+COLON											= ":"
+SEMICOLON									= ";"
+COMMA											= ","
+DOT												= "."
+ELLIPSIS									= "..."
+QMARK											= "?"
 
 // operators
-ADD								= "+"
-SUB								= "-" // doubles as the negation operator
-MUL								= "*"
-DIV								= "/"
-MOD								= "%"
+ADD												= "+"
+SUB												= "-" // doubles as the negation operator
+MUL												= "*"
+DIV												= "/"
+MOD												= "%"
 
-BIT_AND							= "&"
-BIT_OR							= "|"
-BIT_LSH							= "<<"
-BIT_RSH							= ">>"
+BIT_AND										= "&"
+BIT_OR										= "|"
+BIT_LSH										= "<<"
+BIT_RSH										= ">>"
 
-LOG_NOT							= "!"
-LOG_AND							= "&&"
-LOG_OR							= "||"
+LOG_NOT										= "!"
+LOG_AND										= "&&"
+LOG_OR										= "||"
 
-EQ								= "=="
-NEQ								= "!="
-LT								= "<"
-LTEQ							= "<="
-GT								= ">"
-GTEQ							= ">="
+EQ												= "=="
+NEQ												= "!="
+LT												= "<"
+LTEQ											= "<="
+GT												= ">"
+GTEQ											= ">="
 
-ASSIGN							= "="
-ASSIGN_ADD						= "+="
-ASSIGN_SUB						= "-="
-ASSIGN_MUL						= "*="
-ASSIGN_DIV						= "/="
-ASSIGN_MOD						= "%="
-ASSIGN_BIT_AND					= "&="
-ASSIGN_BIT_OR					= "|="
-ASSIGN_BIT_LSH					= "<<="
-ASSIGN_BIT_RSH					= ">>="
+ASSIGN										= "="
+ASSIGN_ADD								= "+="
+ASSIGN_SUB								= "-="
+ASSIGN_MUL								= "*="
+ASSIGN_DIV								= "/="
+ASSIGN_MOD								= "%="
+ASSIGN_BIT_AND						= "&="
+ASSIGN_BIT_OR							= "|="
+ASSIGN_BIT_LSH						= "<<="
+ASSIGN_BIT_RSH						= ">>="
 
-INCREMENT						= "++"
-DECREMENT						= "--"
+INCREMENT									= "++"
+DECREMENT									= "--"
 
 // literals
-IDENTIFIER						= <<[_A-Za-z][_A-Za-z0-9]*>>
-DEC_NUMBER						= <<-?[0-9]+\.[0-9]+>>
-HEX_NUMBER						= <<-?0x[0-9A-Fa-f]+>>
-INT_NUMBER						= <<-?[0-9]+>>
-STRING							= <<"(\\.|[^"])*">>
+IDENTIFIER								= <<[_A-Za-z][_A-Za-z0-9]*>>
+DEC_NUMBER								= <<-?[0-9]+\.[0-9]+>>
+HEX_NUMBER								= <<-?0x[0-9A-Fa-f]+>>
+INT_NUMBER								= <<-?[0-9]+>>
+STRING										= <<"(\\.|[^"])*">>
 
 %productions%
 
-script							= root_statement+;
+script										= root_statement+;
 
 // statements
-root_statement					=
-								import_statement SEMICOLON |
-								function_definition |
-								builtin_declaration SEMICOLON |
-								statement;
-statement						=
-								compound_statement SEMICOLON |
-								if_statement |
-								[name_label] while_statement |
-								[name_label] do_statement SEMICOLON |
-								[name_label] for_statement |
-								return_statement SEMICOLON |
-								break_statement SEMICOLON |
-								continue_statement SEMICOLON |
-								yield_statement SEMICOLON |
-								exit_statement SEMICOLON |
-								lock_statement SEMICOLON |
-								unlock_statement SEMICOLON |
-								statement_block;
+root_statement						=
+														import_statement SEMICOLON |
+														function_definition |
+														builtin_declaration SEMICOLON |
+														statement;
+statement									=
+														compound_statement SEMICOLON |
+														if_statement |
+														[name_label] while_statement |
+														[name_label] do_statement SEMICOLON |
+														[name_label] for_statement |
+														return_statement SEMICOLON |
+														break_statement SEMICOLON |
+														continue_statement SEMICOLON |
+														yield_statement SEMICOLON |
+														exit_statement SEMICOLON |
+														lock_statement SEMICOLON |
+														unlock_statement SEMICOLON |
+														statement_block;
 compound_statement				= compound_statement_item {COMMA compound_statement_item};
-compound_statement_item			=
-								const_definition |
-								variable_definition |
-								variable_declaration |
-								variable_assignment |
-								variable_augment |
-								function_call;
-statement_block					= L_BRACE {statement} R_BRACE;
+compound_statement_item		=
+														const_definition |
+														variable_definition |
+														variable_declaration |
+														variable_assignment |
+														variable_augment |
+														function_call;
+statement_block						= L_BRACE {statement} R_BRACE;
 
-import_statement				= IMPORT STRING;
-yield_statement					= YIELD;
-exit_statement					= EXIT;
-lock_statement					= LOCK;
-unlock_statement				= UNLOCK;
+import_statement					= IMPORT STRING;
+yield_statement						= YIELD;
+exit_statement						= EXIT;
+lock_statement						= LOCK;
+unlock_statement					= UNLOCK;
 
-name_label						= IDENTIFIER COLON;
+name_label								= IDENTIFIER COLON;
 
 // operators
 assignment_operator				= ASSIGN | ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MUL | ASSIGN_DIV | ASSIGN_MOD | ASSIGN_BIT_AND | ASSIGN_BIT_OR | ASSIGN_BIT_LSH | ASSIGN_BIT_RSH;
-ternary_operator				= expression QMARK expression COLON expression;
-binary_operator					=
-								ADD | SUB | MUL | DIV | MOD | // arithmetic
-								BIT_AND | BIT_OR | BIT_LSH | BIT_RSH | // bitwise
-								EQ | NEQ | LT | LTEQ | GT | GTEQ | // comparison
-								LOG_AND | LOG_OR; // logical
-unary_operator					= LOG_NOT | SUB;
-augment_operator				= INCREMENT | DECREMENT;
+ternary_operator					= expression QMARK expression COLON expression;
+binary_operator						=
+														ADD | SUB | MUL | DIV | MOD | // arithmetic
+														BIT_AND | BIT_OR | BIT_LSH | BIT_RSH | // bitwise
+														EQ | NEQ | LT | LTEQ | GT | GTEQ | // comparison
+														LOG_AND | LOG_OR; // logical
+unary_operator						= LOG_NOT | SUB;
+augment_operator					= INCREMENT | DECREMENT;
 
 // expressions
-expression						= operand {binary_operator operand};
-operand							= [unary_operator_list] term;
-term							=
-								int_cast |
-								float_cast |
-								typeof_cast |
-								function_call |
-								variable_reference |
-								variable_augment |
-								STRING |
-								DEC_NUMBER |
-								HEX_NUMBER |
-								INT_NUMBER |
-								TRUE |
-								FALSE |
-								L_PAREN expression R_PAREN |
-								L_BRACKET ternary_operator R_BRACKET; // HACK: the brackets remove ambiguity
+expression								= operand {binary_operator operand};
+operand										= [unary_operator_list] term;
+term											=
+														int_cast |
+														float_cast |
+														typeof_cast |
+														function_call |
+														variable_reference |
+														variable_augment |
+														STRING |
+														DEC_NUMBER |
+														HEX_NUMBER |
+														INT_NUMBER |
+														TRUE |
+														FALSE |
+														L_PAREN expression R_PAREN |
+														L_BRACKET ternary_operator R_BRACKET; // HACK: the brackets remove ambiguity
 
 unary_operator_list				= unary_operator+;
 
-int_cast						= INT L_PAREN expression R_PAREN;
-float_cast						= FLOAT L_PAREN expression R_PAREN;
-typeof_cast						= TYPEOF L_PAREN expression R_PAREN;
+int_cast									= INT L_PAREN expression R_PAREN;
+float_cast								= FLOAT L_PAREN expression R_PAREN;
+typeof_cast								= TYPEOF L_PAREN expression R_PAREN;
 
 // constants
-const_definition				= CONST IDENTIFIER ASSIGN expression;
+const_definition					= CONST IDENTIFIER ASSIGN expression;
 
 // variables
 variable_reference				= IDENTIFIER; // used in expressions
 variable_declaration			= VAR IDENTIFIER;
 variable_definition				= VAR IDENTIFIER ASSIGN expression;
 variable_assignment				= IDENTIFIER assignment_operator expression;
-variable_augment				= postfix_augment | prefix_augment;
+variable_augment					= postfix_augment | prefix_augment;
 
-postfix_augment					= IDENTIFIER augment_operator;
-prefix_augment					= augment_operator IDENTIFIER;
+postfix_augment						= IDENTIFIER augment_operator;
+prefix_augment						= augment_operator IDENTIFIER;
 
 // functions
 function_definition				= FUNCTION IDENTIFIER parameter_list statement_block;
-function_call					= IDENTIFIER argument_list;
+function_call							= IDENTIFIER argument_list;
 
-parameter_list					= L_PAREN [parameter {COMMA parameter}] R_PAREN; // e.g. (a, b, ...)
-parameter						= IDENTIFIER | ELLIPSIS;
-argument_list					= L_PAREN [argument {COMMA argument}] R_PAREN;
-argument						= expression;
+parameter_list						= L_PAREN [parameter {COMMA parameter}] R_PAREN; // e.g. (a, b, ...)
+parameter									= IDENTIFIER | ELLIPSIS;
+argument_list							= L_PAREN [argument {COMMA argument}] R_PAREN;
+argument									= expression;
 
 // builtins
 builtin_declaration				= BUILTIN IDENTIFIER parameter_list;
 
 // flow control
-if_statement					= IF expression statement [ELSE statement];
-while_statement					= WHILE expression statement;
-do_statement					= DO statement WHILE expression;
-for_statement					= FOR L_PAREN [for_declaration] SEMICOLON [for_condition] SEMICOLON [for_iteration] R_PAREN statement;
-for_declaration					= compound_statement;
-for_condition					= expression;
-for_iteration					= compound_statement;
+if_statement							= IF expression statement [ELSE statement];
+while_statement						= WHILE expression statement;
+do_statement							= DO statement WHILE expression;
+for_statement							= FOR L_PAREN [for_declaration] SEMICOLON [for_condition] SEMICOLON [for_iteration] R_PAREN statement;
+for_declaration						= compound_statement;
+for_condition							= expression;
+for_iteration							= compound_statement;
 
-return_statement				= RETURN [expression];
-break_statement					= BREAK [IDENTIFIER];
+return_statement					= RETURN [expression];
+break_statement						= BREAK [IDENTIFIER];
 continue_statement				= CONTINUE [IDENTIFIER];
