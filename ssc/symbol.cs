@@ -244,9 +244,11 @@ namespace arookas {
 
 		public int Display {
 			get { return mDisplay; }
+			set { mDisplay = value; }
 		}
 		public int Index {
 			get { return mIndex; }
+			set { mIndex = value; }
 		}
 
 		// symbol table
