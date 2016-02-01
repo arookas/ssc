@@ -51,14 +51,12 @@ namespace arookas {
 
 	abstract class sunCallableSymbol : sunSymbol {
 		public sunParameterInfo Parameters { get; private set; }
-		protected List<sunPoint> CallSites { get; private set; }
 
-		public bool HasCallSites { get { return CallSites.Count > 0; } }
+		public abstract bool HasCallSites { get; }
 
 		protected sunCallableSymbol(string name, sunParameterInfo parameterInfo)
 			: base(name) {
 			Parameters = parameterInfo;
-			CallSites = new List<sunPoint>(10);
 		}
 
 		public abstract void OpenCallSite(sunCompiler compiler, int argumentCount);
@@ -66,33 +64,77 @@ namespace arookas {
 	}
 
 	class sunBuiltinSymbol : sunCallableSymbol {
-		public int Index { get; private set; }
+		int mIndex;
+		List<sunBuiltinCallSite> mCallSites;
+
+		public int Index {
+			get { return mIndex; }
+			set { mIndex = value; }
+		}
+
+		public override bool HasCallSites {
+			get { return mCallSites.Count > 0; }
+		}
 
 		// symbol table
 		public override sunSymbolType Type { get { return sunSymbolType.Builtin; } }
 		public override uint Data { get { return (uint)Index; } }
 
 		public sunBuiltinSymbol(string name, int index)
-			: base(name, null) {
-			Index = index;
-		}
+			: this(name, null, index) { }
 		public sunBuiltinSymbol(string name, sunParameterInfo parameters, int index)
 			: base(name, parameters) {
-			Index = index;
+			mIndex = index;
+			mCallSites = new List<sunBuiltinCallSite>(10);
 		}
 
 		public override void Compile(sunCompiler compiler) {
 			// don't compile builtins
 		}
 		public override void OpenCallSite(sunCompiler compiler, int argumentCount) {
-			compiler.Binary.WriteFUNC(Index, argumentCount);
+			var callSite = new sunBuiltinCallSite(compiler.Binary.OpenPoint(), argumentCount);
+			mCallSites.Add(callSite);
+			compiler.Binary.WriteFUNC(0, 0); // dummy
 		}
-		public override void CloseCallSites(sunCompiler compiler) { }
+		public override void CloseCallSites(sunCompiler compiler) {
+			compiler.Binary.Keep();
+			foreach (var callSite in mCallSites) {
+				compiler.Binary.Goto(callSite.Point);
+				compiler.Binary.WriteFUNC(mIndex, callSite.ArgCount);
+			}
+			compiler.Binary.Back();
+		}
+
+		struct sunBuiltinCallSite {
+			sunPoint mPoint;
+			int mArgCount;
+
+			public sunPoint Point {
+				get { return mPoint; }
+			}
+			public int ArgCount {
+				get { return mArgCount; }
+			}
+
+			public sunBuiltinCallSite(sunPoint point, int argCount) {
+				mPoint = point;
+				mArgCount = argCount;
+			}
+		}
 	}
 
 	class sunFunctionSymbol : sunCallableSymbol {
-		sunNode Body { get; set; }
-		public uint Offset { get; private set; }
+		uint mOffset;
+		sunNode mBody;
+		List<sunPoint> mCallSites;
+
+		public uint Offset {
+			get { return mOffset; }
+		}
+
+		public override bool HasCallSites {
+			get { return mCallSites.Count > 0; }
+		}
 
 		// symbol table
 		public override sunSymbolType Type { get { return sunSymbolType.Function; } }
@@ -100,28 +142,32 @@ namespace arookas {
 
 		public sunFunctionSymbol(string name, sunParameterInfo parameters, sunNode body)
 			: base(name, parameters) {
-			Body = body;
+			if (body == null) {
+				throw new ArgumentNullException("body");
+			}
+			mCallSites = new List<sunPoint>(5);
+			mBody = body;
 		}
 
 		public override void Compile(sunCompiler compiler) {
-			Offset = compiler.Binary.Offset;
+			mOffset = compiler.Binary.Offset;
 			compiler.Context.Scopes.Push(sunScopeType.Function);
 			compiler.Context.Scopes.ResetLocalCount();
 			foreach (var parameter in Parameters) {
 				compiler.Context.Scopes.DeclareVariable(parameter); // since there is no AST node for these, they won't affect MaxLocalCount
 			}
 			compiler.Binary.WriteMKDS(1);
-			compiler.Binary.WriteMKFR(Body.MaxLocalCount);
-			Body.Compile(compiler);
+			compiler.Binary.WriteMKFR(mBody.MaxLocalCount);
+			mBody.Compile(compiler);
 			compiler.Binary.WriteRET0();
 			compiler.Context.Scopes.Pop();
 		}
 		public override void OpenCallSite(sunCompiler compiler, int argumentCount) {
 			var point = compiler.Binary.WriteCALL(argumentCount);
-			CallSites.Add(point);
+			mCallSites.Add(point);
 		}
 		public override void CloseCallSites(sunCompiler compiler) {
-			foreach (var callSite in CallSites) {
+			foreach (var callSite in mCallSites) {
 				compiler.Binary.ClosePoint(callSite, Offset);
 			}
 		}
