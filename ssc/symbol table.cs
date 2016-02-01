@@ -37,9 +37,14 @@ namespace arookas {
 
 	abstract class sunSymbol {
 		string mName;
+		sunSymbolModifiers mModifiers;
 
 		public string Name {
 			get { return mName; }
+		}
+		public sunSymbolModifiers Modifiers {
+			get { return mModifiers; }
+			set { mModifiers = value; }
 		}
 
 		// symbol table
@@ -311,5 +316,12 @@ namespace arookas {
 		Function,
 		Variable,
 		Constant,
+	}
+
+	[Flags]
+	enum sunSymbolModifiers {
+		None = 0,
+		Constant = 1 << 0,
+		Local = 1 << 1,
 	}
 }
