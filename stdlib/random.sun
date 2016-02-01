@@ -5,10 +5,12 @@
  * 2016 arookas
 \* ================================================= */
 
+import "ssc/common.sun";
+
 var local next;
 
 function srand(seed) {
-	next = seed;
+	next = int(seed);
 }
 
 function rand() {
