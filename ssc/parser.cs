@@ -60,14 +60,16 @@ namespace arookas {
 			return ast;
 		}
 		static sunNode ConvertNode(string file, Node node) {
+			var id = GetId(node);
+			var parent = GetId(node.Parent);
 			var location = new sunSourceLocation(file, node.StartLine, node.StartColumn);
-			string token = null;
+			var token = "";
 			if (node is Token) {
 				token = (node as Token).Image;
 			}
 
 			// statements
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.SCRIPT: return new sunNode(location);
 				case __sunConstants.ROOT_STATEMENT: return new sunNode(location);
 				case __sunConstants.STATEMENT: return new sunNode(location);
@@ -85,7 +87,7 @@ namespace arookas {
 			}
 
 			// literals
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.INT_NUMBER: return new sunIntLiteral(location, token);
 				case __sunConstants.HEX_NUMBER: return new sunHexLiteral(location, token);
 				case __sunConstants.DEC_NUMBER: return new sunFloatLiteral(location, token);
@@ -97,14 +99,14 @@ namespace arookas {
 			}
 
 			// operators
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.ADD: return new sunAdd(location);
 				case __sunConstants.SUB: {
-						if (GetId(node.Parent) == __sunConstants.UNARY_OPERATOR) {
-							return new sunNeg(location);
-						}
-						return new sunSub(location);
+					if (parent == __sunConstants.UNARY_OPERATOR) {
+						return new sunNeg(location);
 					}
+					return new sunSub(location);
+				}
 				case __sunConstants.MUL: return new sunMul(location);
 				case __sunConstants.DIV: return new sunDiv(location);
 				case __sunConstants.MOD: return new sunMod(location);
@@ -148,7 +150,7 @@ namespace arookas {
 			}
 
 			// expressions
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.EXPRESSION: return new sunExpression(location);
 				case __sunConstants.OPERAND: return new sunOperand(location);
 				case __sunConstants.TERM: return new sunNode(location);
@@ -164,12 +166,12 @@ namespace arookas {
 			}
 
 			// builtins
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.BUILTIN_DECLARATION: return new sunBuiltinDeclaration(location);
 			}
 
 			// functions
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.FUNCTION_DEFINITION: return new sunFunctionDefinition(location);
 				case __sunConstants.FUNCTION_CALL: return new sunFunctionCall(location);
 
@@ -178,7 +180,7 @@ namespace arookas {
 			}
 
 			// variables
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.VARIABLE_REFERENCE: return new sunStorableReference(location);
 				case __sunConstants.VARIABLE_DECLARATION: return new sunVariableDeclaration(location);
 				case __sunConstants.VARIABLE_DEFINITION: return new sunVariableDefinition(location);
@@ -187,12 +189,12 @@ namespace arookas {
 			}
 
 			// constants
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.CONST_DEFINITION: return new sunConstantDefinition(location);
 			}
 
 			// flow control
-			switch (GetId(node)) {
+			switch (id) {
 				case __sunConstants.IF_STATEMENT: return new sunIf(location);
 				case __sunConstants.WHILE_STATEMENT: return new sunWhile(location);
 				case __sunConstants.DO_STATEMENT: return new sunDo(location);
