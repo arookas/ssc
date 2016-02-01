@@ -216,18 +216,18 @@ namespace arookas {
 
 		// static util
 		string MangleSymbolName(string basename, bool system, bool local) {
-			var prefix = "";
-			var suffix = "";
-			if (system) {
-				prefix = "$";
-			}
-			if (local) {
-				suffix = String.Format("@{0}", mLocalStack.Peek());
-			}
-			if (prefix == "" && suffix == "") {
+			if (!system && !local) {
 				return basename;
 			}
-			return String.Concat(prefix, basename, suffix);
+			var sb = new StringBuilder(basename.Length + 16);
+			if (system) {
+				sb.Append('$');
+			}
+			sb.Append(basename);
+			if (local) {
+				sb.AppendFormat("@{0}", mLocalStack.Peek());
+			}
+			return sb.ToString();
 		}
 	}
 }
