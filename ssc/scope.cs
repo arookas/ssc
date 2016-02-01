@@ -4,47 +4,57 @@ using System.Linq;
 
 namespace arookas {
 	class sunScopeStack : IEnumerable<sunScope> {
-		List<sunScope> Stack { get; set; }
+		List<sunScope> mStack;
+		int mGlobals, mLocals;
 
-		public int Count { get { return Stack.Count; } }
-#if SSC_PACK_VARS
-		int GlobalCount { get { return Stack.Where(i => i.Type == sunScopeType.Script).Sum(i => i.VariableCount); } }
-		int LocalCount { get { return Stack.Where(i => i.Type == sunScopeType.Function).Sum(i => i.VariableCount); } }
-#else
-		int GlobalCount { get; set; }
-		int LocalCount { get; set; }
-#endif
+		public int Count {
+			get { return mStack.Count; }
+		}
 
-		public sunScope Root { get { return this.FirstOrDefault(i => i.Type == Top.Type); } }
-		public sunScope Script { get { return this.FirstOrDefault(i => i.Type == sunScopeType.Script); } }
-		public sunScope Function { get { return this.FirstOrDefault(i => i.Type == sunScopeType.Function); } }
-		public sunScope Top { get { return this[Count - 1]; } }
+		public sunScope Root {
+			get { return this.FirstOrDefault(i => i.Type == Top.Type); }
+		}
+		public sunScope Script {
+			get { return this.FirstOrDefault(i => i.Type == sunScopeType.Script); }
+		}
+		public sunScope Function {
+			get { return this.FirstOrDefault(i => i.Type == sunScopeType.Function); }
+		}
+		public sunScope Top {
+			get { return this[Count - 1]; }
+		}
 
-		public sunScope this[int index] { get { return Stack[index]; } }
+		public sunScope this[int index] {
+			get { return mStack[index]; }
+		}
 
 		public sunScopeStack() {
-			Stack = new List<sunScope>(8);
+			mStack = new List<sunScope>(8);
 			Push(sunScopeType.Script); // push global scope
 		}
 
 		public void Push() { Push(Top.Type); }
 		public void Push(sunScopeType type) {
-			Stack.Add(new sunScope(type));
+			mStack.Add(new sunScope(type));
 		}
 		public void Pop() {
 			if (Count > 1) {
-				Stack.RemoveAt(Count - 1);
+				mStack.RemoveAt(Count - 1);
 			}
 		}
 		public void Clear() {
-			Stack.Clear();
+			mStack.Clear();
 			Push(sunScopeType.Script); // add global scope
+			mGlobals = 0;
+			mLocals = 0;
 		}
 
-#if !SSC_PACK_VARS
-		public void ResetGlobalCount() { GlobalCount = 0; }
-		public void ResetLocalCount() { LocalCount = 0; }
-#endif
+		public void ResetGlobalCount() {
+			mGlobals = 0;
+		}
+		public void ResetLocalCount() {
+			mLocals = 0;
+		}
 
 		public sunVariableSymbol DeclareVariable(string name) {
 			switch (Top.Type) {
@@ -57,26 +67,26 @@ namespace arookas {
 			return Top.DeclareConstant(name, expression);
 		}
 		sunVariableSymbol DeclareGlobal(string name) {
-			var symbol = Top.DeclareVariable(name, 0, GlobalCount);
-#if !SSC_PACK_VARS
+			var symbol = Top.DeclareVariable(name, 0, mGlobals);
 			if (symbol != null) {
-				++GlobalCount;
+				++mGlobals;
 			}
-#endif
 			return symbol;
 		}
 		sunVariableSymbol DeclareLocal(string name) {
-			var symbol = Top.DeclareVariable(name, 1, LocalCount);
-#if !SSC_PACK_VARS
+			var symbol = Top.DeclareVariable(name, 1, mLocals);
 			if (symbol != null) {
-				++LocalCount;
+				++mLocals;
 			}
-#endif
 			return symbol;
 		}
 
-		public IEnumerator<sunScope> GetEnumerator() { return Stack.GetEnumerator(); }
-		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+		public IEnumerator<sunScope> GetEnumerator() {
+			return mStack.GetEnumerator();
+		}
+		IEnumerator IEnumerable.GetEnumerator() {
+			return GetEnumerator();
+		}
 	}
 
 	class sunScope {
