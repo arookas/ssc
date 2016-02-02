@@ -12,35 +12,37 @@ namespace arookas {
 			"true", "false",
 		};
 
+		__sunParser mParser;
+		sunScriptFile mFile;
+
 		public sunNode Parse(sunScriptFile file) {
-			using (var input = file.CreateReader()) {
+			mFile = file;
+			using (var input = mFile.CreateReader()) {
 				try {
-					var parser = new __sunParser(input);
-					var node = parser.Parse();
-					return CreateAst(file.Name, node);
+					mParser = new __sunParser(input);
+					var node = mParser.Parse();
+					return CreateAst(node);
 				}
 				catch (ParserLogException ex) {
-					throw new sunParserException(file.Name, ex[0]);
+					throw new sunParserException(file.Name, mFile.Id, ex[0]);
 				}
 			}
 		}
 
-		static sunNode CreateAst(string file, Node node) {
-			var ast = ConvertNode(file, node);
+		sunNode CreateAst(Node node) {
+			var ast = ConvertNode(node);
 			if (ast == null) {
 				return null;
 			}
-			// children
 			if (node is Production) {
 				var production = node as Production;
 				for (int i = 0; i < production.Count; ++i) {
-					var child = CreateAst(file, production[i]);
+					var child = CreateAst(production[i]);
 					if (child != null) {
 						ast.Add(child);
 					}
 				}
 			}
-			// transcience
 			if (ast.Count == 1) {
 				switch (GetId(node)) {
 					case __sunConstants.ROOT_STATEMENT:
@@ -59,10 +61,10 @@ namespace arookas {
 			}
 			return ast;
 		}
-		static sunNode ConvertNode(string file, Node node) {
+		sunNode ConvertNode(Node node) {
 			var id = GetId(node);
 			var parent = GetId(node.Parent);
-			var location = new sunSourceLocation(file, node.StartLine, node.StartColumn);
+			var location = new sunSourceLocation(mFile.Name, mFile.Id, node.StartLine, node.StartColumn);
 			var token = "";
 			if (node is Token) {
 				token = (node as Token).Image;
@@ -102,11 +104,11 @@ namespace arookas {
 			switch (id) {
 				case __sunConstants.ADD: return new sunAdd(location);
 				case __sunConstants.SUB: {
-					if (parent == __sunConstants.UNARY_OPERATOR) {
-						return new sunNeg(location);
+						if (parent == __sunConstants.UNARY_OPERATOR) {
+							return new sunNeg(location);
+						}
+						return new sunSub(location);
 					}
-					return new sunSub(location);
-				}
 				case __sunConstants.MUL: return new sunMul(location);
 				case __sunConstants.DIV: return new sunDiv(location);
 				case __sunConstants.MOD: return new sunMod(location);
@@ -213,8 +215,8 @@ namespace arookas {
 				switch (parent) {
 					case __sunConstants.FUNCTION_MODIFIERS:
 					case __sunConstants.BUILTIN_MODIFIERS: {
-						return new sunConstKeyword(location);
-					}
+							return new sunConstKeyword(location);
+						}
 				}
 			}
 			if (id == __sunConstants.LOCAL) {

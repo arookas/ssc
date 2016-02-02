@@ -18,6 +18,7 @@ namespace arookas {
 			List<sunScriptFile> mImports;
 			Stack<sunScriptFile> mFiles;
 			string mRootDirectory, mCurrentDirectory;
+			ulong mFileId;
 
 			string CurrentDirectory {
 				get {
@@ -64,7 +65,7 @@ namespace arookas {
 					return sunImportResult.Skipped;
 				}
 				try {
-					file = new sunScriptFile(path, File.OpenRead(path));
+					file = new sunScriptFile(path, File.OpenRead(path), mFileId++);
 				}
 				catch {
 					return sunImportResult.FailedToLoad;
@@ -85,6 +86,7 @@ namespace arookas {
 	public class sunScriptFile : IDisposable {
 		string mName;
 		Stream mStream;
+		ulong mId;
 
 		public string Name {
 			get { return mName; }
@@ -92,8 +94,11 @@ namespace arookas {
 		public Stream Stream {
 			get { return mStream; }
 		}
+		public ulong Id {
+			get { return mId; }
+		}
 
-		public sunScriptFile(string name, Stream stream) {
+		public sunScriptFile(string name, Stream stream, ulong id) {
 			if (name == null) {
 				throw new ArgumentNullException("name");
 			}
@@ -105,6 +110,7 @@ namespace arookas {
 			}
 			mName = name;
 			mStream = stream;
+			mId = id;
 		}
 
 		public void Dispose() {

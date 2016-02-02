@@ -31,7 +31,7 @@ namespace arookas
 				else {
 					if (results.Error is sunSourceException) {
 						var error = results.Error as sunSourceException;
-						Error("  in file \"{0}\"\n  at line {1}, col {2}\n\n{3}{4}", error.Location.File, error.Location.Line, error.Location.Column, GetErrorPreview(error.Location), error.Message);
+						Error("  in file \"{0}\"\n  at line {1}, col {2}\n\n{3}{4}", error.Location.ScriptName, error.Location.Line, error.Location.Column, GetErrorPreview(error.Location), error.Message);
 						exitCode = 1;
 					}
 					else {
@@ -107,7 +107,7 @@ namespace arookas
 		static string GetErrorPreview(sunSourceLocation location) {
 			Stream file;
 			try {
-				file = File.OpenRead(location.File);
+				file = File.OpenRead(location.ScriptName);
 			}
 			catch {
 				// simply don't do a preview if opening a file fails

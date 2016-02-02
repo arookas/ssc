@@ -4,20 +4,36 @@ using System.Collections.Generic;
 
 namespace arookas {
 	public class sunSourceLocation {
-		public string File { get; private set; }
-		public int Line { get; private set; }
-		public int Column { get; private set; }
+		string mScriptName;
+		ulong mScriptId;
+		int mLine, mColumn;
 
-		public sunSourceLocation(string file, int line, int column) {
+		public string ScriptName {
+			get { return mScriptName; }
+		}
+		public ulong ScriptId {
+			get { return mScriptId; }
+		}
+		public int Line {
+			get { return mLine; }
+		}
+		public int Column {
+			get { return mColumn; }
+		}
+
+		public sunSourceLocation(string file, ulong id, int line, int column) {
 			if (file == null) {
 				throw new ArgumentNullException("file");
 			}
-			File = file;
-			Line = line;
-			Column = column;
+			mScriptName = file;
+			mScriptId = id;
+			mLine = line;
+			mColumn = column;
 		}
 
-		public override string ToString() { return String.Format("\"{0}\", ({1},{2})", File, Line, Column); }
+		public override string ToString() {
+			return String.Format("\"{0}\", ({1},{2})", mScriptName, mLine, mColumn);
+		}
 	}
 
 	class sunNode : IEnumerable<sunNode> {

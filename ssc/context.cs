@@ -53,7 +53,8 @@ namespace arookas {
 			return symbol;
 		}
 		public sunFunctionSymbol DefineFunction(sunFunctionDefinition node) {
-			var name = MangleSymbolName(node.Name.Value, false, (node.Modifiers & sunSymbolModifiers.Local) != 0);
+			var local = (node.Modifiers & sunSymbolModifiers.Local) != 0;
+			var name = MangleSymbolName(node.Name.Value, node.Location.ScriptId, false, local);
 			if (node.Parameters.IsVariadic) {
 				throw new sunVariadicFunctionException(node);
 			}
@@ -64,9 +65,10 @@ namespace arookas {
 			SymbolTable.Add(symbol);
 			return symbol;
 		}
+
 		public sunCallableSymbol ResolveCallable(sunFunctionCall node) {
 			var global = node.Name.Value;
-			var local = MangleSymbolName(global, false, true);
+			var local = MangleSymbolName(global, node.Location.ScriptId, false, true);
 			var symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == local);
 			if (symbol != null) {
 				return symbol;
@@ -77,6 +79,7 @@ namespace arookas {
 			}
 			return null;
 		}
+
 		public sunCallableSymbol MustResolveCallable(sunFunctionCall node) {
 			var symbol = ResolveCallable(node);
 			if (symbol == null) {
@@ -94,7 +97,7 @@ namespace arookas {
 		}
 		sunVariableSymbol DeclareVariable(sunIdentifier node, sunSymbolModifiers modifiers) {
 			var local = (modifiers & sunSymbolModifiers.Local) != 0;
-			var name = MangleSymbolName(node.Value, false, local);
+			var name = MangleSymbolName(node.Value, node.Location.ScriptId, false, local);
 			if (Scopes.Any(i => i.GetIsDeclared(name))) {
 				throw new sunRedeclaredVariableException(node);
 			}
@@ -109,15 +112,16 @@ namespace arookas {
 		}
 		sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression, sunSymbolModifiers modifiers) {
 			var local = (modifiers & sunSymbolModifiers.Local) != 0;
-			var name = MangleSymbolName(node.Value, false, local);
+			var name = MangleSymbolName(node.Value, node.Location.ScriptId, false, local);
 			if (Scopes.Any(i => i.GetIsDeclared(name))) {
 				throw new sunRedeclaredVariableException(node);
 			}
 			return Scopes.DeclareConstant(name, expression);
 		}
+
 		public sunStorableSymbol ResolveStorable(sunIdentifier node) {
 			var global = node.Value;
-			var local = MangleSymbolName(global, false, true);
+			var local = MangleSymbolName(global, node.Location.ScriptId, false, true);
 			var symbol = ResolveStorable(local);
 			if (symbol != null) {
 				return symbol;
@@ -143,6 +147,7 @@ namespace arookas {
 		public sunConstantSymbol ResolveConstant(sunIdentifier node) {
 			return ResolveStorable(node) as sunConstantSymbol;
 		}
+
 		public sunStorableSymbol MustResolveStorable(sunIdentifier node) {
 			var symbol = ResolveStorable(node);
 			if (symbol == null) {
@@ -196,7 +201,7 @@ namespace arookas {
 			return symbol;
 		}
 		sunStorableSymbol AddSystemVariable(string name) {
-			var symbol = Scopes.DeclareVariable(MangleSymbolName(name, true, false));
+			var symbol = Scopes.DeclareVariable(MangleSystemSymbol(name));
 			SymbolTable.Add(symbol);
 			return symbol;
 		}
