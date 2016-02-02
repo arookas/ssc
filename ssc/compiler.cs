@@ -89,7 +89,7 @@ namespace arookas {
 		void CleanSymbols() {
 			var i = 0;
 			while (i < mContext.SymbolTable.Count) {
-				if (mContext.SymbolTable[i] is sunCallableSymbol && !mContext.SymbolTable[i].HasRelocations) {
+				if (!mContext.SymbolTable[i].HasRelocations) {
 					mContext.SymbolTable.RemoveAt(i);
 					continue;
 				}
@@ -101,6 +101,15 @@ namespace arookas {
 					continue;
 				}
 				builtin.Index = i;
+			}
+			var vars = 0;
+			for (i = 0; i < mContext.SymbolTable.Count; ++i) {
+				var variable = mContext.SymbolTable[i] as sunVariableSymbol;
+				if (variable == null) {
+					continue;
+				}
+				variable.Display = 0;
+				variable.Index = vars++;
 			}
 		}
 #endif
