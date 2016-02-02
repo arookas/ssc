@@ -8,8 +8,6 @@ using System.Text;
 namespace arookas {
 	class sunContext {
 		Stack<sunNameLabel> mNameStack;
-		Stack<long> mLocalStack;
-		long mLocal;
 
 		public sunDataTable DataTable { get; private set; }
 		public sunSymbolTable SymbolTable { get; private set; }
@@ -31,7 +29,6 @@ namespace arookas {
 			Scopes = new sunScopeStack();
 			Loops = new sunLoopStack();
 			mNameStack = new Stack<sunNameLabel>(10);
-			mLocalStack = new Stack<long>(10);
 			AddSystemSymbols();
 		}
 
@@ -41,8 +38,6 @@ namespace arookas {
 			Scopes.Clear();
 			Loops.Clear();
 			mNameStack.Clear();
-			mLocalStack.Clear();
-			mLocal = 0;
 
 			// reinstall system symbols
 			AddSystemSymbols();
@@ -184,14 +179,6 @@ namespace arookas {
 			return null;
 		}
 
-		// locals
-		public void PushLocal() {
-			mLocalStack.Push(mLocal++);
-		}
-		public void PopLocal() {
-			mLocalStack.Pop();
-		}
-
 		// system symbols
 		void AddSystemSymbols() {
 			// add system builtins
@@ -215,7 +202,7 @@ namespace arookas {
 		}
 
 		// static util
-		string MangleSymbolName(string basename, bool system, bool local) {
+		static string MangleSymbolName(string basename, ulong id, bool system, bool local) {
 			if (!system && !local) {
 				return basename;
 			}
@@ -225,7 +212,7 @@ namespace arookas {
 			}
 			sb.Append(basename);
 			if (local) {
-				sb.AppendFormat("@{0}", mLocalStack.Peek());
+				sb.AppendFormat("@{0}", id);
 			}
 			return sb.ToString();
 		}

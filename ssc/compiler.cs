@@ -107,9 +107,7 @@ namespace arookas {
 			if (result == sunImportResult.Loaded) {
 				try {
 					mResolver.EnterFile(file);
-					mContext.PushLocal();
 					mParser.Parse(file).Compile(this);
-					mContext.PopLocal();
 					mResolver.ExitFile(file);
 				}
 				finally {
