@@ -47,11 +47,10 @@ The script generates a solution with the following projects:
  - **sbdump**, a tool which dumps disassembly and other information on compiled SPC binaries
 
 Simply run the script through premake5 and build the resulting solution.
-There are also several compile-time options which are able to be configured via the premake5 command line:
+There are also compile-time options which are able to be configured via the premake5 command line:
 
 |Option|Description|
 |------|-----------|
-|var-alloc|Affects how variables are allocated slices. Available values are _pack_ and _inc_.|
 |clean-symbols|Cleans symbol table of unused symbols.|
 
 _**Note:** A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.

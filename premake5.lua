@@ -1,15 +1,5 @@
 -- options
 newoption {
-	trigger = "var-alloc",
-	value = "MODE",
-	description = "Sets how the compiler should allocate variables",
-	allowed = {
-		{ "pack", "Recycle slices as they become unused" },
-		{ "inc", "Every variable gets its own slice" }
-	}
-}
-
-newoption {
 	trigger = "clean-symbols",
 	description = "Cleans up the symbol table from unused symbols"
 }
@@ -40,8 +30,6 @@ workspace "ssc"
 		links { "System", "arookas", "grammatica-1.6" }
 		
 		-- apply options
-		filter "options:var-alloc=pack"
-			defines { "SSC_PACK_VARS" }
 		filter "options:clean-symbols"
 			defines { "SSC_CLEAN_SYMBOLS" }
 		filter {}
