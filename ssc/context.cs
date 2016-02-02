@@ -202,6 +202,12 @@ namespace arookas {
 		}
 
 		// static util
+		static string MangleSystemSymbol(string basename) {
+			return MangleSymbolName(basename, 0, true, false);
+		}
+		static string MangleLocalSymbol(string basename, ulong id) {
+			return MangleSymbolName(basename, id, false, true);
+		}
 		static string MangleSymbolName(string basename, ulong id, bool system, bool local) {
 			if (!system && !local) {
 				return basename;
