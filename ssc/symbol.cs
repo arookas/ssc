@@ -283,6 +283,8 @@ namespace arookas {
 			get { return (uint)Index; }
 		}
 
+		public sunVariableSymbol(string name)
+			: this(name, 0, 0) { }
 		public sunVariableSymbol(string name, int display, int index)
 			: base(name) {
 			mDisplay = display;
