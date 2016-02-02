@@ -46,6 +46,9 @@ namespace arookas {
 				using (mBinary = new sunBinary(output)) {
 					CompileBody(name);
 					CompileFunctions();
+#if SSC_CLEAN_SYMBOLS
+					CleanSymbols();
+#endif
 					CompileRelocations();
 					CompileData();
 					CompileSymbols();
@@ -82,6 +85,25 @@ namespace arookas {
 			}
 			return count;
 		}
+#if SSC_CLEAN_SYMBOLS
+		void CleanSymbols() {
+			var i = 0;
+			while (i < mContext.SymbolTable.Count) {
+				if (mContext.SymbolTable[i] is sunCallableSymbol && !mContext.SymbolTable[i].HasRelocations) {
+					mContext.SymbolTable.RemoveAt(i);
+					continue;
+				}
+				++i;
+			}
+			for (i = 0; i < mContext.SymbolTable.Count; ++i) {
+				var builtin = mContext.SymbolTable[i] as sunBuiltinSymbol;
+				if (builtin == null) {
+					continue;
+				}
+				builtin.Index = i;
+			}
+		}
+#endif
 		void CompileRelocations() {
 			foreach (var symbol in mContext.SymbolTable) {
 				symbol.CloseRelocations(this);
