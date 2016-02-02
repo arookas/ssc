@@ -6,9 +6,16 @@ namespace arookas {
 	class sunLoopStack {
 		Stack<sunLoop> mLoops;
 
-		sunLoop Top { get { return mLoops.Peek(); } }
-		sunLoop this[string name] { get { return mLoops.FirstOrDefault(i => i.Name == name); } }
-		public int Count { get { return mLoops.Count; } }
+		sunLoop Top {
+			get { return mLoops.Peek(); }
+		}
+		public int Count {
+			get { return mLoops.Count; }
+		}
+		
+		sunLoop this[string name] {
+			get { return mLoops.FirstOrDefault(i => i.Name == name); }
+		}
 
 		public sunLoopStack() {
 			mLoops = new Stack<sunLoop>(5);
@@ -44,29 +51,45 @@ namespace arookas {
 			mLoops.Clear();
 		}
 
-		public bool AddBreak(sunPoint point) { return AddBreak(point, null); }
-		public bool AddContinue(sunPoint point) { return AddContinue(point, null); }
+		public bool AddBreak(sunPoint point) {
+			if (Count > 0) {
+				Top.AddBreak(point);
+				return true;
+			}
+			return false;
+		}
+		public bool AddContinue(sunPoint point) {
+			if (Count > 0) {
+				Top.AddContinue(point);
+				return true;
+			}
+			return false;
+		}
 		public bool AddBreak(sunPoint point, string name) {
-			if (Count < 1) {
-				return false;
+			if (name == null) {
+				throw new ArgumentNullException("name");
 			}
-			var loop = name == null ? Top : this[name];
-			if (loop == null) {
-				return false;
+			if (Count > 0) {
+				var loop = this[name];
+				if (loop != null) {
+					loop.AddBreak(point);
+					return true;
+				}
 			}
-			loop.AddBreak(point);
-			return true;
+			return false;
 		}
 		public bool AddContinue(sunPoint point, string name) {
-			if (Count < 1) {
-				return false;
+			if (name == null) {
+				throw new ArgumentNullException("name");
 			}
-			var loop = name == null ? Top : this[name];
-			if (loop == null) {
-				return false;
+			if (Count > 0) {
+				var loop = this[name];
+				if (loop != null) {
+					loop.AddContinue(point);
+					return true;
+				}
 			}
-			loop.AddContinue(point);
-			return true;
+			return false;
 		}
 
 	}
