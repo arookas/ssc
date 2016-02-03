@@ -86,9 +86,9 @@ namespace arookas {
 			mText.Writer.Write8(0x02);
 			mText.Writer.WriteS32(index);
 		}
-		public void WriteADR(int value) {
+		public void WriteADR(uint value) {
 			mText.Writer.Write8(0x03);
-			mText.Writer.WriteS32(value);
+			mText.Writer.Write32(value);
 		}
 		public void WriteVAR(int display, int index) {
 			mText.Writer.Write8(0x04);
