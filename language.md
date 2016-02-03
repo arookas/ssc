@@ -63,7 +63,7 @@ const PI = 3.14;
 const TWOPI = 2 * pi;
 const R = 300.0;
 
-var circ = R * TWOPI; // this actually compiles to 'var circ = r * (2 * (3.14));'
+var circ = R * TWOPI; // this actually compiles to 'var circ = 300.0 * (2 * (3.14));'
 ```
 
 _**Note:** You may assign only expressions which are evaluated to be constant._
