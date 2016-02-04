@@ -52,6 +52,21 @@ namespace arookas {
 		}
 	}
 
+	class sunAddressLiteral : sunToken<uint>, sunTerm {
+		public sunAddressLiteral(sunSourceLocation location, string literal)
+			: base(location) {
+				Value = UInt32.Parse(literal.Substring(1), NumberStyles.AllowHexSpecifier);
+		}
+
+		public override void Compile(sunCompiler compiler) {
+			compiler.Binary.WriteADR(Value);
+		}
+
+		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
+			return sunExpressionFlags.Literals;
+		}
+	}
+
 	class sunStringLiteral : sunToken<string>, sunTerm {
 		public sunStringLiteral(sunSourceLocation location, string literal)
 			: base(location) {

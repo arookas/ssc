@@ -93,6 +93,7 @@ namespace arookas {
 				case __sunConstants.INT_NUMBER: return new sunIntLiteral(location, token);
 				case __sunConstants.HEX_NUMBER: return new sunHexLiteral(location, token);
 				case __sunConstants.DEC_NUMBER: return new sunFloatLiteral(location, token);
+				case __sunConstants.ADR_NUMBER: return new sunAddressLiteral(location, token);
 				case __sunConstants.STRING: return new sunStringLiteral(location, token);
 				case __sunConstants.IDENTIFIER: return new sunIdentifier(location, token);
 				case __sunConstants.ELLIPSIS: return new sunEllipsis(location);
