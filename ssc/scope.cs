@@ -89,7 +89,7 @@ namespace arookas {
 		}
 	}
 
-	class sunScope {
+	class sunScope : IEnumerable<sunStorableSymbol> {
 		List<sunStorableSymbol> mStorables;
 		sunScopeType mType;
 
@@ -141,6 +141,13 @@ namespace arookas {
 		}
 		public sunConstantSymbol ResolveConstant(string name) {
 			return ResolveStorable(name) as sunConstantSymbol;
+		}
+
+		public IEnumerator<sunStorableSymbol> GetEnumerator() {
+			return mStorables.GetEnumerator();
+		}
+		IEnumerator IEnumerable.GetEnumerator() {
+			return GetEnumerator();
 		}
 	}
 
