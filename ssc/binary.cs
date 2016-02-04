@@ -171,13 +171,6 @@ namespace arookas {
 		public void WriteSHR() {
 			mText.Writer.Write8(0x1B);
 		}
-		public sunPoint WriteCALL(int count) {
-			mText.Writer.Write8(0x1C);
-			var point = OpenPoint();
-			mText.Writer.Write32(0); // dummy
-			mText.Writer.WriteS32(count);
-			return point;
-		}
 		public void WriteCALL(uint offset, int count) {
 			mText.Writer.Write8(0x1C);
 			mText.Writer.Write32(offset);
