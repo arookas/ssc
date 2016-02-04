@@ -159,6 +159,7 @@ term											=
 														variable_augment |
 														STRING |
 														DEC_NUMBER |
+														ADR_NUMBER |
 														HEX_NUMBER |
 														INT_NUMBER |
 														TRUE |
