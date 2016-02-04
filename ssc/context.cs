@@ -98,10 +98,10 @@ namespace arookas {
 		sunVariableSymbol DeclareVariable(sunIdentifier node, sunSymbolModifiers modifiers) {
 			var local = (modifiers & sunSymbolModifiers.Local) != 0;
 			var name = MangleSymbolName(node.Value, node.Location.ScriptId, false, local);
-			if (Scopes.Any(i => i.GetIsDeclared(name))) {
+			var symbol = Scopes.DeclareVariable(name);
+			if (symbol == null) {
 				throw new sunRedeclaredVariableException(node);
 			}
-			var symbol = Scopes.DeclareVariable(name);
 			if (Scopes.Top.Type == sunScopeType.Script) { // global-scope variables are added to the symbol table
 				SymbolTable.Add(symbol);
 			}
@@ -113,10 +113,11 @@ namespace arookas {
 		sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression, sunSymbolModifiers modifiers) {
 			var local = (modifiers & sunSymbolModifiers.Local) != 0;
 			var name = MangleSymbolName(node.Value, node.Location.ScriptId, false, local);
-			if (Scopes.Any(i => i.GetIsDeclared(name))) {
+			var symbol = Scopes.DeclareConstant(name, expression);
+			if (symbol == null) {
 				throw new sunRedeclaredVariableException(node);
 			}
-			return Scopes.DeclareConstant(name, expression);
+			return symbol;
 		}
 
 		public sunStorableSymbol ResolveStorable(sunIdentifier node) {
