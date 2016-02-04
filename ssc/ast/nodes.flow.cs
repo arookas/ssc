@@ -31,14 +31,14 @@ namespace arookas {
 		protected sunLoopNode(sunSourceLocation location)
 			: base(location) { }
 
-		public sunLoop PushLoop(sunContext context) {
+		protected sunLoop PushLoop(sunContext context) {
 			var name = context.PopNameLabel();
 			if (name == null) {
 				return context.Loops.Push();
 			}
 			return context.Loops.Push(name.Label.Value);
 		}
-		public sunLoop PushLoop(sunContext context, sunLoopFlags flags) {
+		protected sunLoop PushLoop(sunContext context, sunLoopFlags flags) {
 			var name = context.PopNameLabel();
 			if (name == null) {
 				return context.Loops.Push(flags);
