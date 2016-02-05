@@ -9,9 +9,13 @@
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
+#if SSC_SCOPES
 			compiler.Context.Scopes.Push(compiler.Context.Scopes.Top.Type);
+#endif
 			base.Compile(compiler);
+#if SSC_SCOPES
 			compiler.Context.Scopes.Pop();
+#endif
 		}
 	}
 

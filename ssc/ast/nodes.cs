@@ -49,8 +49,9 @@ namespace arookas {
 		public bool IsBranch { get { return Count > 0; } }
 		public bool IsLeaf { get { return Count < 1; } }
 
-		public int MaxLocalCount {
+		public int LocalCount {
 			get {
+#if SSC_SCOPES
 				var locals = 0;
 				var maxChildLocals = 0;
 				foreach (var child in this) {
@@ -58,16 +59,28 @@ namespace arookas {
 						++locals;
 					}
 					else if (child is sunCompoundStatement) {
-						locals += child.MaxLocalCount; // HACK: compound statements aren't their own scope
+						locals += child.LocalCount; // HACK: compound statements aren't their own scope
 					}
 					else if (!(child is sunFunctionDefinition)) { // don't recurse into function bodies
-						var childLocals = child.MaxLocalCount;
+						var childLocals = child.LocalCount;
 						if (childLocals > maxChildLocals) {
 							maxChildLocals = childLocals;
 						}
 					}
 				}
 				return locals + maxChildLocals;
+#else
+				var locals = 0;
+				foreach (var child in this) {
+					if (child is sunVariableDeclaration || child is sunVariableDefinition) {
+						++locals;
+					}
+					else if (!(child is sunFunctionDefinition)) { // don't recurse into function bodies
+						locals += child.LocalCount;
+					}
+				}
+				return locals;
+#endif
 			}
 		}
 

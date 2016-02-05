@@ -99,7 +99,9 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
+#if SSC_SCOPES
 			compiler.Context.Scopes.Push();
+#endif
 			var loop = PushLoop(compiler.Context);
 			TryCompile(Declaration, compiler);
 			var bodyPrologue = compiler.Binary.OpenPoint();
@@ -112,7 +114,9 @@ namespace arookas {
 			compiler.Binary.ClosePoint(bodyEpilogue);
 			loop.BreakPoint = compiler.Binary.OpenPoint();
 			compiler.Context.Loops.Pop(compiler);
+#if SSC_SCOPES
 			compiler.Context.Scopes.Pop();
+#endif
 		}
 	}
 	class sunForDeclaration : sunNode {

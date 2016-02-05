@@ -102,7 +102,11 @@ namespace arookas {
 			if (symbol == null) {
 				throw new sunRedeclaredVariableException(node);
 			}
-			if (Scopes.Top.Type == sunScopeType.Script) { // global-scope variables are added to the symbol table
+#if SSC_SCOPES
+			if (Scopes.Top.Type == sunScopeType.Script) {
+#else
+			if (Scopes.Count == 1) {
+#endif
 				SymbolTable.Add(symbol);
 			}
 			return symbol;

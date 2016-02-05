@@ -50,6 +50,17 @@ namespace arookas {
 			mSymbols.Clear();
 		}
 
+		public IEnumerable<sunSymbol> Get() {
+			return mSymbols;
+		}
+		public IEnumerable<TSymbol> Get<TSymbol>() where TSymbol : sunSymbol {
+			return mSymbols.OfType<TSymbol>();
+		}
+
+		public int GetCount<TSymbol>() where TSymbol : sunSymbol {
+			return mSymbols.Count(i => i is TSymbol);
+		}
+
 		public IEnumerator<sunSymbol> GetEnumerator() {
 			return mSymbols.GetEnumerator();
 		}
@@ -187,16 +198,19 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			mOffset = compiler.Binary.Offset;
+#if SSC_SCOPES
 			compiler.Context.Scopes.Push(sunScopeType.Function);
-			compiler.Context.Scopes.ResetLocalCount();
+#else
+			compiler.Context.Scopes.Push();
+#endif
 			foreach (var parameter in Parameters) {
 				compiler.Context.Scopes.DeclareVariable(parameter); // since there is no AST node for these, they won't affect MaxLocalCount
 			}
 			compiler.Binary.WriteMKDS(1);
-			compiler.Binary.WriteMKFR(mBody.MaxLocalCount);
+			compiler.Binary.WriteMKFR(mBody.LocalCount);
 			mBody.Compile(compiler);
 			compiler.Binary.WriteRET0();
-			compiler.Context.Scopes.Pop();
+			compiler.Context.Scopes.Pop(compiler);
 			++mCompiles;
 		}
 		public override sunRelocation CreateCallSite(sunCompiler compiler, int argCount) {
