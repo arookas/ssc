@@ -207,7 +207,10 @@ namespace arookas {
 				compiler.Context.Scopes.DeclareVariable(parameter); // since there is no AST node for these, they won't affect MaxLocalCount
 			}
 			compiler.Binary.WriteMKDS(1);
-			compiler.Binary.WriteMKFR(mBody.LocalCount);
+			var locals = mBody.LocalCount;
+			if (locals > 0) {
+				compiler.Binary.WriteMKFR(locals);
+			}
 			mBody.Compile(compiler);
 			compiler.Binary.WriteRET0();
 			compiler.Context.Scopes.Pop(compiler);
