@@ -104,9 +104,11 @@ namespace arookas {
 			mRelocations.Add(relocation);
 		}
 		public void CloseRelocations(sunCompiler compiler) {
+			compiler.Binary.Keep();
 			foreach (var relocation in mRelocations) {
 				relocation.Relocate(compiler);
 			}
+			compiler.Binary.Back();
 		}
 
 		public static sunSymbolModifiers GetModifiers(sunNode modifierlist) {
