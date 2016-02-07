@@ -143,7 +143,7 @@ namespace arookas {
 
 		// symbol table
 		public override sunSymbolType Type { get { return sunSymbolType.Builtin; } }
-		public override uint Data { get { return (uint)Index; } }
+		public override uint Data { get { return (uint)mIndex; } }
 
 		public sunBuiltinSymbol(string name, int index)
 			: this(name, null, index) { }
