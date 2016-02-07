@@ -89,12 +89,6 @@ namespace arookas {
 		public virtual void BeginSymbol() {
 			// stub
 		}
-		internal void WriteSymbol(sunSymbol symbol) {
-			if (symbol == null) {
-				throw new ArgumentNullException("symbol");
-			}
-			WriteSymbol(symbol.Type, symbol.Name, symbol.Data);
-		}
 		public abstract void WriteSymbol(sunSymbolType type, string name, uint data);
 		public virtual void EndSymbol() {
 			// stub
