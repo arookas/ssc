@@ -29,11 +29,14 @@ namespace arookas {
 			return Compile(name, output, sunImportResolver.Default);
 		}
 		public sunCompilerResults Compile(string name, Stream output, sunImportResolver resolver) {
+			return Compile(name, new sunSpcBinary(output), resolver);
+		}
+		public sunCompilerResults Compile(string name, sunBinary binary, sunImportResolver resolver) {
 			if (name == null) {
 				throw new ArgumentNullException("name");
 			}
-			if (output == null) {
-				throw new ArgumentNullException("output");
+			if (binary == null) {
+				throw new ArgumentNullException("binary");
 			}
 			if (resolver == null) {
 				throw new ArgumentNullException("resolver");
@@ -41,18 +44,26 @@ namespace arookas {
 			var results = new sunCompilerResults();
 			var timer = Stopwatch.StartNew();
 			try {
+				mBinary = binary;
 				mResolver = resolver;
 				mContext.Clear();
-				using (mBinary = new sunBinary(output)) {
-					CompileBody(name);
-					CompileFunctions();
+				mBinary.Open();
+				mBinary.BeginText();
+				CompileBody(name);
+				CompileFunctions();
 #if SSC_CLEAN_SYMBOLS
-					CleanSymbols();
+				CleanSymbols();
 #endif
-					CompileRelocations();
-					CompileData();
-					CompileSymbols();
-				}
+				CompileRelocations();
+				mBinary.EndText();
+				mBinary.BeginData();
+				CompileData();
+				mBinary.EndData();
+				mBinary.BeginSymbol();
+				CompileSymbols();
+				mBinary.EndSymbol();
+				mBinary.Close();
+
 				results.DataCount = mContext.DataTable.Count;
 				results.SymbolCount = mContext.SymbolTable.Count;
 				results.BuiltinCount = mContext.SymbolTable.GetCount<sunBuiltinSymbol>();

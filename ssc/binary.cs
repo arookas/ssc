@@ -6,17 +6,130 @@ using System.Text;
 using arookas.IO.Binary;
 
 namespace arookas {
-	class sunBinary : IDisposable {
+	public abstract class sunBinary {
+		public abstract uint Offset { get; }
+
+		public virtual void Open() {
+			// stub
+		}
+		public virtual void Close() {
+			// stub
+		}
+
+		// text
+		public abstract void Keep();
+		public abstract void Back();
+		public abstract void Goto(uint offset);
+
+		public virtual sunPoint OpenPoint() {
+			return new sunPoint(Offset);
+		}
+		public virtual void ClosePoint(sunPoint point) {
+			ClosePoint(point, Offset);
+		}
+		public abstract void ClosePoint(sunPoint point, uint offset);
+
+		public virtual void BeginText() {
+			// stub
+		}
+		public abstract void WriteINT(int value);
+		public abstract void WriteFLT(float value);
+		public abstract void WriteSTR(int index);
+		public abstract void WriteADR(uint value);
+		public abstract void WriteVAR(int display, int index);
+		public abstract void WriteNOP();
+		public abstract void WriteINC(int display, int index);
+		public abstract void WriteDEC(int display, int index);
+		public abstract void WriteADD();
+		public abstract void WriteSUB();
+		public abstract void WriteMUL();
+		public abstract void WriteDIV();
+		public abstract void WriteMOD();
+		public abstract void WriteASS(int display, int index);
+		public abstract void WriteEQ();
+		public abstract void WriteNE();
+		public abstract void WriteGT();
+		public abstract void WriteLT();
+		public abstract void WriteGE();
+		public abstract void WriteLE();
+		public abstract void WriteNEG();
+		public abstract void WriteNOT();
+		public abstract void WriteAND();
+		public abstract void WriteOR();
+		public abstract void WriteBAND();
+		public abstract void WriteBOR();
+		public abstract void WriteSHL();
+		public abstract void WriteSHR();
+		public abstract void WriteCALL(uint offset, int count);
+		public abstract void WriteFUNC(int index, int count);
+		public abstract void WriteMKFR(int count);
+		public abstract void WriteMKDS(int display);
+		public abstract void WriteRET();
+		public abstract void WriteRET0();
+		public abstract sunPoint WriteJNE();
+		public abstract void WriteJNE(sunPoint point);
+		public abstract sunPoint WriteJMP();
+		public abstract void WriteJMP(sunPoint point);
+		public abstract void WritePOP();
+		public abstract void WriteINT0();
+		public abstract void WriteINT1();
+		public abstract void WriteEND();
+		public virtual void EndText() {
+			// stub
+		}
+
+		public virtual void BeginData() {
+			// stub
+		}
+		public abstract void WriteData(string data);
+		public virtual void EndData() {
+			// stub
+		}
+
+		public virtual void BeginSymbol() {
+			// stub
+		}
+		internal void WriteSymbol(sunSymbol symbol) {
+			if (symbol == null) {
+				throw new ArgumentNullException("symbol");
+			}
+			WriteSymbol(symbol.Type, symbol.Name, symbol.Data);
+		}
+		public abstract void WriteSymbol(sunSymbolType type, string name, uint data);
+		public virtual void EndSymbol() {
+			// stub
+		}
+	}
+
 	public struct sunPoint {
+		readonly uint mOffset;
+
+		public uint Offset {
+			get { return mOffset; }
+		}
+
+		public sunPoint(uint offset) {
+			mOffset = offset;
+		}
+
+		public static implicit operator sunPoint(uint offset) {
+			return new sunPoint(offset);
+		}
+		public static implicit operator uint(sunPoint point) {
+			return point.mOffset;
+		}
+	}
+
+	sealed class sunSpcBinary : sunBinary {
 		aBinaryWriter mWriter;
 		sunBinarySection mText, mData, mDataString, mSymbol, mSymbolString;
 		int mDataCount, mSymbolCount, mVarCount;
 
-		public uint Offset {
+		public override uint Offset {
 			get { return mText.Offset; }
 		}
 
-		public sunBinary(Stream output) {
+		public sunSpcBinary(Stream output) {
 			mWriter = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
 			mText = new sunBinarySection();
 			mData = new sunBinarySection();
@@ -26,11 +139,14 @@ namespace arookas {
 			mWriter.PushAnchor();
 		}
 
-		// close
-		public void Dispose() {
-			Close();
+		public override void ClosePoint(sunPoint point, uint offset) {
+			Keep();
+			Goto(point.Offset);
+			mText.Writer.Write32(offset);
+			Back();
 		}
-		public void Close() {
+
+		public override void Close() {
 			// header
 			mWriter.WriteString("SPCB");
 			mWriter.Write32(0x1C);
@@ -49,30 +165,17 @@ namespace arookas {
 		}
 
 		// text
-		public void Keep() {
+		public override void Keep() {
 			mText.Writer.Keep();
 		}
-		public void Back() {
+		public override void Back() {
 			mText.Writer.Back();
 		}
-		public void Goto(uint offset) {
+		public override void Goto(uint offset) {
 			mText.Writer.Goto(offset);
 		}
 
-		public sunPoint OpenPoint() {
-			return new sunPoint(Offset);
-		}
-		public void ClosePoint(sunPoint point) {
-			ClosePoint(point, Offset);
-		}
-		public void ClosePoint(sunPoint point, uint offset) {
-			Keep();
-			Goto(point.Offset);
-			mText.Writer.Write32(offset);
-			Back();
-		}
-
-		public void WriteINT(int value) {
+		public override void WriteINT(int value) {
 			switch (value) { // shortcut commands
 				case 0: WriteINT0(); return;
 				case 1: WriteINT1(); return;
@@ -83,28 +186,28 @@ namespace arookas {
 			mText.Writer.Write8(0x00);
 			mText.Writer.WriteS32(value);
 		}
-		public void WriteFLT(float value) {
+		public override void WriteFLT(float value) {
 #if DEBUG
 			TraceInstruction("flt {0}", value);
 #endif
 			mText.Writer.Write8(0x01);
 			mText.Writer.WriteF32(value);
 		}
-		public void WriteSTR(int index) {
+		public override void WriteSTR(int index) {
 #if DEBUG
 			TraceInstruction("str {0}", index);
 #endif
 			mText.Writer.Write8(0x02);
 			mText.Writer.WriteS32(index);
 		}
-		public void WriteADR(uint value) {
+		public override void WriteADR(uint value) {
 #if DEBUG
 			TraceInstruction("adr ${0:X8}", value);
 #endif
 			mText.Writer.Write8(0x03);
 			mText.Writer.Write32(value);
 		}
-		public void WriteVAR(int display, int index) {
+		public override void WriteVAR(int display, int index) {
 #if DEBUG
 			TraceInstruction("var {0} {1}", display, index);
 #endif
@@ -112,13 +215,13 @@ namespace arookas {
 			mText.Writer.WriteS32(display);
 			mText.Writer.WriteS32(index);
 		}
-		public void WriteNOP() {
+		public override void WriteNOP() {
 #if DEBUG
 			TraceInstruction("nop");
 #endif
 			mText.Writer.Write8(0x05);
 		}
-		public void WriteINC(int display, int index) {
+		public override void WriteINC(int display, int index) {
 #if DEBUG
 			TraceInstruction("inc {0} {1}", display, index);
 #endif
@@ -126,7 +229,7 @@ namespace arookas {
 			mText.Writer.WriteS32(display);
 			mText.Writer.WriteS32(index);
 		}
-		public void WriteDEC(int display, int index) {
+		public override void WriteDEC(int display, int index) {
 #if DEBUG
 			TraceInstruction("dec {0} {1}", display, index);
 #endif
@@ -134,37 +237,37 @@ namespace arookas {
 			mText.Writer.WriteS32(display);
 			mText.Writer.WriteS32(index);
 		}
-		public void WriteADD() {
+		public override void WriteADD() {
 #if DEBUG
 			TraceInstruction("add");
 #endif
 			mText.Writer.Write8(0x08);
 		}
-		public void WriteSUB() {
+		public override void WriteSUB() {
 #if DEBUG
 			TraceInstruction("sub");
 #endif
 			mText.Writer.Write8(0x09);
 		}
-		public void WriteMUL() {
+		public override void WriteMUL() {
 #if DEBUG
 			TraceInstruction("mul");
 #endif
 			mText.Writer.Write8(0x0A);
 		}
-		public void WriteDIV() {
+		public override void WriteDIV() {
 #if DEBUG
 			TraceInstruction("div");
 #endif
 			mText.Writer.Write8(0x0B);
 		}
-		public void WriteMOD() {
+		public override void WriteMOD() {
 #if DEBUG
 			TraceInstruction("mod");
 #endif
 			mText.Writer.Write8(0x0C);
 		}
-		public void WriteASS(int display, int index) {
+		public override void WriteASS(int display, int index) {
 #if DEBUG
 			TraceInstruction("ass {0} {1}", display, index);
 #endif
@@ -173,91 +276,91 @@ namespace arookas {
 			mText.Writer.WriteS32(display);
 			mText.Writer.WriteS32(index);
 		}
-		public void WriteEQ() {
+		public override void WriteEQ() {
 #if DEBUG
 			TraceInstruction("eq");
 #endif
 			mText.Writer.Write8(0x0E);
 		}
-		public void WriteNE() {
+		public override void WriteNE() {
 #if DEBUG
 			TraceInstruction("ne");
 #endif
 			mText.Writer.Write8(0x0F);
 		}
-		public void WriteGT() {
+		public override void WriteGT() {
 #if DEBUG
 			TraceInstruction("gt");
 #endif
 			mText.Writer.Write8(0x10);
 		}
-		public void WriteLT() {
+		public override void WriteLT() {
 #if DEBUG
 			TraceInstruction("lt");
 #endif
 			mText.Writer.Write8(0x11);
 		}
-		public void WriteGE() {
+		public override void WriteGE() {
 #if DEBUG
 			TraceInstruction("ge");
 #endif
 			mText.Writer.Write8(0x12);
 		}
-		public void WriteLE() {
+		public override void WriteLE() {
 #if DEBUG
 			TraceInstruction("le");
 #endif
 			mText.Writer.Write8(0x13);
 		}
-		public void WriteNEG() {
+		public override void WriteNEG() {
 #if DEBUG
 			TraceInstruction("neg");
 #endif
 			mText.Writer.Write8(0x14);
 		}
-		public void WriteNOT() {
+		public override void WriteNOT() {
 #if DEBUG
 			TraceInstruction("not");
 #endif
 			mText.Writer.Write8(0x15);
 		}
-		public void WriteAND() {
+		public override void WriteAND() {
 #if DEBUG
 			TraceInstruction("and");
 #endif
 			mText.Writer.Write8(0x16);
 		}
-		public void WriteOR() {
+		public override void WriteOR() {
 #if DEBUG
 			TraceInstruction("or");
 #endif
 			mText.Writer.Write8(0x17);
 		}
-		public void WriteBAND() {
+		public override void WriteBAND() {
 #if DEBUG
 			TraceInstruction("band");
 #endif
 			mText.Writer.Write8(0x18);
 		}
-		public void WriteBOR() {
+		public override void WriteBOR() {
 #if DEBUG
 			TraceInstruction("bor");
 #endif
 			mText.Writer.Write8(0x19);
 		}
-		public void WriteSHL() {
+		public override void WriteSHL() {
 #if DEBUG
 			TraceInstruction("shl");
 #endif
 			mText.Writer.Write8(0x1A);
 		}
-		public void WriteSHR() {
+		public override void WriteSHR() {
 #if DEBUG
 			TraceInstruction("shr");
 #endif
 			mText.Writer.Write8(0x1B);
 		}
-		public void WriteCALL(uint offset, int count) {
+		public override void WriteCALL(uint offset, int count) {
 #if DEBUG
 			TraceInstruction("call ${0:X8} {1}", offset, count);
 #endif
@@ -265,7 +368,7 @@ namespace arookas {
 			mText.Writer.Write32(offset);
 			mText.Writer.WriteS32(count);
 		}
-		public void WriteFUNC(int index, int count) {
+		public override void WriteFUNC(int index, int count) {
 #if DEBUG
 			TraceInstruction("func {0} {1}", index, count);
 #endif
@@ -273,33 +376,33 @@ namespace arookas {
 			mText.Writer.WriteS32(index);
 			mText.Writer.WriteS32(count);
 		}
-		public void WriteMKFR(int count) {
+		public override void WriteMKFR(int count) {
 #if DEBUG
 			TraceInstruction("mkfr {0}", count);
 #endif
 			mText.Writer.Write8(0x1E);
 			mText.Writer.WriteS32(count);
 		}
-		public void WriteMKDS(int display) {
+		public override void WriteMKDS(int display) {
 #if DEBUG
 			TraceInstruction("mkds {0}", display);
 #endif
 			mText.Writer.Write8(0x1F);
 			mText.Writer.WriteS32(display);
 		}
-		public void WriteRET() {
+		public override void WriteRET() {
 #if DEBUG
 			TraceInstruction("ret");
 #endif
 			mText.Writer.Write8(0x20);
 		}
-		public void WriteRET0() {
+		public override void WriteRET0() {
 #if DEBUG
 			TraceInstruction("ret0");
 #endif
 			mText.Writer.Write8(0x21);
 		}
-		public sunPoint WriteJNE() {
+		public override sunPoint WriteJNE() {
 #if DEBUG
 			TraceInstruction("jne # UNFINISHED");
 #endif
@@ -308,14 +411,14 @@ namespace arookas {
 			mText.Writer.Write32(0); // dummy
 			return point;
 		}
-		public void WriteJNE(sunPoint point) {
+		public override void WriteJNE(sunPoint point) {
 #if DEBUG
 			TraceInstruction("jne {0:X8}", point.Offset);
 #endif
 			mText.Writer.Write8(0x22);
 			mText.Writer.Write32(point.Offset);
 		}
-		public sunPoint WriteJMP() {
+		public override sunPoint WriteJMP() {
 #if DEBUG
 			TraceInstruction("jmp # UNFINISHED");
 #endif
@@ -324,32 +427,32 @@ namespace arookas {
 			mText.Writer.Write32(0); // dummy
 			return point;
 		}
-		public void WriteJMP(sunPoint point) {
+		public override void WriteJMP(sunPoint point) {
 #if DEBUG
 			TraceInstruction("jmp {0:X8}", point.Offset);
 #endif
 			mText.Writer.Write8(0x23);
 			mText.Writer.Write32(point.Offset);
 		}
-		public void WritePOP() {
+		public override void WritePOP() {
 #if DEBUG
 			TraceInstruction("pop");
 #endif
 			mText.Writer.Write8(0x24);
 		}
-		public void WriteINT0() {
+		public override void WriteINT0() {
 #if DEBUG
 			TraceInstruction("int0");
 #endif
 			mText.Writer.Write8(0x25);
 		}
-		public void WriteINT1() {
+		public override void WriteINT1() {
 #if DEBUG
 			TraceInstruction("int1");
 #endif
 			mText.Writer.Write8(0x26);
 		}
-		public void WriteEND() {
+		public override void WriteEND() {
 #if DEBUG
 			TraceInstruction("end");
 #endif
@@ -364,7 +467,7 @@ namespace arookas {
 #endif
 
 		// data
-		public void WriteData(string data) {
+		public override void WriteData(string data) {
 			if (data == null) {
 				throw new ArgumentNullException("data");
 			}
@@ -374,13 +477,7 @@ namespace arookas {
 		}
 
 		// symbol
-		public void WriteSymbol(sunSymbol symbol) {
-			if (symbol == null) {
-				throw new ArgumentNullException("symbol");
-			}
-			WriteSymbol(symbol.Type, symbol.Name, symbol.Data);
-		}
-		public void WriteSymbol(sunSymbolType type, string name, uint data) {
+		public override void WriteSymbol(sunSymbolType type, string name, uint data) {
 			mSymbol.Writer.WriteS32((int)type);
 			mSymbol.Writer.Write32(mSymbolString.Size);
 			mSymbol.Writer.Write32(data);
@@ -426,24 +523,6 @@ namespace arookas {
 				}
 				writer.Write8s(mStream.GetBuffer(), (int)Size);
 			}
-		}
-	}
-
-		readonly uint mOffset;
-
-		public uint Offset {
-			get { return mOffset; }
-		}
-
-		public sunPoint(uint offset) {
-			mOffset = offset;
-		}
-
-		public static implicit operator sunPoint(uint offset) {
-			return new sunPoint(offset);
-		}
-		public static implicit operator uint(sunPoint point) {
-			return point.mOffset;
 		}
 	}
 }
