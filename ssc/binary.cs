@@ -7,6 +7,7 @@ using arookas.IO.Binary;
 
 namespace arookas {
 	class sunBinary : IDisposable {
+	public struct sunPoint {
 		aBinaryWriter mWriter;
 		sunBinarySection mText, mData, mDataString, mSymbol, mSymbolString;
 		int mDataCount, mSymbolCount, mVarCount;
@@ -428,7 +429,6 @@ namespace arookas {
 		}
 	}
 
-	struct sunPoint {
 		readonly uint mOffset;
 
 		public uint Offset {

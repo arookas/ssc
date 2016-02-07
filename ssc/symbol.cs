@@ -339,7 +339,7 @@ namespace arookas {
 		}
 	}
 
-	enum sunSymbolType {
+	public enum sunSymbolType {
 		Builtin,
 		Function,
 		Variable,
