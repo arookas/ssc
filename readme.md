@@ -16,6 +16,7 @@ Use the `sunCompiler.Compile` method or any of its overloads to compile a script
 |---------|-----------|
 |`name`|The name of the main script to compile. This is passed to the import resolver.|
 |`output`|The output stream into which the compiled binary file will be written.|
+|`binary`|The custom binary formatter to use for output. If not specified, the default SPC binary format will be used.|
 |`resolver`|An instance of the import resolver to use. If not specified, `sunImportResolver.Default` will be used.|
 
 _ssc_ by default resolves imports by loading files on disk (see [language.md](language.md) for more information).
