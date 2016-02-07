@@ -55,9 +55,9 @@ namespace arookas {
 				}
 				results.DataCount = mContext.DataTable.Count;
 				results.SymbolCount = mContext.SymbolTable.Count;
-				results.BuiltinCount = mContext.SymbolTable.BuiltinCount;
-				results.FunctionCount = mContext.SymbolTable.FunctionCount;
-				results.VariableCount = mContext.SymbolTable.VariableCount;
+				results.BuiltinCount = mContext.SymbolTable.GetCount<sunBuiltinSymbol>();
+				results.FunctionCount = mContext.SymbolTable.GetCount<sunFunctionSymbol>();
+				results.VariableCount = mContext.SymbolTable.GetCount<sunVariableSymbol>();
 			}
 			catch (sunCompilerException ex) {
 				results.Error = ex;
@@ -79,7 +79,7 @@ namespace arookas {
 		}
 		int DoCompileFunctions() {
 			var count = 0;
-			foreach (var callable in mContext.SymbolTable.Callables.Where(i => i.HasRelocations && i.CompileCount == 0)) {
+			foreach (var callable in mContext.SymbolTable.Get<sunCallableSymbol>().Where(i => i.HasRelocations && i.CompileCount == 0)) {
 				callable.Compile(this);
 				++count;
 			}

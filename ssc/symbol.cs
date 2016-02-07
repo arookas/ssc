@@ -9,19 +9,6 @@ namespace arookas {
 		List<sunSymbol> mSymbols;
 
 		public int Count { get { return mSymbols.Count; } }
-		public int CallableCount { get { return Callables.Count(); } }
-		public int BuiltinCount { get { return Builtins.Count(); } }
-		public int FunctionCount { get { return Functions.Count(); } }
-		public int StorableCount { get { return Storables.Count(); } }
-		public int VariableCount { get { return Variables.Count(); } }
-		public int ConstantCount { get { return Constants.Count(); } }
-
-		public IEnumerable<sunCallableSymbol> Callables { get { return mSymbols.OfType<sunCallableSymbol>(); } }
-		public IEnumerable<sunBuiltinSymbol> Builtins { get { return mSymbols.OfType<sunBuiltinSymbol>(); } }
-		public IEnumerable<sunFunctionSymbol> Functions { get { return mSymbols.OfType<sunFunctionSymbol>(); } }
-		public IEnumerable<sunStorableSymbol> Storables { get { return mSymbols.OfType<sunStorableSymbol>(); } }
-		public IEnumerable<sunVariableSymbol> Variables { get { return mSymbols.OfType<sunVariableSymbol>(); } }
-		public IEnumerable<sunConstantSymbol> Constants { get { return mSymbols.OfType<sunConstantSymbol>(); } }
 
 		public sunSymbol this[int index] {
 			get { return mSymbols[index]; }

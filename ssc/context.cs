@@ -45,7 +45,7 @@ namespace arookas {
 
 		// callables
 		public sunBuiltinSymbol DeclareBuiltin(sunBuiltinDeclaration node) {
-			if (SymbolTable.Callables.Any(i => i.Name == node.Name.Value)) {
+			if (SymbolTable.Get<sunCallableSymbol>().Any(i => i.Name == node.Name.Value)) {
 				throw new sunRedeclaredBuiltinException(node);
 			}
 			var symbol = new sunBuiltinSymbol(node.Name.Value, node.Parameters.ParameterInfo, SymbolTable.Count);
@@ -58,7 +58,7 @@ namespace arookas {
 			if (node.Parameters.IsVariadic) {
 				throw new sunVariadicFunctionException(node);
 			}
-			if (SymbolTable.Callables.Any(i => i.Name == name)) {
+			if (SymbolTable.Get<sunCallableSymbol>().Any(i => i.Name == name)) {
 				throw new sunRedefinedFunctionException(node);
 			}
 			var symbol = new sunFunctionSymbol(name, node.Parameters.ParameterInfo, node.Body);
@@ -69,11 +69,11 @@ namespace arookas {
 		public sunCallableSymbol ResolveCallable(sunFunctionCall node) {
 			var global = node.Name.Value;
 			var local = MangleSymbolName(global, node.Location.ScriptId, false, true);
-			var symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == local);
+			var symbol = SymbolTable.Get<sunCallableSymbol>().FirstOrDefault(i => i.Name == local);
 			if (symbol != null) {
 				return symbol;
 			}
-			symbol = SymbolTable.Callables.FirstOrDefault(i => i.Name == global);
+			symbol = SymbolTable.Get<sunCallableSymbol>().FirstOrDefault(i => i.Name == global);
 			if (symbol != null) {
 				return symbol;
 			}
