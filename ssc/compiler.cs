@@ -145,12 +145,12 @@ namespace arookas {
 				throw new ArgumentNullException("name");
 			}
 			sunScriptFile file;
-			var result = mResolver.ResolveImport(name, out file);
+			var result = mResolver.Resolve(name, out file);
 			if (result == sunImportResult.Loaded) {
 				try {
-					mResolver.EnterFile(file);
+					mResolver.Enter(file);
 					mParser.Parse(file).Compile(this);
-					mResolver.ExitFile(file);
+					mResolver.Exit(file);
 				}
 				finally {
 					file.Dispose();

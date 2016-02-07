@@ -9,9 +9,9 @@ namespace arookas {
 			get { return new sunDefaultImportResolver(); }
 		}
 
-		public abstract void EnterFile(sunScriptFile file);
-		public abstract void ExitFile(sunScriptFile file);
-		public abstract sunImportResult ResolveImport(string name, out sunScriptFile file);
+		public abstract void Enter(sunScriptFile file);
+		public abstract void Exit(sunScriptFile file);
+		public abstract sunImportResult Resolve(string name, out sunScriptFile file);
 
 		// default implementation
 		sealed class sunDefaultImportResolver : sunImportResolver {
@@ -36,13 +36,13 @@ namespace arookas {
 				mCurrentDirectory = Directory.GetCurrentDirectory();
 			}
 
-			public override void EnterFile(sunScriptFile file) {
+			public override void Enter(sunScriptFile file) {
 				mFiles.Push(file);
 			}
-			public override void ExitFile(sunScriptFile file) {
+			public override void Exit(sunScriptFile file) {
 				mFiles.Pop();
 			}
-			public override sunImportResult ResolveImport(string name, out sunScriptFile file) {
+			public override sunImportResult Resolve(string name, out sunScriptFile file) {
 				file = null;
 				name = name.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 				var path = "";
