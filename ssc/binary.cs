@@ -439,6 +439,9 @@ namespace arookas {
 			mOffset = offset;
 		}
 
+		public static implicit operator sunPoint(uint offset) {
+			return new sunPoint(offset);
+		}
 		public static implicit operator uint(sunPoint point) {
 			return point.mOffset;
 		}
