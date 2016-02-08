@@ -60,3 +60,7 @@ For more information, see Grammatica's official [installation documentation](htt
 ## Language
 
 For more information on the SunScript language and its syntax, see [language.md](language.md).
+
+## Extending the compiler
+
+_ssc_ is designed to be extensible. For more information on extending _ssc_, see [extensions.md](extensions.md).
