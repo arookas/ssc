@@ -116,7 +116,7 @@ namespace arookas {
 
 	sealed class sunSpcBinary : sunBinary {
 		aBinaryWriter mWriter;
-		sunBinarySection mText, mData, mDataString, mSymbol, mSymbolString;
+		sunSpcBinarySection mText, mData, mDataString, mSymbol, mSymbolString;
 		int mDataCount, mSymbolCount, mVarCount;
 
 		public override uint Offset {
@@ -125,11 +125,11 @@ namespace arookas {
 
 		public sunSpcBinary(Stream output) {
 			mWriter = new aBinaryWriter(output, Endianness.Big, Encoding.GetEncoding(932));
-			mText = new sunBinarySection();
-			mData = new sunBinarySection();
-			mDataString = new sunBinarySection();
-			mSymbol = new sunBinarySection();
-			mSymbolString = new sunBinarySection();
+			mText = new sunSpcBinarySection();
+			mData = new sunSpcBinarySection();
+			mDataString = new sunSpcBinarySection();
+			mSymbol = new sunSpcBinarySection();
+			mSymbolString = new sunSpcBinarySection();
 			mWriter.PushAnchor();
 		}
 
@@ -484,7 +484,7 @@ namespace arookas {
 			}
 		}
 
-		class sunBinarySection : IDisposable {
+		class sunSpcBinarySection : IDisposable {
 			readonly aBinaryWriter mWriter;
 			readonly MemoryStream mStream;
 
@@ -502,7 +502,7 @@ namespace arookas {
 				get { return (uint)mWriter.Length; }
 			}
 
-			public sunBinarySection() {
+			public sunSpcBinarySection() {
 				mStream = new MemoryStream(1024);
 				mWriter = new aBinaryWriter(mStream, Endianness.Big, Encoding.GetEncoding(932));
 			}
