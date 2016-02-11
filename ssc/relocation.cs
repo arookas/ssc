@@ -7,7 +7,7 @@ namespace arookas {
 		public abstract void Relocate(sunCompiler compiler);
 	}
 
-	abstract class sunRelocation<TSymbol> : sunRelocation where TSymbol : sunSymbol {
+	abstract class sunSymbolRelocation<TSymbol> : sunRelocation where TSymbol : sunSymbol {
 		protected TSymbol mSymbol;
 
 		protected sunRelocation(TSymbol symbol) {
@@ -18,7 +18,7 @@ namespace arookas {
 		}
 	}
 
-	class sunBuiltinCallSite : sunRelocation<sunBuiltinSymbol> {
+	class sunBuiltinCallSite : sunSymbolRelocation<sunBuiltinSymbol> {
 		int mArgCount;
 
 		public sunBuiltinCallSite(sunBuiltinSymbol symbol, sunCompiler compiler, int argCount)
@@ -50,9 +50,9 @@ namespace arookas {
 		}
 	}
 
-	class sunVariableGetSite : sunRelocation<sunVariableSymbol> {
 		public sunVariableGetSite(sunVariableSymbol symbol, sunCompiler compiler)
 			: base(symbol) {
+	class sunVariableGetSite : sunSymbolRelocation<sunVariableSymbol> {
 			mPoint = compiler.Binary.OpenPoint();
 			compiler.Binary.WriteVAR(0, 0);
 		}
@@ -63,9 +63,9 @@ namespace arookas {
 		}
 	}
 
-	class sunVariableSetSite : sunRelocation<sunVariableSymbol> {
 		public sunVariableSetSite(sunVariableSymbol symbol, sunCompiler compiler)
 			: base(symbol) {
+	class sunVariableSetSite : sunSymbolRelocation<sunVariableSymbol> {
 			mPoint = compiler.Binary.OpenPoint();
 			compiler.Binary.WriteASS(0, 0);
 		}
@@ -76,9 +76,9 @@ namespace arookas {
 		}
 	}
 
-	class sunVariableIncSite : sunRelocation<sunVariableSymbol> {
 		public sunVariableIncSite(sunVariableSymbol symbol, sunCompiler compiler)
 			: base(symbol) {
+	class sunVariableIncSite : sunSymbolRelocation<sunVariableSymbol> {
 			mPoint = compiler.Binary.OpenPoint();
 			compiler.Binary.WriteINC(0, 0);
 		}
@@ -89,9 +89,9 @@ namespace arookas {
 		}
 	}
 
-	class sunVariableDecSite : sunRelocation<sunVariableSymbol> {
 		public sunVariableDecSite(sunVariableSymbol symbol, sunCompiler compiler)
 			: base(symbol) {
+	class sunVariableDecSite : sunSymbolRelocation<sunVariableSymbol> {
 			mPoint = compiler.Binary.OpenPoint();
 			compiler.Binary.WriteDEC(0, 0);
 		}
