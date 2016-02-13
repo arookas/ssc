@@ -40,9 +40,9 @@ workspace "ssc"
 		links { "System", "arookas", "grammatica-1.6" }
 		
 		-- apply options
-		filter "options:clean-symbols"
+		if _OPTIONS["clean-symbols"] then
 			defines { "SSC_CLEAN_SYMBOLS" }
-		filter {}
+		end
 
 		files {
 			"ssc/**.cs",
