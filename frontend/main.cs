@@ -139,10 +139,14 @@ namespace arookas
 				return sb.ToString();
 			}
 		}
-		static bool IsFullWidth(char c) { return (c >= 0x2E80 && c <= 0x9FFF) || (c >= 0xFF00 && c <= 0xFFEF); }
+		static bool IsFullWidth(char c) {
+			return (c >= 0x2E80 && c <= 0x9FFF) || (c >= 0xFF00 && c <= 0xFFEF);
+		}
 
 		// output
-		static void Message(string format, params object[] args) { Console.Write(format, args); }
+		static void Message(string format, params object[] args) {
+			Console.Write(format, args);
+		}
 		static void Warning(string format, params object[] args) {
 			Console.ForegroundColor = ConsoleColor.Yellow;
 			Console.Write("WARNING:\n");
@@ -156,7 +160,11 @@ namespace arookas
 			Console.ResetColor();
 		}
 
-		[Conditional("DEBUG")] static void Pause() { Console.ReadKey(); }
-		static void Exit(int code) { Environment.Exit(code); }
+		[Conditional("DEBUG")] static void Pause() {
+			Console.ReadKey();
+		}
+		static void Exit(int code) {
+			Environment.Exit(code);
+		}
 	}
 }
