@@ -30,11 +30,8 @@ Use the various properties on this type to gather the information of the compila
 |`Success`|Whether the script was compiled successfully. If not, the `Error` property will be non-`null`.|
 |`Error`|The fatal error which occured during compilation. If compilation was successful, this will be `null`.|
 |`CompileTime`|The time it took to compile, measured as a `TimeSpan` instance.|
-|`DataCount`|The total number of data-table entries created.|
-|`SymbolCount`|The total number of symbols (builtins, functions, and variables) created.|
-|`BuiltinCount`|The total number of builtin symbols created.|
-|`FunctionCount`|The total number of function symbols created.|
-|`VariableCount`|The total number of global-scope variable symbols created.|
+|`Data`|An array containing the data-table entries.|
+|`Symbols`|An array containing the symbol-table entries.|
 
 If the error is of the type `sunSourceException`, you can cast and retrieve the script name, line, and column of the error.
 

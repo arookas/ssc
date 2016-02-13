@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace arookas
@@ -22,11 +23,11 @@ namespace arookas
 				var results = compiler.Compile(inputFile, output);
 				if (results.Success) {
 					Message("Finished compiling in {0:F2}ms.\n", results.CompileTime.TotalMilliseconds);
-					Message("  Data count: {0}\n", results.DataCount);
-					Message("Symbol count: {0}\n", results.SymbolCount);
-					Message(" -  builtins: {0}\n", results.BuiltinCount);
-					Message(" - functions: {0}\n", results.FunctionCount);
-					Message(" - variables: {0}\n", results.VariableCount);
+					Message("  Data count: {0}\n", results.Data.Length);
+					Message("Symbol count: {0}\n", results.Symbols.Length);
+					Message(" -  builtins: {0}\n", results.Symbols.Count(i => i.Type == sunSymbolType.Builtin));
+					Message(" - functions: {0}\n", results.Symbols.Count(i => i.Type == sunSymbolType.Function));
+					Message(" - variables: {0}\n", results.Symbols.Count(i => i.Type == sunSymbolType.Variable));
 				}
 				else {
 					if (results.Error is sunSourceException) {

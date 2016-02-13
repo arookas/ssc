@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace arookas {
 	public class sunCompiler {
@@ -63,11 +64,8 @@ namespace arookas {
 				mBinary.EndSymbol();
 				mBinary.Close();
 
-				results.DataCount = mContext.DataTable.Count;
-				results.SymbolCount = mContext.SymbolTable.Count;
-				results.BuiltinCount = mContext.SymbolTable.GetCount<sunBuiltinSymbol>();
-				results.FunctionCount = mContext.SymbolTable.GetCount<sunFunctionSymbol>();
-				results.VariableCount = mContext.SymbolTable.GetCount<sunVariableSymbol>();
+				results.Data = mContext.DataTable.ToArray();
+				results.Symbols = mContext.SymbolTable.Select(i => new sunSymbolInfo(i.Type, i.Name)).ToArray();
 			}
 			catch (sunCompilerException ex) {
 				results.Error = ex;
@@ -168,17 +166,50 @@ namespace arookas {
 	}
 
 	public class sunCompilerResults {
-		// success
-		public bool Success { get { return Error == null; } }
-		public sunCompilerException Error { get; internal set; }
+		sunCompilerException mError;
+		TimeSpan mTime;
+		string[] mData;
+		sunSymbolInfo[] mSymbols;
 
-		// statistics
-		public int DataCount { get; internal set; }
-		public int SymbolCount { get; internal set; }
-		public int BuiltinCount { get; internal set; }
-		public int FunctionCount { get; internal set; }
-		public int VariableCount { get; internal set; }
+		public bool Success {
+			get { return mError == null; }
+		}
 
-		public TimeSpan CompileTime { get; internal set; }
+		public sunCompilerException Error {
+			get { return mError; }
+			internal set { mError = value; }
+		}
+		public TimeSpan CompileTime {
+			get { return mTime; }
+			internal set { mTime = value; }
+		}
+		public string[] Data {
+			get { return mData; }
+			internal set { mData = value; }
+		}
+		public sunSymbolInfo[] Symbols {
+			get { return mSymbols; }
+			internal set { mSymbols = value; }
+		}
+	}
+
+	public class sunSymbolInfo {
+		sunSymbolType mType;
+		string mName;
+
+		public sunSymbolType Type {
+			get { return mType; }
+		}
+		public string Name {
+			get { return mName; }
+		}
+
+		internal sunSymbolInfo(sunSymbolType type, string name) {
+			if (name == null) {
+				throw new ArgumentNullException("name");
+			}
+			mType = type;
+			mName = name;
+		}
 	}
 }
