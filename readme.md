@@ -40,23 +40,35 @@ If the error is of the type `sunSourceException`, you can cast and retrieve the 
 
 ## Compiling
 
-This repository contains a [premake5](https://premake.github.io/) [configuration file](premake5.lua).
+### Dependencies
+
+There are several dependencies when building _ssc_.
+All dependencies must be placed in the _lib-dir_ folder (see below), unless stated otherwise.
+
+|Dependency|Notes|
+|----------|-----|
+|[arookas library](https://github.com/arookas/arookas)|Preferably, the library should be built in the same configuration as _ssc_ (e.g. debug, release).|
+|[Grammatica 1.6](http://grammatica.percederberg.net/)|Already included in the repository.|
+
+_**Note:** A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.
+For more information, see Grammatica's official [installation documentation](http://grammatica.percederberg.net/doc/release/install.html)._
+
+### premake
+
+This repository contains a [premake5](https://premake.github.io/) [configuration file](premake5.lua). 
 The script generates a solution with the following projects:
 
  - **ssc**, the base _ssc_ API library
  - **frontend**, a basic command-line frontend
  - **sbdump**, a tool which dumps disassembly and other information on compiled SPC binaries
 
-Simply run the script through premake5 and build the resulting solution.
-There are also compile-time options which are able to be configured via the premake5 command line:
+After setting up the dependencies, simply run the script through premake5 and build the resulting solution.
+There are also options which are able to be configured via the premake5 command line:
 
 |Option|Description|
 |------|-----------|
 |lib-dir|Sets the path to the dependencies. Defaults to the _lib/_ folder.|
 |clean-symbols|Cleans symbol table of unused symbols.|
-
-_**Note:** A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.
-For more information, see Grammatica's official [installation documentation](http://grammatica.percederberg.net/doc/release/install.html)._
 
 ## Language
 
