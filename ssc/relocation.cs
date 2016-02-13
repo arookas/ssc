@@ -2,15 +2,25 @@
 
 namespace arookas {
 	abstract class sunRelocation {
-		protected sunPoint mPoint;
+		protected sunBinary mBinary;
+		protected uint mPoint;
 
-		public abstract void Relocate(sunCompiler compiler);
+		protected sunRelocation(sunBinary binary) {
+			if (binary == null) {
+				throw new ArgumentNullException("binary");
+			}
+			mBinary = binary;
+			mPoint = mBinary.Offset;
+		}
+
+		public abstract void Relocate();
 	}
 
 	abstract class sunSymbolRelocation<TSymbol> : sunRelocation where TSymbol : sunSymbol {
 		protected TSymbol mSymbol;
 
-		protected sunRelocation(TSymbol symbol) {
+		protected sunSymbolRelocation(sunBinary binary, TSymbol symbol)
+			: base(binary) {
 			if (symbol == null) {
 				throw new ArgumentNullException("symbol");
 			}
@@ -21,84 +31,120 @@ namespace arookas {
 	class sunBuiltinCallSite : sunSymbolRelocation<sunBuiltinSymbol> {
 		int mArgCount;
 
-		public sunBuiltinCallSite(sunBuiltinSymbol symbol, sunCompiler compiler, int argCount)
-			: base (symbol) {
-			mPoint = compiler.Binary.OpenPoint();
-			compiler.Binary.WriteFUNC(0, 0);
+		public sunBuiltinCallSite(sunBinary binary, sunBuiltinSymbol symbol, int argCount)
+			: base (binary, symbol) {
 			mArgCount = argCount;
+			mBinary.WriteFUNC(0, 0);
 		}
 
-		public override void Relocate(sunCompiler compiler) {
-			compiler.Binary.Goto(mPoint);
-			compiler.Binary.WriteFUNC(mSymbol.Index, mArgCount);
+		public override void Relocate() {
+			mBinary.Keep();
+			mBinary.Goto(mPoint);
+			mBinary.WriteFUNC(mSymbol.Index, mArgCount);
+			mBinary.Back();
 		}
 	}
 
-	class sunFunctionCallSite : sunRelocation<sunFunctionSymbol> {
+	class sunFunctionCallSite : sunSymbolRelocation<sunFunctionSymbol> {
 		int mArgCount;
 
-			public sunFunctionCallSite(sunFunctionSymbol symbol, sunCompiler compiler, int argCount)
-				: base(symbol) {
-			mPoint = compiler.Binary.OpenPoint();
-			compiler.Binary.WriteCALL(0, 0);
+		public sunFunctionCallSite(sunBinary binary, sunFunctionSymbol symbol, int argCount)
+			: base(binary, symbol) {
 			mArgCount = argCount;
+			mBinary.WriteCALL(0, 0);
 		}
 
-		public override void Relocate(sunCompiler compiler) {
-			compiler.Binary.Goto(mPoint);
-			compiler.Binary.WriteCALL(mSymbol.Offset, mArgCount);
+		public override void Relocate() {
+			mBinary.Keep();
+			mBinary.Goto(mPoint);
+			mBinary.WriteCALL(mSymbol.Offset, mArgCount);
+			mBinary.Back();
 		}
 	}
 
-		public sunVariableGetSite(sunVariableSymbol symbol, sunCompiler compiler)
-			: base(symbol) {
 	class sunVariableGetSite : sunSymbolRelocation<sunVariableSymbol> {
-			mPoint = compiler.Binary.OpenPoint();
-			compiler.Binary.WriteVAR(0, 0);
+		public sunVariableGetSite(sunBinary binary, sunVariableSymbol symbol)
+			: base(binary, symbol) {
+			mBinary.WriteVAR(0, 0);
 		}
 
-		public override void Relocate(sunCompiler compiler) {
-			compiler.Binary.Goto(mPoint);
-			compiler.Binary.WriteVAR(mSymbol.Display, mSymbol.Index);
+		public override void Relocate() {
+			mBinary.Keep();
+			mBinary.Goto(mPoint);
+			mBinary.WriteVAR(mSymbol.Display, mSymbol.Index);
+			mBinary.Back();
 		}
 	}
 
-		public sunVariableSetSite(sunVariableSymbol symbol, sunCompiler compiler)
-			: base(symbol) {
 	class sunVariableSetSite : sunSymbolRelocation<sunVariableSymbol> {
-			mPoint = compiler.Binary.OpenPoint();
-			compiler.Binary.WriteASS(0, 0);
+		public sunVariableSetSite(sunBinary binary, sunVariableSymbol symbol)
+			: base(binary, symbol) {
+			mBinary.WriteASS(0, 0);
 		}
 
-		public override void Relocate(sunCompiler compiler) {
-			compiler.Binary.Goto(mPoint);
-			compiler.Binary.WriteASS(mSymbol.Display, mSymbol.Index);
+		public override void Relocate() {
+			mBinary.Keep();
+			mBinary.Goto(mPoint);
+			mBinary.WriteASS(mSymbol.Display, mSymbol.Index);
+			mBinary.Back();
 		}
 	}
 
-		public sunVariableIncSite(sunVariableSymbol symbol, sunCompiler compiler)
-			: base(symbol) {
 	class sunVariableIncSite : sunSymbolRelocation<sunVariableSymbol> {
-			mPoint = compiler.Binary.OpenPoint();
-			compiler.Binary.WriteINC(0, 0);
+		public sunVariableIncSite(sunBinary binary, sunVariableSymbol symbol)
+			: base(binary, symbol) {
+			mBinary.WriteINC(0, 0);
 		}
 
-		public override void Relocate(sunCompiler compiler) {
-			compiler.Binary.Goto(mPoint);
-			compiler.Binary.WriteINC(mSymbol.Display, mSymbol.Index);
+		public override void Relocate() {
+			mBinary.Keep();
+			mBinary.Goto(mPoint);
+			mBinary.WriteINC(mSymbol.Display, mSymbol.Index);
+			mBinary.Back();
 		}
 	}
 
-		public sunVariableDecSite(sunVariableSymbol symbol, sunCompiler compiler)
-			: base(symbol) {
 	class sunVariableDecSite : sunSymbolRelocation<sunVariableSymbol> {
-			mPoint = compiler.Binary.OpenPoint();
-			compiler.Binary.WriteDEC(0, 0);
+		public sunVariableDecSite(sunBinary binary, sunVariableSymbol symbol)
+			: base(binary, symbol) {
+			mBinary.WriteDEC(0, 0);
 		}
 
-		public override void Relocate(sunCompiler compiler) {
-			compiler.Binary.Goto(mPoint);
-			compiler.Binary.WriteDEC(mSymbol.Display, mSymbol.Index);
+		public override void Relocate() {
+			mBinary.Keep();
+			mBinary.Goto(mPoint);
+			mBinary.WriteDEC(mSymbol.Display, mSymbol.Index);
+			mBinary.Back();
+		}
+	}
+
+	class sunJumpNotEqualSite : sunRelocation {
+		public sunJumpNotEqualSite(sunBinary binary)
+			: base(binary) {
+			mBinary.WriteJNE(0);
+		}
+
+		public override void Relocate() {
+			var offset = mBinary.Offset;
+			mBinary.Keep();
+			mBinary.Goto(mPoint);
+			mBinary.WriteJNE(offset);
+			mBinary.Back();
+		}
+	}
+
+	class sunJumpSite : sunRelocation {
+		public sunJumpSite(sunBinary binary)
+			: base(binary) {
+			mBinary.WriteJMP(0);
+		}
+
+		public override void Relocate() {
+			var offset = mBinary.Offset;
+			mBinary.Keep();
+			mBinary.Goto(mPoint);
+			mBinary.WriteJMP(offset);
+			mBinary.Back();
 		}
 	}
 }

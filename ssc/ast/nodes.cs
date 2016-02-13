@@ -38,14 +38,29 @@ namespace arookas {
 
 	class sunNode : IEnumerable<sunNode> {
 		List<sunNode> mChildren;
+		sunNode mParent;
+		sunSourceLocation mLocation;
 
-		public sunNode Parent { get; private set; }
-		public sunSourceLocation Location { get; private set; }
+		public sunNode Parent {
+			get { return mParent; }
+		}
+		public sunSourceLocation Location {
+			get { return mLocation; }
+		}
 
-		public int Count { get { return mChildren.Count; } }
-		public sunNode this[int index] { get { return index >= 0 && index < Count ? mChildren[index] : null; } }
+		public int Count {
+			get { return mChildren.Count; }
+		}
+		public sunNode this[int index] {
+			get {
+				if (index < 0 || index >= mChildren.Count) {
+					return null;
+				}
+				return mChildren[index];
+			}
+		}
 
-		public bool IsRoot { get { return Parent == null; } }
+		public bool IsRoot { get { return mParent == null; } }
 		public bool IsBranch { get { return Count > 0; } }
 		public bool IsLeaf { get { return Count < 1; } }
 
@@ -86,31 +101,31 @@ namespace arookas {
 
 		public sunNode(sunSourceLocation location) {
 			mChildren = new List<sunNode>(5);
-			Location = location;
+			mLocation = location;
 		}
 
 		public void Add(sunNode node) {
 			if (node == null) {
 				throw new ArgumentNullException("node");
 			}
-			if (node.Parent != null) {
-				node.Parent.Remove(node);
+			if (node.mParent != null) {
+				node.mParent.Remove(node);
 			}
-			node.Parent = this;
+			node.mParent = this;
 			mChildren.Add(node);
 		}
 		public void Remove(sunNode node) {
 			if (node == null) {
 				throw new ArgumentNullException("node");
 			}
-			if (node.Parent == this) {
+			if (node.mParent == this) {
 				mChildren.Remove(node);
-				node.Parent = null;
+				node.mParent = null;
 			}
 		}
 		public void Clear() {
 			foreach (var child in this) {
-				child.Parent = null;
+				child.mParent = null;
 			}
 			mChildren.Clear();
 		}
@@ -128,8 +143,12 @@ namespace arookas {
 			return true;
 		}
 
-		public IEnumerator<sunNode> GetEnumerator() { return mChildren.GetEnumerator(); }
-		IEnumerator IEnumerable.GetEnumerator() { return GetEnumerator(); }
+		public IEnumerator<sunNode> GetEnumerator() {
+			return mChildren.GetEnumerator();
+		}
+		IEnumerator IEnumerable.GetEnumerator() {
+			return GetEnumerator();
+		}
 	}
 
 	abstract class sunToken<TValue> : sunNode {

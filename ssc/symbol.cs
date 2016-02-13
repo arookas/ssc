@@ -93,7 +93,7 @@ namespace arookas {
 		public void CloseRelocations(sunCompiler compiler) {
 			compiler.Binary.Keep();
 			foreach (var relocation in mRelocations) {
-				relocation.Relocate(compiler);
+				relocation.Relocate();
 			}
 			compiler.Binary.Back();
 		}
@@ -157,7 +157,7 @@ namespace arookas {
 			++mCompiles;
 		}
 		public override sunRelocation CreateCallSite(sunCompiler compiler, int argCount) {
-			return new sunBuiltinCallSite(this, compiler, argCount);
+			return new sunBuiltinCallSite(compiler.Binary, this, argCount);
 		}
 	}
 
@@ -206,7 +206,7 @@ namespace arookas {
 			++mCompiles;
 		}
 		public override sunRelocation CreateCallSite(sunCompiler compiler, int argCount) {
-			return new sunFunctionCallSite(this, compiler, argCount);
+			return new sunFunctionCallSite(compiler.Binary, this, argCount);
 		}
 	}
 
@@ -298,16 +298,16 @@ namespace arookas {
 		}
 
 		public override void CompileGet(sunCompiler compiler) {
-			OpenRelocation(new sunVariableGetSite(this, compiler));
+			OpenRelocation(new sunVariableGetSite(compiler.Binary, this));
 		}
 		public override void CompileSet(sunCompiler compiler) {
-			OpenRelocation(new sunVariableSetSite(this, compiler));
+			OpenRelocation(new sunVariableSetSite(compiler.Binary, this));
 		}
 		public override void CompileInc(sunCompiler compiler) {
-			OpenRelocation(new sunVariableIncSite(this, compiler));
+			OpenRelocation(new sunVariableIncSite(compiler.Binary, this));
 		}
 		public override void CompileDec(sunCompiler compiler) {
-			OpenRelocation(new sunVariableDecSite(this, compiler));
+			OpenRelocation(new sunVariableDecSite(compiler.Binary, this));
 		}
 	}
 

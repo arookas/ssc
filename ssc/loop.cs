@@ -51,21 +51,21 @@ namespace arookas {
 			mLoops.Clear();
 		}
 
-		public bool AddBreak(sunPoint point) {
+		public bool AddBreak(sunRelocation point) {
 			if (Count > 0) {
 				Top.AddBreak(point);
 				return true;
 			}
 			return false;
 		}
-		public bool AddContinue(sunPoint point) {
+		public bool AddContinue(sunRelocation point) {
 			if (Count > 0) {
 				Top.AddContinue(point);
 				return true;
 			}
 			return false;
 		}
-		public bool AddBreak(sunPoint point, string name) {
+		public bool AddBreak(sunRelocation point, string name) {
 			if (name == null) {
 				throw new ArgumentNullException("name");
 			}
@@ -78,7 +78,7 @@ namespace arookas {
 			}
 			return false;
 		}
-		public bool AddContinue(sunPoint point, string name) {
+		public bool AddContinue(sunRelocation point, string name) {
 			if (name == null) {
 				throw new ArgumentNullException("name");
 			}
@@ -96,19 +96,29 @@ namespace arookas {
 
 	class sunLoop {
 		string mName;
-		List<sunPoint> mBreaks, mContinues;
+		List<sunRelocation> mBreaks, mContinues;
 		sunLoopFlags mFlags;
-		sunPoint mBreakPoint, mContinuePoint;
+		uint mBreakPoint, mContinuePoint;
 
-		public string Name { get { return mName; } }
-		public bool HasName { get { return Name != null; } }
-		public sunPoint BreakPoint { get { return mBreakPoint; } set { mBreakPoint = value; } }
-		public sunPoint ContinuePoint { get { return mContinuePoint; } set { mContinuePoint = value; } }
+		public string Name {
+			get { return mName; }
+		}
+		public bool HasName {
+			get { return Name != null; }
+		}
+		public uint BreakPoint {
+			get { return mBreakPoint; }
+			set { mBreakPoint = value; }
+		}
+		public uint ContinuePoint {
+			get { return mContinuePoint; }
+			set { mContinuePoint = value; }
+		}
 
 		public sunLoop() {
 			mName = null;
-			mBreaks = new List<sunPoint>(5);
-			mContinues = new List<sunPoint>(5);
+			mBreaks = new List<sunRelocation>(5);
+			mContinues = new List<sunRelocation>(5);
 			mFlags = sunLoopFlags.ConsumeBreak | sunLoopFlags.ConsumeContinue;
 		}
 		public sunLoop(sunLoopFlags flags) {
@@ -126,14 +136,14 @@ namespace arookas {
 			return (mFlags & flags) != 0;
 		}
 
-		public bool AddBreak(sunPoint point) {
+		public bool AddBreak(sunRelocation point) {
 			if (!HasFlag(sunLoopFlags.ConsumeBreak)) {
 				return false;
 			}
 			mBreaks.Add(point);
 			return true;
 		}
-		public bool AddContinue(sunPoint point) {
+		public bool AddContinue(sunRelocation point) {
 			if (!HasFlag(sunLoopFlags.ConsumeContinue)) {
 				return false;
 			}
@@ -143,12 +153,12 @@ namespace arookas {
 		public void Close(sunCompiler compiler) {
 			if (HasFlag(sunLoopFlags.ConsumeBreak)) {
 				foreach (var b in mBreaks) {
-					compiler.Binary.ClosePoint(b, mBreakPoint);
+					b.Relocate();
 				}
 			}
 			if (HasFlag(sunLoopFlags.ConsumeContinue)) {
 				foreach (var c in mContinues) {
-					compiler.Binary.ClosePoint(c, mContinuePoint);
+					c.Relocate();
 				}
 			}
 		}

@@ -12,17 +12,17 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			Condition.Compile(compiler);
-			var trueBodyEpilogue = compiler.Binary.WriteJNE();
+			var trueBodyEpilogue = new sunJumpNotEqualSite(compiler.Binary);
 			TrueBody.Compile(compiler);
 			var falseBody = FalseBody;
 			if (falseBody != null) {
-				var falseBodyEpilogue = compiler.Binary.WriteJMP();
-				compiler.Binary.ClosePoint(trueBodyEpilogue);
+				var falseBodyEpilogue = new sunJumpSite(compiler.Binary);
+				trueBodyEpilogue.Relocate();
 				falseBody.Compile(compiler);
-				compiler.Binary.ClosePoint(falseBodyEpilogue);
+				falseBodyEpilogue.Relocate();
 			}
 			else {
-				compiler.Binary.ClosePoint(trueBodyEpilogue);
+				trueBodyEpilogue.Relocate();
 			}
 		}
 	}
@@ -56,14 +56,14 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			var loop = PushLoop(compiler.Context);
-			var bodyPrologue = compiler.Binary.OpenPoint();
-			loop.ContinuePoint = compiler.Binary.OpenPoint();
+			var bodyPrologue = compiler.Binary.Offset;
+			loop.ContinuePoint = compiler.Binary.Offset;
 			Condition.Compile(compiler);
-			var bodyEpilogue = compiler.Binary.WriteJNE();
+			var bodyEpilogue = new sunJumpNotEqualSite(compiler.Binary);
 			Body.Compile(compiler);
 			compiler.Binary.WriteJMP(bodyPrologue);
-			compiler.Binary.ClosePoint(bodyEpilogue);
-			loop.BreakPoint = compiler.Binary.OpenPoint();
+			bodyEpilogue.Relocate();
+			loop.BreakPoint = compiler.Binary.Offset;
 			compiler.Context.Loops.Pop(compiler);
 		}
 	}
@@ -77,14 +77,14 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			var loop = PushLoop(compiler.Context);
-			var bodyPrologue = compiler.Binary.OpenPoint();
+			var bodyPrologue = compiler.Binary.Offset;
 			Body.Compile(compiler);
-			loop.ContinuePoint = compiler.Binary.OpenPoint();
+			loop.ContinuePoint = compiler.Binary.Offset;
 			Condition.Compile(compiler);
-			var bodyEpilogue = compiler.Binary.WriteJNE();
+			var bodyEpilogue = new sunJumpNotEqualSite(compiler.Binary);
 			compiler.Binary.WriteJMP(bodyPrologue);
-			compiler.Binary.ClosePoint(bodyEpilogue);
-			loop.BreakPoint = compiler.Binary.OpenPoint();
+			bodyEpilogue.Relocate();
+			loop.BreakPoint = compiler.Binary.Offset;
 			compiler.Context.Loops.Pop(compiler);
 		}
 	}
@@ -104,15 +104,15 @@ namespace arookas {
 #endif
 			var loop = PushLoop(compiler.Context);
 			TryCompile(Declaration, compiler);
-			var bodyPrologue = compiler.Binary.OpenPoint();
+			var bodyPrologue = compiler.Binary.Offset;
 			TryCompile(Condition, compiler);
-			var bodyEpilogue = compiler.Binary.WriteJNE();
+			var bodyEpilogue = new sunJumpNotEqualSite(compiler.Binary);
 			Body.Compile(compiler);
-			loop.ContinuePoint = compiler.Binary.OpenPoint();
+			loop.ContinuePoint = compiler.Binary.Offset;
 			TryCompile(Iteration, compiler);
 			compiler.Binary.WriteJMP(bodyPrologue);
-			compiler.Binary.ClosePoint(bodyEpilogue);
-			loop.BreakPoint = compiler.Binary.OpenPoint();
+			bodyEpilogue.Relocate();
+			loop.BreakPoint = compiler.Binary.Offset;
 			compiler.Context.Loops.Pop(compiler);
 #if SSC_SCOPES
 			compiler.Context.Scopes.Pop();
@@ -158,7 +158,7 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			var point = compiler.Binary.WriteJMP();
+			var point = new sunJumpSite(compiler.Binary);
 			var success = true;
 			if (IsNamed) {
 				success = compiler.Context.Loops.AddBreak(point, NameLabel.Value);
@@ -180,7 +180,7 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			var point = compiler.Binary.WriteJMP();
+			var point = new sunJumpSite(compiler.Binary);
 			var success = true;
 			if (IsNamed) {
 				success = compiler.Context.Loops.AddContinue(point, NameLabel.Value);

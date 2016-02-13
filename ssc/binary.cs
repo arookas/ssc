@@ -21,14 +21,6 @@ namespace arookas {
 		public abstract void Back();
 		public abstract void Goto(uint offset);
 
-		public virtual sunPoint OpenPoint() {
-			return new sunPoint(Offset);
-		}
-		public virtual void ClosePoint(sunPoint point) {
-			ClosePoint(point, Offset);
-		}
-		public abstract void ClosePoint(sunPoint point, uint offset);
-
 		public virtual void BeginText() {
 			// stub
 		}
@@ -66,10 +58,8 @@ namespace arookas {
 		public abstract void WriteMKDS(int display);
 		public abstract void WriteRET();
 		public abstract void WriteRET0();
-		public abstract sunPoint WriteJNE();
-		public abstract void WriteJNE(sunPoint point);
-		public abstract sunPoint WriteJMP();
-		public abstract void WriteJMP(sunPoint point);
+		public abstract void WriteJNE(uint offset);
+		public abstract void WriteJMP(uint offset);
 		public abstract void WritePOP();
 		public abstract void WriteINT0();
 		public abstract void WriteINT1();
@@ -95,25 +85,6 @@ namespace arookas {
 		}
 	}
 
-	public struct sunPoint {
-		readonly uint mOffset;
-
-		public uint Offset {
-			get { return mOffset; }
-		}
-
-		public sunPoint(uint offset) {
-			mOffset = offset;
-		}
-
-		public static implicit operator sunPoint(uint offset) {
-			return new sunPoint(offset);
-		}
-		public static implicit operator uint(sunPoint point) {
-			return point.mOffset;
-		}
-	}
-
 	sealed class sunSpcBinary : sunBinary {
 		aBinaryWriter mWriter;
 		sunSpcBinarySection mText, mData, mDataString, mSymbol, mSymbolString;
@@ -131,13 +102,6 @@ namespace arookas {
 			mSymbol = new sunSpcBinarySection();
 			mSymbolString = new sunSpcBinarySection();
 			mWriter.PushAnchor();
-		}
-
-		public override void ClosePoint(sunPoint point, uint offset) {
-			Keep();
-			Goto(point.Offset);
-			mText.Writer.Write32(offset);
-			Back();
 		}
 
 		public override void Close() {
@@ -396,37 +360,19 @@ namespace arookas {
 #endif
 			mText.Writer.Write8(0x21);
 		}
-		public override sunPoint WriteJNE() {
+		public override void WriteJNE(uint offset) {
 #if DEBUG
-			TraceInstruction("jne # UNFINISHED");
+			TraceInstruction("jne ${0:X8}", offset);
 #endif
 			mText.Writer.Write8(0x22);
-			sunPoint point = OpenPoint();
-			mText.Writer.Write32(0); // dummy
-			return point;
+			mText.Writer.Write32(offset);
 		}
-		public override void WriteJNE(sunPoint point) {
+		public override void WriteJMP(uint offset) {
 #if DEBUG
-			TraceInstruction("jne {0:X8}", point.Offset);
-#endif
-			mText.Writer.Write8(0x22);
-			mText.Writer.Write32(point.Offset);
-		}
-		public override sunPoint WriteJMP() {
-#if DEBUG
-			TraceInstruction("jmp # UNFINISHED");
+			TraceInstruction("jmp ${0:X8}", offset);
 #endif
 			mText.Writer.Write8(0x23);
-			sunPoint point = OpenPoint();
-			mText.Writer.Write32(0); // dummy
-			return point;
-		}
-		public override void WriteJMP(sunPoint point) {
-#if DEBUG
-			TraceInstruction("jmp {0:X8}", point.Offset);
-#endif
-			mText.Writer.Write8(0x23);
-			mText.Writer.Write32(point.Offset);
+			mText.Writer.Write32(offset);
 		}
 		public override void WritePOP() {
 #if DEBUG

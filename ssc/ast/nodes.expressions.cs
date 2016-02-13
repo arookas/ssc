@@ -116,12 +116,12 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			Condition.Compile(compiler);
-			var falsePrologue = compiler.Binary.WriteJNE();
+			var falsePrologue = new sunJumpNotEqualSite(compiler.Binary);
 			TrueBody.Compile(compiler);
-			var trueEpilogue = compiler.Binary.WriteJMP();
-			compiler.Binary.ClosePoint(falsePrologue);
+			var trueEpilogue = new sunJumpSite(compiler.Binary);
+			falsePrologue.Relocate();
 			FalseBody.Compile(compiler);
-			compiler.Binary.ClosePoint(trueEpilogue);
+			trueEpilogue.Relocate();
 		}
 
 		sunExpressionFlags sunTerm.GetExpressionFlags(sunContext context) {
