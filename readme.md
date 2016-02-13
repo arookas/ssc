@@ -52,6 +52,7 @@ There are also compile-time options which are able to be configured via the prem
 
 |Option|Description|
 |------|-----------|
+|lib-dir|Sets the path to the dependencies. Defaults to the _lib/_ folder.|
 |clean-symbols|Cleans symbol table of unused symbols.|
 
 _**Note:** A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.

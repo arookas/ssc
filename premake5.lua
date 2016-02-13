@@ -1,14 +1,24 @@
 -- options
 newoption {
+	trigger = "lib-dir",
+	description = "Sets the path for the dependencies",
+	value = "PATH"
+}
+
+newoption {
 	trigger = "clean-symbols",
 	description = "Cleans up the symbol table from unused symbols"
 }
+
+if not _OPTIONS["lib-dir"] then
+	_OPTIONS["lib-dir"] = "lib"
+end
 
 -- main workspace
 workspace "ssc"
 	configurations { "Debug", "Release" }
 	targetdir "bin/%{cfg.buildcfg}"
-	libdirs { "lib" }
+	libdirs { _OPTIONS["lib-dir"] }
 	
 	startproject "frontend"
 	
