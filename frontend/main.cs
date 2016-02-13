@@ -8,7 +8,7 @@ namespace arookas
 	static class SSC {
 		static void Main(string[] args) {
 			Message("ssc v0.1 arookas\n");
-			var cmd = new CommandLine(args);
+			var cmd = new aCommandLine(args);
 			if (cmd.Count == 0) {
 				Message("Usage: ssc -input <input.sun> [-output <output.sb>]\n");
 				Pause();
@@ -58,7 +58,7 @@ namespace arookas
 		}
 
 		// command-line
-		static void ReadCmdLine(CommandLine cmd, out string inputFile, out string outputFile) {
+		static void ReadCmdLine(aCommandLine cmd, out string inputFile, out string outputFile) {
 			inputFile = null;
 			outputFile = null;
 			foreach (var prm in cmd) {
@@ -76,7 +76,7 @@ namespace arookas
 				outputFile = Path.ChangeExtension(inputFile, ".sb");
 			}
 		}
-		static void GetInput(CommandLineParameter prm, ref string inputFile) {
+		static void GetInput(aCommandLineParameter prm, ref string inputFile) {
 			if (inputFile != null) {
 				Error("Only one -input option is allowed.\n");
 				Pause();
@@ -89,7 +89,7 @@ namespace arookas
 			}
 			inputFile = prm[0];
 		}
-		static void GetOutput(CommandLineParameter prm, ref string outputFile) {
+		static void GetOutput(aCommandLineParameter prm, ref string outputFile) {
 			if (outputFile != null) {
 				Error("Only one -output option is allowed.\n");
 				Pause();

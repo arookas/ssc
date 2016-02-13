@@ -14,7 +14,7 @@ namespace arookas {
 		public bool OutputDynsym { get { return mOutputDynsym; } }
 		public bool OutputBss { get { return mOutputBss; } }
 
-		public CommandLineSettings(CommandLine cmd) {
+		public CommandLineSettings(aCommandLine cmd) {
 			if (cmd == null) {
 				throw new ArgumentNullException("cmd");
 			}

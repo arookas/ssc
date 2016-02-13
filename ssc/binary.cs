@@ -466,7 +466,7 @@ namespace arookas {
 				throw new ArgumentNullException("data");
 			}
 			mData.Writer.Write32(mDataString.Size);
-			mDataString.Writer.WriteString(data, aBinaryStringFormat.NullTerminated);
+			mDataString.Writer.WriteString<aZSTR>(data);
 			++mDataCount;
 		}
 
@@ -477,7 +477,7 @@ namespace arookas {
 			mSymbol.Writer.Write32(data);
 			mSymbol.Writer.Write32(0u); // runtime field (hash)
 			mSymbol.Writer.Write32(0u); // runtime field (funcptr)
-			mSymbolString.Writer.WriteString(name, aBinaryStringFormat.NullTerminated);
+			mSymbolString.Writer.WriteString<aZSTR>(name);
 			++mSymbolCount;
 			if (type == sunSymbolType.Variable) {
 				++mVarCount;
@@ -508,7 +508,6 @@ namespace arookas {
 			}
 
 			public void Dispose() {
-				mWriter.Dispose();
 				mStream.Dispose();
 			}
 			public void Copy(aBinaryWriter writer) {

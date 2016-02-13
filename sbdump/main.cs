@@ -67,7 +67,7 @@ namespace arookas {
 
 		static void ReadCommandLine(string[] args) {
 			Console.WriteLine("Reading command line...");
-			sSettings = new CommandLineSettings(new CommandLine(args));
+			sSettings = new CommandLineSettings(new aCommandLine(args));
 		}
 		static void CreateReader(Stream stream) {
 			Console.WriteLine("Creating binary reader...");
@@ -240,7 +240,7 @@ namespace arookas {
 		static string FetchDataValue(uint ofs) {
 			sReader.Keep();
 			sReader.Goto(sDataOffset + (4 * sDataCount) + ofs);
-			var data = sReader.ReadString(aBinaryStringFormat.NullTerminated);
+			var data = sReader.ReadString<aZSTR>();
 			sReader.Back();
 			return data;
 		}
@@ -271,7 +271,7 @@ namespace arookas {
 		static string FetchSymbolName(Symbol symbol) {
 			sReader.Keep();
 			sReader.Goto(sDynsymOffset + (20 * sDynsymCount) + symbol.StringOffset);
-			var name = sReader.ReadString(aBinaryStringFormat.NullTerminated);
+			var name = sReader.ReadString<aZSTR>();
 			sReader.Back();
 			return name;
 		}
