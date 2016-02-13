@@ -57,10 +57,8 @@ The .text section contains all the executable instructions that the interpreter 
 
 There is also a method for each of the standard commands defined by `TSpcInterp`. Their job is to simply write the specified command, with the following exceptions:
 
-- It is the responsibility of the `WriteINT` method to redirect to `WriteINT0` or `WriteINT1`, if that functionality is desired. `WriteINT0` and `WriteINT1` are _never_ called by the compiler directly.
-- The `WriteJNE` and `WriteJMP` methods have two overloads, each:
-  - The first overload takes no parameters and returns a `sunPoint` instance. This overload is designed to write a dummy command with an associated `sunPoint` instance which can be later closed to finish writing the command.
-  - The second overload simply writes the final command directly, without opening a `sunPoint` instance.
+- It is the responsibility of the `WriteINT` method to redirect to `WriteINT0` or `WriteINT1`, if that functionality is desired.
+`WriteINT0` and `WriteINT1` are **never** called by the compiler directly.
 
 The API defines several methods and properties for navigating the .text section:
 
@@ -70,13 +68,6 @@ The API defines several methods and properties for navigating the .text section:
 |`Goto`|Seeks to the specified offset into the .text section.|
 |`Keep`|Pushes the current offset into the .text section onto the stack.|
 |`Back`|Pops the element off the top of the stack and seeks to that offset in the .text section.|
-
-For opening and closing `sunPoint` instances, the following methods exist in the API:
-
-|Method|Description|
-|------|-----------|
-|`OpenPoint`|Creates a `sunPoint` instance linked to the current offset in the .text section.|
-|`ClosePoint`|Closes a `sunPoint` instance. If the `offset` parameter is omitted, the current value of the `Offset` property is used instead.|
 
 #### .data
 
