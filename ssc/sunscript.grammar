@@ -110,9 +110,10 @@ root_statement						=
 statement									=
 														compound_statement SEMICOLON |
 														if_statement |
-														[name_label] while_statement |
-														[name_label] do_statement SEMICOLON |
-														[name_label] for_statement |
+														name_label |
+														while_statement |
+														do_statement SEMICOLON |
+														for_statement |
 														return_statement SEMICOLON |
 														break_statement SEMICOLON |
 														continue_statement SEMICOLON |
