@@ -6,6 +6,11 @@ newoption {
 }
 
 newoption {
+	trigger = "clean-functions",
+	description = "Compiles only used functions"
+}
+
+newoption {
 	trigger = "clean-symbols",
 	description = "Cleans up the symbol table from unused symbols"
 }
@@ -40,6 +45,9 @@ workspace "ssc"
 		links { "System", "arookas", "grammatica-1.6" }
 		
 		-- apply options
+		if _OPTIONS["clean-functions"] then
+			defines { "SSC_CLEAN_FUNCTIONS" }
+		end
 		if _OPTIONS["clean-symbols"] then
 			defines { "SSC_CLEAN_SYMBOLS" }
 		end

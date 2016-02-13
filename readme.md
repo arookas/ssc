@@ -68,6 +68,7 @@ There are also options which are able to be configured via the premake5 command 
 |Option|Description|
 |------|-----------|
 |lib-dir|Sets the path to the dependencies. Defaults to the _lib/_ folder.|
+|clean-functions|Compiles only used functions.|
 |clean-symbols|Cleans symbol table of unused symbols.|
 
 ## Language

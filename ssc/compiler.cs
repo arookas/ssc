@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 
 namespace arookas {
 	public class sunCompiler {
@@ -85,6 +84,7 @@ namespace arookas {
 			}
 			mBinary.WriteEND();
 		}
+#if SSC_CLEAN_FUNCTIONS
 		void CompileFunctions() {
 			while (DoCompileFunctions() > 0) ;
 		}
@@ -96,6 +96,13 @@ namespace arookas {
 			}
 			return count;
 		}
+#else
+		void CompileFunctions() {
+			foreach (var callable in mContext.SymbolTable.Get<sunCallableSymbol>()) {
+				callable.Compile(this);
+			}
+		}
+#endif
 #if SSC_CLEAN_SYMBOLS
 		void CleanSymbols() {
 			var i = 0;
