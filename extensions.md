@@ -10,7 +10,7 @@ There are three primary methods in the import-resolver API:
 |------|-----------|
 |`Enter`|Called when the compiler begins compiling a script. The script about to be compiled is passed through the `file` parameter.|
 |`Exit`|Similar to `Enter`, but is called when the compiler finishes compiling a script.|
-|`Resolve`|This is where the actual import resolver logic is implemented. The name of the script is passed through the `name` parameter. The method initiailizes a new `sunScriptFile` instance and passes it to the `file` out parameter.|
+|`Resolve`|This is where the actual import resolver logic is implemented. The name of the script is passed through the `name` parameter. The method initializes a new `sunScriptFile` instance and passes it to the `file` out parameter.|
 
 #### Import results
 
