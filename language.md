@@ -60,7 +60,7 @@ Instead, they are simply evaluated each time they are actually used (similar to 
 
 ```javascript
 const PI = 3.14;
-const TWOPI = 2 * pi;
+const TWOPI = 2 * PI;
 const R = 300.0;
 
 var circ = R * TWOPI; // this actually compiles to 'var circ = 300.0 * (2 * (3.14));'
