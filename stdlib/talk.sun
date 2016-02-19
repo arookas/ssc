@@ -22,6 +22,8 @@ builtin setTalkMsgID(msgID, flags);
 builtin getTalkNPC();
 builtin getTalkNPCName();
 
+builtin setValue2TalkVariable(variable, value); // stub
+
 // functions
 function waitTalkStart(name) {
 	while (true) {

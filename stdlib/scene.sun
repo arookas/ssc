@@ -16,7 +16,7 @@ builtin getNPCType(npc);
 builtin setTransScale(name, tx, ty, tz, sx, sy, sz);
 
 // cubes
-builtin isInsideCube(a);
+builtin isInsideCube(cube);
 builtin isInsideFastCube(a, b);
 
 // appear
@@ -69,6 +69,18 @@ builtin npcDanceOn(npc);
 
 builtin isNpcSinkBottom(npc);
 
+// mario
+builtin setMarioWaiting();
+builtin startMarioTalking();
+builtin warpMario(x, y, z, d);
+builtin warpFrontToMario(a);
+builtin onNeutralMarioKey();
+
+
+// piantissimo
+builtin startMonteman(a);
+builtin monteManReachFlag();
+
 // shadow mario
 builtin startEMarioDisappear(emario);
 builtin startEMarioGateDrawing(emario);
@@ -82,3 +94,5 @@ builtin isWaterMelonIsReached(melon);
 builtin killMushroom1up(handle);
 builtin checkMonteClear(a);
 builtin raiseBuilding(a);
+builtin startOpenModelGate(a);
+builtin maniCoinDown();
