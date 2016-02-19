@@ -65,8 +65,8 @@ workspace "ssc"
 		
 		prebuildcommands {
 			-- regenerate grammatica classes before compilation begins
-			"{CHDIR} \"%{prj.location}\"",
-			"java -jar grammatica.jar \"sunscript.grammar\" --csoutput \".\\generated\" --csnamespace \"arookas\" --csclassname \"__sun\"",
+			'{CHDIR} "%{prj.location}"',
+			'java -jar grammatica.jar "sunscript.grammar" --csoutput ".\\generated" --csnamespace "arookas" --csclassname "__sun"',
 		}
 
 	-- frontend project (example command-line interface)
@@ -90,8 +90,8 @@ workspace "ssc"
 		
 		postbuildcommands {
 			-- copy stdlib to frontend output so users can import the scripts
-			"{RMDIR} \"%{cfg.buildtarget.directory}ssc\"",
-			"{COPY} \"%{wks.location}stdlib\" \"%{cfg.buildtarget.directory}ssc\"",
+			'{RMDIR} "%{cfg.buildtarget.directory}ssc"',
+			'{COPY} "%{wks.location}stdlib" "%{cfg.buildtarget.directory}ssc"',
 		}
 
 	-- sbdump utility
