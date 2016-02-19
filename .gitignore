@@ -1,6 +1,6 @@
-# premake
-premake5.bat
-premake5.exe
+# executables
+*.bat
+*.exe
 
 # visual studio
 *.csproj
@@ -12,7 +12,3 @@ bin/
 
 # generated types
 generated/
-
-# testing
-test.sun
-test.sb
