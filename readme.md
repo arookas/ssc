@@ -35,6 +35,12 @@ Use the various properties on this type to gather the information of the compila
 
 If the error is of the type `sunSourceException`, you can cast and retrieve the script name, line, and column of the error.
 
+---
+
+The repository comes with a [ST3 syntax definition file](sunscript.sublime-syntax):
+
+![SunScript ST3 syntax preview](http://i.imgur.com/9VtTpks.png)
+
 ## Compiling
 
 ### Dependencies

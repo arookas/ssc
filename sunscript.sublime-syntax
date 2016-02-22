@@ -1,0 +1,344 @@
+%YAML 1.2
+---
+name: SunScript
+file_extensions:
+  - sun
+scope: source.sun
+variables:
+  identifier: '[A-Za-z_][A-Za-z0-9_]*'
+  
+contexts:
+  main:
+    - include: statement
+    
+  literal-keyword:
+    # loop
+    - match: \bbreak\b
+      scope: keyword.control.loop.sun
+    - match: \bcontinue\b
+      scope: keyword.control.loop.sun
+    - match: \breturn\b
+      scope: keyword.control.flow.sun
+      
+    # flow
+    - match: \byield\b
+      scope: keyword.control.flow.sun
+    - match: \bexit\b
+      scope: keyword.control.flow.sun
+    - match: \block\b
+      scope: keyword.control.flow.sun
+    - match: \bunlock\b
+      scope: keyword.control.flow.sun
+      
+    # storage
+    - match: \b(const|var|local)\b
+      scope: storage.type.sun
+      
+  statement:
+    - include: comment
+    - include: statement-import
+    - include: statement-block
+    - include: conditional
+    - include: statement-builtin-declaration
+    - include: statement-function-definition
+    - include: expression
+    
+  statement-import:
+    - match: \bimport\b
+      scope: keyword.control.import.sun
+    - include: literal-string
+    
+  statement-block:
+    - match: '\}'
+      scope: meta.block.sun meta.brace.curly.sun
+      pop: true
+    - match: '\{'
+      scope: meta.brace.curly.sun
+      push:
+        - meta_scope: meta.block.sun
+        - include: statement
+    
+  #############################################################################
+  ## COMMENTS
+  #############################################################################
+  
+  comment:
+    # block comments
+    - match: /\*
+      scope: punctuation.definition.comment.sun
+      push:
+        - meta_scope: comment.block.sun
+        - match: \*/
+          scope: punctuation.definition.comment.sun
+          pop: true
+          
+    # line comments
+    - match: //
+      scope: punctuation.definition.comment.sun
+      push:
+        - meta_scope: comment.line.double-slash.sun
+        - match: \n
+          pop: true
+          
+  #############################################################################
+  ## CONDITIONALS
+  #############################################################################
+  
+  conditional:
+    # do while
+    - match: \bdo\b
+      scope: keyword.control.loop.sun
+      push:
+        - meta_scope: meta.do-while.sun
+        - include: comment
+        - match: '\}'
+          scope: meta.brace.curly.sun
+        - match: '\{'
+          scope: meta.brace.curly.sun
+          push:
+            - meta_scope: meta.block.sun
+            - include: statement
+        - match: \bwhile\b
+          scope: keyword.control.loop.sun
+        - match: '\('
+          scope: meta.brace.round.sun
+          push:
+            - meta_scope: meta.group.braces.round.sun
+            - include: expression
+        - match: '\)'
+          scope: meta.group.braces.round.sun meta.brace.round.sun
+          pop: true
+          
+    # for
+    - match: \bfor\b
+      scope: keyword.control.loop.sun
+      push:
+        - meta_scope: meta.for.sun
+        - include: parentheses-expression
+        - include: statement
+        
+    # while
+    - match: \bwhile\b
+      scope: keyword.control.loop.sun
+      push:
+        - meta_scope: meta.while.sun
+        - include: parentheses-expression
+        - include: statement
+        
+    # if / else if
+    - match: \b(else\s+if|if)\b
+      scope: keyword.control.conditional.sun
+      push:
+        - meta_scope: meta.conditional.sun
+        - include: parentheses-expression
+        - include: statement
+        
+    # else
+    - match: \belse\b
+      scope: keyword.control.conditional.sun
+      push:
+        - meta_scope: meta.conditional.sun
+        - include: parentheses-expression
+        - include: statement
+        
+  #############################################################################
+  ## EXPRESSIONS
+  #############################################################################
+  
+  expression:
+    - match: '(?=\))'
+      pop: true
+    - include: comment
+    
+    - include: literal-keyword
+    - include: literal-operator
+    - include: literal-punctuation
+    
+    - include: literal-call
+    
+    - include: literal-constant
+    - include: literal-string
+    - include: literal-number
+    - include: literal-variable
+    
+    - include: parentheses-expression
+    - include: brackets-expression
+  
+  parentheses-expression:
+    - match: '\('
+      scope: meta.brace.round.sun
+      push:
+        - meta_scope: meta.group.braces.round.sun
+        - match: '\)'
+          scope: meta.brace.round.sun
+          pop: true
+        - include: expression
+    
+  brackets-expression:
+    - match: '\['
+      scope: meta.brace.square.sun
+      push:
+        - meta_scope: meta.groupbraces.square.sun
+        - match: '\]'
+          scope: meta.brace.square.sun
+          pop: true
+        - include: expression
+    
+  literal-operator:
+    # assignment
+    - match: (?x) =(?!=)
+      scope: keyword.operator.assignment.sun
+    
+    # augment
+    - match: (?x) \+= | -= | \*= | /= | %= | &= | \|= | <<= | >>=
+      scope: keyword.operator.assignment.augmented.sun
+    
+    # arithmetic
+    - match: (?x) \+\+ | -- | \+ | - | \* | / | %
+      scope: keyword.operator.arithmetic.sun
+    
+    # logical
+    - match: (?x) !(?!=) | && | \|\|
+      scope: keyword.operator.logical.sun
+    
+    # bitwise
+    - match: (?x) ~ | << | >> | & | \|
+      scope: keyword.operator.bitwise.sun
+    
+    # relational
+    - match: (?x) <= | >= | < | >
+      scope: keyword.operator.relational.sun
+    
+    # logical
+    - match: (?x) == | !=
+      scope: keyword.operator.comparison.sun
+    
+    # ternary
+    - match: '\?|:'
+      scope: keyword.operator.ternary.sun
+      
+  literal-punctuation:
+    - match: \;
+      scope: punctuation.terminator.statement.sun
+    - match: ","
+      scope: meta.delimiter.comma.sun
+      
+  #############################################################################
+  ## FUNCTIONS / BUILTINS
+  #############################################################################
+  
+  statement-builtin-declaration:
+    - match: \b(builtin)\b
+      scope: meta.function.declaration.sun
+      captures:
+        1: storage.type.function.sun
+      push:
+        - match: \blocal\b
+          scope: storage.type.sun
+        - match: \bconst\b
+          scope: storage.type.sun
+        - match: '{{identifier}}'
+          scope: meta.function.declaration.sun entity.name.function.sun
+        - include: parameter-list
+        - match: ";"
+          pop: true
+  
+  statement-function-definition:
+    - match: \b(function)\b
+      scope: meta.function.definition.sun
+      captures:
+        1: storage.type.function.sun
+      set:
+        - match: \blocal\b
+          scope: storage.type.sun
+        - match: \bconst\b
+          scope: storage.type.sun
+        - match: '{{identifier}}'
+          scope: meta.function.definition.sun entity.name.function.sun
+        - include: parameter-list
+        - match: '(?=\{)'
+          pop: true
+  
+  parameter-list:
+    - match: \(
+      scope: punctuation.defintion.parameters.begin.sun
+      push:
+        - match: \)
+          scope: punctuation.definition.parameters.end.sun
+          pop: true
+        - match: \.{3}
+          scope: keyword.operator.spread.sun
+        - match: '{{identifier}}'
+          scope: variable.parameter.sun
+        - match: ','
+          scope: punctuation.separator.parameter.sun
+        - include: comment
+        
+  argument-list:
+    - match: '\)'
+      scope: meta.brace.round.sun
+      pop: true
+    - match: '\('
+      scope: meta.brace.round.sun
+      push:
+        - match: '(?=\))'
+          pop: true
+        - include: expression
+    
+  literal-call:
+    - match: '({{identifier}})(?=\s*\()'
+      scope: variable.function.sun
+      push:
+        - meta_scope: meta.function-call.sun
+        - include: argument-list
+    
+  #############################################################################
+  ## LITERALS
+  #############################################################################
+  
+  literal-string:
+    - match: "'"
+      scope: punctuation.definition.string.begin.sun
+      push:
+        - meta_scope: string.quoted.single.sun
+        - match: (')|(\n)
+          captures:
+            1: unctuation.definition.string.end.sun
+            2: invalid.illegal.newline.sun
+          pop: true
+        - include: literal-string-escape
+    - match: '"'
+      scope: punctuation.definition.string.begin.sun
+      push:
+        - meta_scope: string.quoted.double.sun
+        - match: (")|(\n)
+          captures:
+            1: punctuation.definition.string.end.sun
+            2: invalid.illegal.newline.sun
+          pop: true
+        - include: literal-string-escape
+        
+  literal-string-escape:
+    - match: '\\(''|"|\\|0|a|b|f|n|r|t|v|x[0-9A-Fa-f]{1,4}|u[0-9A-Fa-f]{4}|U[0-9A-Fa-f]{8})'
+      scope: constant.character.escape.sun
+      
+  literal-number:
+    - match: \$[0-9A-Fa-f]{8} # address
+      scope: constant.numeric.sun
+    - match: \b[0-9]+\.[0-9]+ # decimal
+      scope: constant.numeric.sun
+    - match: \b0x[0-9A-Fa-f]+ # hexadecimal
+      scope: constant.numeric.sun
+    - match: \b[0-9]+ # integer
+      scope: constant.numeric.sun
+      
+  literal-constant:
+    - match: \btrue\b
+      scope: constant.language.boolean.true.sun
+    - match: \bfalse\b
+      scope: constant.language.boolean.false.sun
+      
+  literal-variable:
+    - match: '{{identifier}}'
+      scope: variable.other.readwrite.sun
+      
