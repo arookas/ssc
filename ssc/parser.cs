@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace arookas {
 	class sunParser {
-		static string[] keywords = {
+		static string[] sKeywords = {
 			"import",
 			"builtin", "function", "var", "const", "local",
 			"if", "while", "do", "for",
@@ -235,7 +235,7 @@ namespace arookas {
 		}
 
 		public static bool IsKeyword(string name) {
-			return keywords.Contains(name);
+			return sKeywords.Contains(name);
 		}
 	}
 }
