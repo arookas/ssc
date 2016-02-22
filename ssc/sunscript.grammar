@@ -198,9 +198,9 @@ builtin_declaration				= builtin_modifiers IDENTIFIER parameter_list;
 builtin_modifiers					= BUILTIN [CONST];
 
 // flow control
-if_statement							= IF expression statement [ELSE statement];
-while_statement						= WHILE expression statement;
-do_statement							= DO statement WHILE expression;
+if_statement							= IF L_PAREN expression R_PAREN statement [ELSE statement];
+while_statement						= WHILE L_PAREN expression R_PAREN statement;
+do_statement							= DO statement WHILE L_PAREN expression R_PAREN;
 for_statement							= FOR L_PAREN [for_declaration] SEMICOLON [for_condition] SEMICOLON [for_iteration] R_PAREN statement;
 for_declaration						= compound_statement;
 for_condition							= expression;
