@@ -2,8 +2,9 @@
 
 ## Summary
 
-_ssc_ is a basic, work-in-progress compiler for SunScript. It supports all of the byte-code functionality of Super Mario Sunshine's SPC interpreter.
-The compiler compiles to the SPC binary format (.sb files) used by Super Mario Sunshine.
+_ssc_ is a work-in-progress compiler for SunScript.
+It supports all of the byte-code functionality of Super Mario Sunshine's SPC interpreter.
+The compiler can compile to the SPC binary format (.sb files) used by Super Mario Sunshine, allowing for completely new and custom scripts.
 
 This program utilizes the [Grammatica](http://grammatica.percederberg.net/) library to generate an LL(k) parser using a grammar syntax file.
 
