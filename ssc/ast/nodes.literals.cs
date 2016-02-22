@@ -100,6 +100,7 @@ namespace arookas {
 					case 'b': sb.Append('\b'); break;
 					case 'f': sb.Append('\f'); break;
 					case 'n': sb.Append('\n'); break;
+					case 'r': sb.Append('\r'); break;
 					case 't': sb.Append('\t'); break;
 					case 'v': sb.Append('\v'); break;
 					case 'x': sb.Append(UnescapeHex(value, j + 2, out i)); continue;
