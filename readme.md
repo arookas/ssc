@@ -1,6 +1,6 @@
 # ssc
 
-![SunScript ST3 syntax preview](http://i.imgur.com/9VtTpks.png)
+![SunScript ST3 syntax preview](http://i.imgur.com/YHChKwd.png)
 
 ## Summary
 
