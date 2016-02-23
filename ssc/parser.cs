@@ -207,8 +207,8 @@ namespace arookas {
 			
 			// modifiers
 			switch (id) {
-				case __sunConstants.LOCAL: return new sunLocalKeyword(location);
-				case __sunConstants.CONST: return new sunConstKeyword(location);
+				case __sunConstants.LOCAL: return new sunLocalModifier(location);
+				case __sunConstants.CONST: return new sunConstModifier(location);
 			}
 
 			// emergency fallback

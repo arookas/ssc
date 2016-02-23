@@ -103,10 +103,10 @@ namespace arookas {
 				return sunSymbolModifiers.None;
 			}
 			var modifiers = sunSymbolModifiers.None;
-			if (modifierlist.Any(i => i is sunConstKeyword)) {
+			if (modifierlist.Any(i => i is sunConstModifier)) {
 				modifiers |= sunSymbolModifiers.Constant;
 			}
-			if (modifierlist.Any(i => i is sunLocalKeyword)) {
+			if (modifierlist.Any(i => i is sunLocalModifier)) {
 				modifiers |= sunSymbolModifiers.Local;
 			}
 			return modifiers;
