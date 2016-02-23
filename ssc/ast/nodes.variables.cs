@@ -34,6 +34,9 @@
 		public override void Compile(sunCompiler compiler) {
 			var symbol = compiler.Context.DeclareVariable(this);
 			symbol.Modifiers = Modifiers;
+			if ((Modifiers & sunSymbolModifiers.Constant) != 0) {
+				throw new sunInvalidModifierException(this[0]);
+			}
 		}
 	}
 
