@@ -345,7 +345,7 @@ namespace arookas {
 	[Flags]
 	enum sunSymbolModifiers {
 		None = 0,
-		Constant = 1 << 0,
-		Local = 1 << 1,
+		Local = 1 << 0,
+		Constant = 1 << 1,
 	}
 }
