@@ -173,7 +173,7 @@ unary_operator_list				= unary_operator+;
 variable_reference				= IDENTIFIER; // used in expressions
 variable_declaration			= variable_modifiers IDENTIFIER;
 variable_definition				= variable_modifiers IDENTIFIER ASSIGN expression;
-variable_modifiers				= VAR [LOCAL];
+variable_modifiers				= VAR [LOCAL] [CONST];
 variable_assignment				= IDENTIFIER assignment_operator expression;
 variable_augment					= postfix_augment | prefix_augment;
 
