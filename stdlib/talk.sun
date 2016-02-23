@@ -10,8 +10,8 @@
 // ================================================= \\
 
 // flags
-const TALKF_WAIT	= 0;
-const TALKF_CLOSE	= (1 << 0);
+var const TALKF_WAIT		= 0;
+var const TALKF_CLOSE		= (1 << 0);
 
 // builtins
 builtin getTalkMode();
@@ -62,8 +62,8 @@ function talk(msgID, flags) {
 	}
 }
 
-function talkAndWait(msgID)				{ talk(msgID, TALKF_WAIT); }
-function talkAndClose(msgID)			{ talk(msgID, TALKF_CLOSE); }
+function talkAndWait(msgID) { talk(msgID, TALKF_WAIT); }
+function talkAndClose(msgID) { talk(msgID, TALKF_CLOSE); }
 
 // ================================================= \\
 // SELECT
@@ -89,8 +89,8 @@ function select(msgID, flags) {
 	return getTalkSelectedValue();
 }
 
-function talkAndSelect(msgID)				{ return select(msgID, TALKF_WAIT); }
-function talkAndSelectClose(msgID)	{ return select(msgID, TALKF_CLOSE); }
+function talkAndSelect(msgID) { return select(msgID, TALKF_WAIT); }
+function talkAndSelectClose(msgID) { return select(msgID, TALKF_CLOSE); }
 
 // ================================================= \\
 // FORCE
