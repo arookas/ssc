@@ -131,7 +131,7 @@ namespace arookas {
 #endif
 		void CompileRelocations() {
 			foreach (var symbol in mContext.SymbolTable) {
-				symbol.CloseRelocations(this);
+				symbol.CloseRelocations();
 			}
 		}
 		void CompileData() {

@@ -90,12 +90,10 @@ namespace arookas {
 			}
 			mRelocations.Add(relocation);
 		}
-		public void CloseRelocations(sunCompiler compiler) {
-			compiler.Binary.Keep();
+		public void CloseRelocations() {
 			foreach (var relocation in mRelocations) {
 				relocation.Relocate();
 			}
-			compiler.Binary.Back();
 		}
 
 		public static sunSymbolModifiers GetModifiers(sunNode modifierlist) {
@@ -202,7 +200,7 @@ namespace arookas {
 			}
 			mBody.Compile(compiler);
 			compiler.Binary.WriteRET0();
-			compiler.Context.Scopes.Pop(compiler);
+			compiler.Context.Scopes.Pop();
 			++mCompiles;
 		}
 		public override sunRelocation CreateCallSite(sunCompiler compiler, int argCount) {
