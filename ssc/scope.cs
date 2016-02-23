@@ -53,7 +53,7 @@ namespace arookas {
 			mStack.Add(new sunScope(type));
 		}
 #endif
-		public void Pop(sunCompiler compiler) {
+		public void Pop() {
 			if (Count > 1) {
 #if SSC_SCOPES
 				if (Top.Type == sunScopeType.Script) {
@@ -62,7 +62,7 @@ namespace arookas {
 #else
 				// close relocations while we still have references to the symbols
 				foreach (var variable in Top) {
-					variable.CloseRelocations(compiler);
+					variable.CloseRelocations();
 				}
 #endif
 				mStack.RemoveAt(Count - 1);

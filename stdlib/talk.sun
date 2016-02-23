@@ -10,8 +10,8 @@
 // ================================================= \\
 
 // flags
-const TALKF_WAIT	= 0;
-const TALKF_CLOSE	= (1 << 0);
+var const TALKF_WAIT		= 0;
+var const TALKF_CLOSE		= (1 << 0);
 
 // builtins
 builtin getTalkMode();
@@ -56,14 +56,14 @@ function talk(msgID, flags) {
 	}
 	else {
 		yield;
-		while (getTalkMode() != true) {
+		while (!getTalkMode()) {
 			yield;
 		}
 	}
 }
 
-function talkAndWait(msgID)				{ talk(msgID, TALKF_WAIT); }
-function talkAndClose(msgID)			{ talk(msgID, TALKF_CLOSE); }
+function talkAndWait(msgID) { talk(msgID, TALKF_WAIT); }
+function talkAndClose(msgID) { talk(msgID, TALKF_CLOSE); }
 
 // ================================================= \\
 // SELECT
@@ -81,16 +81,15 @@ function select(msgID, flags) {
 		}
 	}
 	else {
-		yield;
-		while (getTalkMode() != true) {
+		do {
 			yield;
-		}
+		} while (!getTalkMode());
 	}
 	return getTalkSelectedValue();
 }
 
-function talkAndSelect(msgID)				{ return select(msgID, TALKF_WAIT); }
-function talkAndSelectClose(msgID)	{ return select(msgID, TALKF_CLOSE); }
+function talkAndSelect(msgID) { return select(msgID, TALKF_WAIT); }
+function talkAndSelectClose(msgID) { return select(msgID, TALKF_CLOSE); }
 
 // ================================================= \\
 // FORCE
@@ -103,20 +102,20 @@ builtin forceCloseTalk();
 
 // functions
 function forceTalk(handle) {
-	var res = __forceStartTalk(handle);
-	if (res == true) {
+	var result = __forceStartTalk(handle);
+	if (result) {
 		while (!isTalkModeNow()) {
 			yield;
 		}
 	}
-	return res;
+	return result;
 }
 function forceTalkExceptNpc(handle) {
-	var res = __forceStartTalkExceptNpc(handle);
-	if (res == true) {
+	var result = __forceStartTalkExceptNpc(handle);
+	if (result) {
 		while (!isTalkModeNow()) {
 			yield;
 		}
 	}
-	return res;
+	return result;
 }

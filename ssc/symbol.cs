@@ -90,12 +90,10 @@ namespace arookas {
 			}
 			mRelocations.Add(relocation);
 		}
-		public void CloseRelocations(sunCompiler compiler) {
-			compiler.Binary.Keep();
+		public void CloseRelocations() {
 			foreach (var relocation in mRelocations) {
 				relocation.Relocate();
 			}
-			compiler.Binary.Back();
 		}
 
 		public static sunSymbolModifiers GetModifiers(sunNode modifierlist) {
@@ -103,10 +101,10 @@ namespace arookas {
 				return sunSymbolModifiers.None;
 			}
 			var modifiers = sunSymbolModifiers.None;
-			if (modifierlist.Any(i => i is sunConstKeyword)) {
+			if (modifierlist.Any(i => i is sunConstModifier)) {
 				modifiers |= sunSymbolModifiers.Constant;
 			}
-			if (modifierlist.Any(i => i is sunLocalKeyword)) {
+			if (modifierlist.Any(i => i is sunLocalModifier)) {
 				modifiers |= sunSymbolModifiers.Local;
 			}
 			return modifiers;
@@ -202,7 +200,7 @@ namespace arookas {
 			}
 			mBody.Compile(compiler);
 			compiler.Binary.WriteRET0();
-			compiler.Context.Scopes.Pop(compiler);
+			compiler.Context.Scopes.Pop();
 			++mCompiles;
 		}
 		public override sunRelocation CreateCallSite(sunCompiler compiler, int argCount) {
@@ -289,8 +287,6 @@ namespace arookas {
 			get { return (uint)Index; }
 		}
 
-		public sunVariableSymbol(string name)
-			: this(name, 0, 0) { }
 		public sunVariableSymbol(string name, int display, int index)
 			: base(name) {
 			mDisplay = display;
@@ -349,7 +345,7 @@ namespace arookas {
 	[Flags]
 	enum sunSymbolModifiers {
 		None = 0,
-		Constant = 1 << 0,
-		Local = 1 << 1,
+		Local = 1 << 0,
+		Constant = 1 << 1,
 	}
 }

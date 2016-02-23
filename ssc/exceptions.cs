@@ -251,4 +251,12 @@ namespace arookas {
 		public sunContinueException(sunContinue node)
 			: base(node) { }
 	}
+	class sunInvalidModifierException : sunNodeException<sunNode> {
+		public override string Message {
+			get { return "Unsupported modifier in modifier list."; }
+		}
+
+		public sunInvalidModifierException(sunNode node)
+			: base(node) { }
+	}
 }
