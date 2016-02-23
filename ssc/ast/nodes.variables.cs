@@ -32,7 +32,8 @@
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			compiler.Context.DeclareVariable(this);
+			var symbol = compiler.Context.DeclareVariable(this);
+			symbol.Modifiers = Modifiers;
 		}
 	}
 
@@ -50,6 +51,7 @@
 
 		public override void Compile(sunCompiler compiler) {
 			var symbol = compiler.Context.DeclareVariable(this);
+			symbol.Modifiers = Modifiers;
 			Operator.Compile(compiler, symbol, Expression);
 		}
 	}
