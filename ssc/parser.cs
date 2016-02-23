@@ -205,17 +205,10 @@ namespace arookas {
 				case __sunConstants.CONTINUE_STATEMENT: return new sunContinue(location);
 			}
 			
-			// keywords
-			if (id == __sunConstants.CONST) {
-				switch (parent) {
-					case __sunConstants.FUNCTION_MODIFIERS:
-					case __sunConstants.BUILTIN_MODIFIERS: {
-							return new sunConstKeyword(location);
-						}
-				}
-			}
-			if (id == __sunConstants.LOCAL) {
-				return new sunLocalKeyword(location);
+			// modifiers
+			switch (id) {
+				case __sunConstants.LOCAL: return new sunLocalKeyword(location);
+				case __sunConstants.CONST: return new sunConstKeyword(location);
 			}
 
 			// emergency fallback
