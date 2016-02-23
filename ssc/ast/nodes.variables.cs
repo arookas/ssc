@@ -53,9 +53,24 @@
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			var symbol = compiler.Context.DeclareVariable(this);
-			symbol.Modifiers = Modifiers;
-			Operator.Compile(compiler, symbol, Expression);
+			// create the right type of symbol based on the const modifier
+			var isConst = (Modifiers & sunSymbolModifiers.Constant) != 0;
+			if (isConst) {
+				// analyze the expression. this does two things:
+				//   1) prevents recursion (i.e. the const referencing itself)
+				//   2) asserts actual constness
+				var flags = Expression.Analyze(compiler.Context);
+				if (flags.HasFlag(sunExpressionFlags.Dynamic)) {
+					throw new sunConstantExpressionException(Expression);
+				}
+				var symbol = compiler.Context.DeclareConstant(this);
+				symbol.Modifiers = Modifiers;
+			}
+			else {
+				var symbol = compiler.Context.DeclareVariable(this);
+				symbol.Modifiers = Modifiers;
+				Operator.Compile(compiler, symbol, Expression);
+			}
 		}
 	}
 
@@ -73,29 +88,6 @@
 				throw new sunAssignConstantException(Name);
 			}
 			Operator.Compile(compiler, symbol, Expression);
-		}
-	}
-
-	class sunConstantDefinition : sunNode {
-		public sunIdentifier Name { get { return this[1] as sunIdentifier; } }
-		public sunExpression Expression { get { return this[3] as sunExpression; } }
-
-		public sunSymbolModifiers Modifiers {
-			get { return sunSymbol.GetModifiers(this[0]) | sunSymbolModifiers.Constant; }
-		}
-
-		public sunConstantDefinition(sunSourceLocation location)
-			: base(location) { }
-
-		public override void Compile(sunCompiler compiler) {
-			// analyze the expression. this does two things:
-			//   1) prevents recursion (i.e. the const referencing itself)
-			//   2) asserts actual constness
-			var flags = Expression.Analyze(compiler.Context);
-			if (flags.HasFlag(sunExpressionFlags.Dynamic)) {
-				throw new sunConstantExpressionException(Expression);
-			}
-			compiler.Context.DeclareConstant(this);
 		}
 	}
 }
