@@ -10,13 +10,13 @@
 // ================================================= \\
 
 // known flags here
-var const SYS_SHINEGET											= 0x10000; // add shine num to this
+var const SYSF_SHINEGET											= 0x10000; // add shine num to this
 
-var const SYS_MARIOLIVES										= 0x20001;
+var const SYSF_MARIOLIVES										= 0x20001;
 
-var const SYS_SHINENUM											= 0x40000;
-var const SYS_BLUECOINNUM										= 0x40001;
-var const SYS_GOLDCOINNUM										= 0x40002;
+var const SYSF_SHINENUM											= 0x40000;
+var const SYSF_BLUECOINNUM										= 0x40001;
+var const SYSF_GOLDCOINNUM										= 0x40002;
 
 builtin getSystemFlag(flag);
 builtin setSystemFlag(flag, value);
