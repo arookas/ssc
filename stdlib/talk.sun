@@ -56,7 +56,7 @@ function talk(msgID, flags) {
 	}
 	else {
 		yield;
-		while (getTalkMode() != true) {
+		while (!getTalkMode()) {
 			yield;
 		}
 	}
@@ -81,10 +81,9 @@ function select(msgID, flags) {
 		}
 	}
 	else {
-		yield;
-		while (getTalkMode() != true) {
+		do {
 			yield;
-		}
+		} while (!getTalkMode());
 	}
 	return getTalkSelectedValue();
 }
@@ -103,20 +102,20 @@ builtin forceCloseTalk();
 
 // functions
 function forceTalk(handle) {
-	var res = __forceStartTalk(handle);
-	if (res == true) {
+	var result = __forceStartTalk(handle);
+	if (result) {
 		while (!isTalkModeNow()) {
 			yield;
 		}
 	}
-	return res;
+	return result;
 }
 function forceTalkExceptNpc(handle) {
-	var res = __forceStartTalkExceptNpc(handle);
-	if (res == true) {
+	var result = __forceStartTalkExceptNpc(handle);
+	if (result) {
 		while (!isTalkModeNow()) {
 			yield;
 		}
 	}
-	return res;
+	return result;
 }

@@ -62,16 +62,10 @@ builtin startMareBottleDemo();
 builtin isFinishMareBottleDemo();
 
 function waitForFinishDemo() {
-	while (true) {
-		if (isDemoMode()) {
-			break;
-		}
+	while (!isDemoMode()) {
 		yield;
 	}
-	while (true) {
-		if (isDemoMode() == false) {
-			break;
-		}
+	while (isDemoMode()) {
 		yield;
 	}
 }
