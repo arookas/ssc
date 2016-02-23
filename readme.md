@@ -1,5 +1,7 @@
 # ssc
 
+![SunScript ST3 syntax preview](http://i.imgur.com/9VtTpks.png)
+
 ## Summary
 
 _ssc_ is a work-in-progress compiler for SunScript.
@@ -35,12 +37,6 @@ Use the various properties on this type to gather the information of the compila
 |`Symbols`|An array containing the symbol-table entries.|
 
 If the error is of the type `sunSourceException`, you can cast and retrieve the script name, line, and column of the error.
-
----
-
-The repository comes with a [ST3 syntax definition file](sunscript.sublime-syntax):
-
-![SunScript ST3 syntax preview](http://i.imgur.com/9VtTpks.png)
 
 ## Compiling
 
@@ -81,4 +77,5 @@ For more information on the SunScript language and its syntax, see [language.md]
 
 ## Extending the compiler
 
-_ssc_ is designed to be extensible. For more information on extending _ssc_, see [extensions.md](extensions.md).
+_ssc_ is designed to be extensible, allowing for custom output formats and import resolvers.
+For more information on extending _ssc_, see [extensions.md](extensions.md).
