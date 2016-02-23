@@ -16,6 +16,9 @@ namespace arookas {
 		public override void Compile(sunCompiler compiler) {
 			var symbol = compiler.Context.DeclareBuiltin(this);
 			symbol.Modifiers = Modifiers;
+			if ((symbol.Modifiers & sunSymbolModifiers.Local) != 0) {
+				throw new sunInvalidModifierException(this[0]); // local builtins are not supported
+			}
 		}
 	}
 
