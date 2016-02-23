@@ -303,7 +303,7 @@ contexts:
         - meta_scope: string.quoted.single.sun
         - match: (')|(\n)
           captures:
-            1: unctuation.definition.string.end.sun
+            1: punctuation.definition.string.end.sun
             2: invalid.illegal.newline.sun
           pop: true
         - include: literal-string-escape
