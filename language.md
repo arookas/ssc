@@ -11,62 +11,59 @@ Both single-line comments and multi-line comments are supported. A single line c
 A variable is created by use of the `var` keyword and may initially be either _declared_ or _defined_.
 A declaration leaves the variable with an undefined initial value, while a definition assigns a value to the variable explicitly:
 
-```javascript
+```
 var a;
 var b = 33;
 ```
 
----
-
-There are three primitive types in SunScript, as shown in the following table.
+There are several primitive types in SunScript, as shown in the following table.
 All variables are dynamically typed and can change at any time by simply assigning it an expression of another type.
 
-|Type  |       Example|
-|:-----|-------------:|
-|int   |`132`, `-0xff`|
-|float |`15.64`, `9.0`|
-|string|  `"foo\nbar"`|
+|Type|Example|
+|:---|------:|
+|int|`132`, `-0xff`|
+|float|`15.64`, `9.0`|
+|string |`"foo\nbar"`|
+|address|`$803200A0`|
 
-SunScript also has the two boolean keywords `true` and `false` (currently defined as the integers one and zero, respectively).
+> **Note:** SunScript also has the two boolean keywords `true` and `false` (currently defined as the integers one and zero, respectively).
 
----
+#### Casting
 
-To get the type of any variable or expression, use the `typeof` statement:
+To explicitly cast to the integer and floating-point types, use the `int` and `float` casting statements:
 
-```javascript
+```
+var const PI = 3.14;
+var piIsExactlyThree = int(PI); // *gasp*
+```
+To get the type of any variable or expression, use the `typeof` statement.
+Constants for the possible return values are defined in the [standard include library](stdlib/common.sun).
+
+```
 var a = 1.1 * 8;
 var b = typeof(a);
 var c = typeof(1.1 * 8); // you may also put expressions as the argument
 ```
 
-Constants for the possible return values are defined in the [standard include library](stdlib/common.sun).
-
----
-
-To explicitly cast to the integer and floating-point types, use the `int` and `float` casting statements:
-
-```javascript
-const PI = 3.14;
-var piIsExactlyThree = int(PI); // *gasp*
-```
-
 #### Constants
 
-Read-only variables may be created via the `const` keyword.
-Only constant definitions are allowed; constant declarations are **not** supported.
+Read-only variables (constants) may be created via the `const` modifier.
+They represent a special literal value which does not change.
 
-To save space in the output binary, constants are not stored in the symbol table, nor are they compiled in the text section.
-Instead, they are simply evaluated each time they are actually used (similar to macros in CPP):
+> **Note:** A constant cannot be declared without a value.
 
-```javascript
-const PI = 3.14;
-const TWOPI = 2 * PI;
-const R = 300.0;
+Constants are not stored in the symbol table, nor are their definitions compiled the text section.
+Instead, they are simply compiled each time they are actually used (similar to macros in the C preprocessor):
+
+```
+var const PI = 3.14;
+var const TWOPI = 2 * PI;
+var const R = 300.0;
 
 var circ = R * TWOPI; // this actually compiles to 'var circ = 300.0 * (2 * (3.14));'
 ```
 
-_**Note:** You may assign only expressions which are evaluated to be constant._
+> **Note:** The expression assigned to a constant must be evaluated to be constant. A constant expression is one which contains only literals and constant symbols.
 
 ### Callables
 
@@ -77,7 +74,7 @@ Callables may have any number of parameters.
 To define a function, use the `function` keyword.
 For builtins, use the `builtin` keyword:
 
-```javascript
+```
 builtin getSystemFlag(flag);
 builtin setSystemFlag(flag, value);
 
@@ -85,61 +82,62 @@ function setOnSystemFlag(flag) { setSystemFlag(flag, true); }
 function setOffSystemFlag(flag) { setSystemFlag(flag, false); }
 ```
 
-A callable may have any number of parameters.
-Each parameter is dynamically typed.
-A builtin may have a variadic signature by specifying an ellipsis keyword `...` as the final parameter (variadic functions are **not** supported):
+Each of the callable's parameters is dynamically typed.
+A builtin may have a variadic signature by specifying the ellipsis identifier `...` as the final parameter:
 
-```javascript
+```
 builtin print(...); // variadic builtin
 
 print("Hello, ", "world!"); // this is legal
 print("I have ", 3, " arguments."); // so is this
 ```
 
+> **Note:** Variadic functions are _not_ supported.
+
 A callable's return value is also dynamic.
-Use a `return` statement to override the interpreter's default return value for a given code path.
+Use a `return` statement to set the return value for a given code path.
+Not all code paths are required to have a return value.
 
 ---
 
 Functions and builtins may be called either as standalone statements or in expressions.
-To call a function or builtin, simply pass its name, followed by any arguments, each separated by a comma:
+To call a function or builtin, simply pass its name, followed by any arguments in parentheses:
 
-```javascript
+```
 appearReadyGo(); // calls the function 'appearReadyGo' with no arguments
 insertTimer(1, 0); // calls the function 'insertTimer' with two arguments, '1' and '0'
 ```
 
-_**Note:** You cannot call a function or builtin in code preceding its definition or declaration, respectively._
+> **Note:** You cannot call a builtin or function in code preceding its declaration or definition.
 
 ### Modifiers
 
 A declared symbol may be assigned compile-time modifiers.
 The modifiers follow their respective keywords in their declaration/definition:
 
-```javascript
-var foo; // global symbol (can be resolved from other scripts)
-var local bar; // global symbol (can be resolved only from the current script)
+```
+var foo; // global script symbol (can be resolved from other scripts)
+var local bar; // local script symbol (can be resolved only from the current script)
 
 function local const getBaz() {
     return 132;
 }
 
-const local baz = getBaz(); // getBaz is marked as constant
+var local const baz = getBaz(); // getBaz is marked as constant
 ```
 
-_ssc_ supports the following modifiers:
+SunScript supports the following modifiers:
 
 |Modifier|Description|
 |--------|-----------|
 |`local`|Resolves only within the current script file. Applies to only script-scope symbols.|
-|`const`|Marks the symbol as constant. Allows for the symbol's use in `const` assignments.|
+|`const`|Marks the symbol as constant. Allows for the symbol's use in constant expressions.|
 
 The following matrix details which symbol types support which modifiers:
 
 |type|`local`|`const`|
 |----|:-----:|:-----:|
-|variable|✓| |
-|constant|✓| |
+|variable|✓|✓|
 |function|✓|✓|
 |builtin| |✓|
 
@@ -165,34 +163,61 @@ The following table describes the operators supported by SunScript, as well as t
 
 ### Flow Control
 
-SunScript has support for `while`, `do`, and `for` loops, as well as the `exit`, `break`, `continue`, and `return` statements:
+Simple boolean flow control can be created using the `if` and `else` statements:
 
-```javascript
-function checkTime(time) {
-    if (time < 30) {
-        startMiss();
-        exit;
-    }
+```
+var coinNum = getSystemFlag(SYSF_GOLDCOINNUM);
+if (coinNum >= needCoinNum) {
+  setSystemFlag(SYSF_GOLDCOINNUM, coinNum - needCoinNum);
+  startEventSE(1);
+  talkAndClose(0xD0019);
+  yield;
+  setNextStage(20, 0);
 }
-var i = 0;
-while (i < 100) {
-    checkTime(i);
-    if (stop) {
-        break;
-    }
+else {
+  talkAndClose(0xD001A);
 }
+```
+
+SunScript also supports the standard loop blocks `while`, `do`, and `for`:
+
+```
+var maniShineNum, var i;
+for (i = 70; i < 86; ++i) {
+  if (isGetShine(i)) {
+    ++maniShineNum;
+  }
+}
+```
+
+To stop execution of the script for the rest of the frame, use the `yield` statement.
+Control will return on the next frame exactly where the script left off.
+
+```
+while(!isTalkModeNow()) {
+  yield;
+}
+```
+
+To end execution of the script completely, use the `exit` statement:
+
+```
+if (getSystemFlag(SYSF_MARIOLIVES) > 5) {
+  exit;
+}
+startMiss();
 ```
 
 #### Named Loops
 
-Loops may be named.
+Loops may be named in order to reference them from within nested loops.
 To name a loop, simply prefix the loop with a label.
 `break` and `continue` statements may be passed the name of the loop which they affect:
 
-```javascript
+```
 outer_loop:
-for (var a; a < 4; ++a) {
-    for (var b; b < 4; ++b) {
+for (var a = 0; a < 4; ++a) {
+    for (var b = 0; b < 4; ++b) {
         if (b == 2) break outer_loop;
     }
 }
@@ -204,22 +229,24 @@ You may split a script amongst several files.
 Doing this requires the use of the `import` statement.
 Simply pass the name of the SunScript file to import:
 
-```javascript
+```
+import "ssc/common.sun";
 import "constants.sun";
 import "C:/math.sun";
 ```
 
-_**Note:** It is recommended to avoid using backslashes, as they may be interpreted as an escape._
+> **Note:** It is recommended to avoid using backslashes, as they may be interpreted as an escape.
 
 Importing files is managed by the `sunImportResolver` instance passed to the compiler.
-The resolver can be the default (`sunImportResolver.Default`) or a completely custom one.
+The resolver can be the default (returned by the `sunImportResolver.Default` property) or a completely custom one.
 If an import resolver fails to find a file, a compiler error will occur.
 
 ---
 
-The default import resolver, `sunImportResolver.Default`, imports scripts by searching and loading files from disk. Where the resolver looks for the script depends on whether the given name is _absolute_ or _relative_:
+The default import resolver imports scripts by searching and loading files from disk. Where the resolver looks for the script depends on whether the given name is _absolute_ or _relative_:
 
-- If the name is _relative_, then the resolver will first append the name to the directory of the current file. If the script then is not found there, it will then look for the script in the compiler's executable directory.
+- If the name is _relative_, then the resolver will look relative to the directory of the current file, followed by the compiler's executable directory.
 - If the name is _absolute_, then the resolver will simply look for the script only in the path specified.
 
-The resolver also keeps track of all files that have been imported and will skip over files whose contents have already been compiled (in order to prevent recursion).
+It also keeps track of all files that have been imported and will skip over files whose contents have already been compiled.
+This helps prevent infinite recursion.
