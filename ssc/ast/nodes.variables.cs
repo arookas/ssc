@@ -38,7 +38,7 @@
 
 	class sunVariableDefinition : sunNode {
 		public sunIdentifier Name { get { return this[1] as sunIdentifier; } }
-		public sunAssign Operator { get { return this[2] as sunAssign; } }
+		public sunAssignOperator Operator { get { return this[2] as sunAssignOperator; } }
 		public sunExpression Expression { get { return this[3] as sunExpression; } }
 
 		public sunSymbolModifiers Modifiers {
@@ -56,7 +56,7 @@
 
 	class sunStorableAssignment : sunNode {
 		public sunIdentifier Name { get { return this[0] as sunIdentifier; } }
-		public sunAssign Operator { get { return this[1] as sunAssign; } }
+		public sunAssignOperator Operator { get { return this[1] as sunAssignOperator; } }
 		public sunExpression Expression { get { return this[2] as sunExpression; } }
 
 		public sunStorableAssignment(sunSourceLocation location)

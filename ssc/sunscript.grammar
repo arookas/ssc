@@ -17,8 +17,8 @@ IMPORT										= "import"
 BUILTIN										= "builtin"
 FUNCTION									= "function"
 VAR												= "var"
-CONST											= "const"
 LOCAL											= "local"
+CONST											= "const"
 
 IF												= "if"
 ELSE											= "else"
@@ -59,21 +59,21 @@ MUL												= "*"
 DIV												= "/"
 MOD												= "%"
 
-BIT_AND										= "&"
-BIT_OR										= "|"
-BIT_LSH										= "<<"
-BIT_RSH										= ">>"
+BAND											= "&"
+BOR												= "|"
+LSH												= "<<"
+RSH												= ">>"
 
-LOG_NOT										= "!"
-LOG_AND										= "&&"
-LOG_OR										= "||"
+NOT												= "!"
+AND												= "&&"
+OR												= "||"
 
 EQ												= "=="
-NEQ												= "!="
+NE												= "!="
 LT												= "<"
-LTEQ											= "<="
+LE												= "<="
 GT												= ">"
-GTEQ											= ">="
+GE												= ">="
 
 ASSIGN										= "="
 ASSIGN_ADD								= "+="
@@ -81,21 +81,21 @@ ASSIGN_SUB								= "-="
 ASSIGN_MUL								= "*="
 ASSIGN_DIV								= "/="
 ASSIGN_MOD								= "%="
-ASSIGN_BIT_AND						= "&="
-ASSIGN_BIT_OR							= "|="
-ASSIGN_BIT_LSH						= "<<="
-ASSIGN_BIT_RSH						= ">>="
+ASSIGN_BAND								= "&="
+ASSIGN_BOR								= "|="
+ASSIGN_LSH								= "<<="
+ASSIGN_RSH								= ">>="
 
 INCREMENT									= "++"
 DECREMENT									= "--"
 
 // literals
 IDENTIFIER								= <<[_A-Za-z][_A-Za-z0-9]*>>
-DEC_NUMBER								= <<-?[0-9]+\.[0-9]+>>
-HEX_NUMBER								= <<-?0x[0-9A-Fa-f]+>>
-INT_NUMBER								= <<-?[0-9]+>>
-ADR_NUMBER								= <<\$[0-9A-Fa-f]{8}>>
-STRING										= <<"(\\.|[^"])*">>
+FLOAT_LITERAL							= <<-?[0-9]+\.[0-9]+>>
+HEX_LITERAL								= <<-?0x[0-9A-Fa-f]+>>
+INTEGER_LITERAL						= <<-?[0-9]+>>
+ADDRESS_LITERAL						= <<\$[0-9A-Fa-f]{8}>>
+STRING_LITERAL						= <<"(\\.|[^"])*">>
 
 %productions%
 
@@ -132,7 +132,7 @@ compound_statement_item		=
 														function_call;
 statement_block						= L_BRACE {statement} R_BRACE;
 
-import_statement					= IMPORT STRING;
+import_statement					= IMPORT STRING_LITERAL;
 yield_statement						= YIELD;
 exit_statement						= EXIT;
 lock_statement						= LOCK;
@@ -141,14 +141,14 @@ unlock_statement					= UNLOCK;
 name_label								= IDENTIFIER COLON;
 
 // operators
-assignment_operator				= ASSIGN | ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MUL | ASSIGN_DIV | ASSIGN_MOD | ASSIGN_BIT_AND | ASSIGN_BIT_OR | ASSIGN_BIT_LSH | ASSIGN_BIT_RSH;
+assignment_operator				= ASSIGN | ASSIGN_ADD | ASSIGN_SUB | ASSIGN_MUL | ASSIGN_DIV | ASSIGN_MOD | ASSIGN_BAND | ASSIGN_BOR | ASSIGN_LSH | ASSIGN_RSH;
 ternary_operator					= expression QMARK expression COLON expression;
 binary_operator						=
 														ADD | SUB | MUL | DIV | MOD | // arithmetic
-														BIT_AND | BIT_OR | BIT_LSH | BIT_RSH | // bitwise
-														EQ | NEQ | LT | LTEQ | GT | GTEQ | // comparison
-														LOG_AND | LOG_OR; // logical
-unary_operator						= LOG_NOT | SUB;
+														BAND | BOR | LSH | RSH | // bitwise
+														EQ | NE | LT | LE | GT | GE | // comparison
+														AND | OR; // logical
+unary_operator						= NOT | SUB;
 augment_operator					= INCREMENT | DECREMENT;
 
 // expressions
@@ -158,11 +158,11 @@ term											=
 														function_call |
 														variable_reference |
 														variable_augment |
-														STRING |
-														DEC_NUMBER |
-														ADR_NUMBER |
-														HEX_NUMBER |
-														INT_NUMBER |
+														STRING_LITERAL |
+														FLOAT_LITERAL |
+														ADDRESS_LITERAL |
+														HEX_LITERAL |
+														INTEGER_LITERAL |
 														TRUE |
 														FALSE |
 														L_PAREN expression R_PAREN |

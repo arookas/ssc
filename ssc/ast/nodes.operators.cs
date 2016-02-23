@@ -18,191 +18,191 @@ namespace arookas {
 	}
 
 	// precedence 0
-	class sunLogOR : sunOperator {
+	class sunLogicalOrOperator : sunOperator {
 		public override int Precedence { get { return 0; } }
 
-		public sunLogOR(sunSourceLocation location)
+		public sunLogicalOrOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteOR(); }
 	}
 
 	// precedence 1
-	class sunLogAND : sunOperator {
+	class sunLogicalAndOperator : sunOperator {
 		public override int Precedence { get { return 1; } }
 
-		public sunLogAND(sunSourceLocation location)
+		public sunLogicalAndOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteAND(); }
 	}
 
 	// precedence 2
-	class sunBitOR : sunOperator {
+	class sunBitwiseOrOperator : sunOperator {
 		public override int Precedence { get { return 2; } }
 
-		public sunBitOR(sunSourceLocation location)
+		public sunBitwiseOrOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteBOR(); }
 	}
 
 	// precedence 3
-	class sunBitAND : sunOperator {
+	class sunBitwiseAndOperator : sunOperator {
 		public override int Precedence { get { return 3; } }
 
-		public sunBitAND(sunSourceLocation location)
+		public sunBitwiseAndOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteBAND(); }
 	}
 
 	// precedence 4
-	class sunEq : sunOperator {
+	class sunEqualOperator : sunOperator {
 		public override int Precedence { get { return 4; } }
 
-		public sunEq(sunSourceLocation location)
+		public sunEqualOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteEQ(); }
 	}
 
-	class sunNtEq : sunOperator {
+	class sunNotEqualOperator : sunOperator {
 		public override int Precedence { get { return 4; } }
 
-		public sunNtEq(sunSourceLocation location)
+		public sunNotEqualOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteNE(); }
 	}
 
 	// precedence 5
-	class sunLt : sunOperator {
+	class sunLessThanOperator : sunOperator {
 		public override int Precedence { get { return 5; } }
 
-		public sunLt(sunSourceLocation location)
+		public sunLessThanOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteLT(); }
 	}
 
-	class sunLtEq : sunOperator {
+	class sunLessEqualOperator : sunOperator {
 		public override int Precedence { get { return 5; } }
 
-		public sunLtEq(sunSourceLocation location)
+		public sunLessEqualOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteLE(); }
 	}
 
-	class sunGt : sunOperator {
+	class sunGreaterThanOperator : sunOperator {
 		public override int Precedence { get { return 5; } }
 
-		public sunGt(sunSourceLocation location)
+		public sunGreaterThanOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteGT(); }
 	}
 
-	class sunGtEq : sunOperator {
+	class sunGreaterEqualOperator : sunOperator {
 		public override int Precedence { get { return 5; } }
 
-		public sunGtEq(sunSourceLocation location)
+		public sunGreaterEqualOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteGE(); }
 	}
 
 	// precedence 6
-	class sunBitLsh : sunOperator {
+	class sunShiftLeftOperator : sunOperator {
 		public override int Precedence { get { return 6; } }
 
-		public sunBitLsh(sunSourceLocation location)
+		public sunShiftLeftOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteSHL(); }
 	}
 
-	class sunBitRsh : sunOperator {
+	class sunShiftRightOperator : sunOperator {
 		public override int Precedence { get { return 6; } }
 
-		public sunBitRsh(sunSourceLocation location)
+		public sunShiftRightOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteSHR(); }
 	}
 
 	// precedence 7
-	class sunAdd : sunOperator {
+	class sunAddOperator : sunOperator {
 		public override int Precedence { get { return 7; } }
 
-		public sunAdd(sunSourceLocation location)
+		public sunAddOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteADD(); }
 	}
 
-	class sunSub : sunOperator {
+	class sunSubtractOperator : sunOperator {
 		public override int Precedence { get { return 7; } }
 
-		public sunSub(sunSourceLocation location)
+		public sunSubtractOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteSUB(); }
 	}
 
 	// precedence 8
-	class sunMul : sunOperator {
+	class sunMultiplyOperator : sunOperator {
 		public override int Precedence { get { return 8; } }
 
-		public sunMul(sunSourceLocation location)
+		public sunMultiplyOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteMUL(); }
 	}
 
-	class sunDiv : sunOperator {
+	class sunDivideOperator : sunOperator {
 		public override int Precedence { get { return 8; } }
 
-		public sunDiv(sunSourceLocation location)
+		public sunDivideOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteDIV(); }
 	}
 
-	class sunMod : sunOperator {
+	class sunModuloOperator : sunOperator {
 		public override int Precedence { get { return 8; } }
 
-		public sunMod(sunSourceLocation location)
+		public sunModuloOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteMOD(); }
 	}
 
 	// precedence 9
-	class sunLogNOT : sunOperator {
+	class sunLogicalNotOperator : sunOperator {
 		public override int Precedence { get { return 9; } }
 
-		public sunLogNOT(sunSourceLocation location)
+		public sunLogicalNotOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteNOT(); }
 	}
-	class sunNeg : sunOperator {
+	class sunNegateOperator : sunOperator {
 		public override int Precedence { get { return 9; } }
 
-		public sunNeg(sunSourceLocation location)
+		public sunNegateOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) { compiler.Binary.WriteNEG(); }
 	}
 
 	// assignment operators
-	class sunAssign : sunOperator {
+	class sunAssignOperator : sunOperator {
 		public override Associativity Associativity { get { return Associativity.Right; } }
 		public override int Precedence { get { return -1; } }
 
-		public sunAssign(sunSourceLocation location)
+		public sunAssignOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public virtual void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -211,8 +211,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignAdd : sunAssign {
-		public sunAssignAdd(sunSourceLocation location)
+	class sunAssignAddOperator : sunAssignOperator {
+		public sunAssignAddOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -223,8 +223,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignSub : sunAssign {
-		public sunAssignSub(sunSourceLocation location)
+	class sunAssignSubtractOperator : sunAssignOperator {
+		public sunAssignSubtractOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -235,8 +235,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignMul : sunAssign {
-		public sunAssignMul(sunSourceLocation location)
+	class sunAssignMultiplyOperator : sunAssignOperator {
+		public sunAssignMultiplyOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -247,8 +247,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignDiv : sunAssign {
-		public sunAssignDiv(sunSourceLocation location)
+	class sunAssignDivideOperator : sunAssignOperator {
+		public sunAssignDivideOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -259,8 +259,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignMod : sunAssign {
-		public sunAssignMod(sunSourceLocation location)
+	class sunAssignModuloOperator : sunAssignOperator {
+		public sunAssignModuloOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -271,8 +271,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignBitAND : sunAssign {
-		public sunAssignBitAND(sunSourceLocation location)
+	class sunAssignBitwiseAndOperator : sunAssignOperator {
+		public sunAssignBitwiseAndOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -283,8 +283,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignBitOR : sunAssign {
-		public sunAssignBitOR(sunSourceLocation location)
+	class sunAssignBitwiseOrOperator : sunAssignOperator {
+		public sunAssignBitwiseOrOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -295,8 +295,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignBitLsh : sunAssign {
-		public sunAssignBitLsh(sunSourceLocation location)
+	class sunAssignShiftLeftOperator : sunAssignOperator {
+		public sunAssignShiftLeftOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {
@@ -307,8 +307,8 @@ namespace arookas {
 		}
 	}
 
-	class sunAssignBitRsh : sunAssign {
-		public sunAssignBitRsh(sunSourceLocation location)
+	class sunAssignShiftRightOperator : sunAssignOperator {
+		public sunAssignShiftRightOperator(sunSourceLocation location)
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler, sunStorableSymbol symbol, sunExpression expression) {

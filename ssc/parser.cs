@@ -90,11 +90,11 @@ namespace arookas {
 
 			// literals
 			switch (id) {
-				case __sunConstants.INT_NUMBER: return new sunIntLiteral(location, token);
-				case __sunConstants.HEX_NUMBER: return new sunHexLiteral(location, token);
-				case __sunConstants.DEC_NUMBER: return new sunFloatLiteral(location, token);
-				case __sunConstants.ADR_NUMBER: return new sunAddressLiteral(location, token);
-				case __sunConstants.STRING: return new sunStringLiteral(location, token);
+				case __sunConstants.INTEGER_LITERAL: return new sunIntLiteral(location, token);
+				case __sunConstants.HEX_LITERAL: return new sunHexLiteral(location, token);
+				case __sunConstants.FLOAT_LITERAL: return new sunFloatLiteral(location, token);
+				case __sunConstants.ADDRESS_LITERAL: return new sunAddressLiteral(location, token);
+				case __sunConstants.STRING_LITERAL: return new sunStringLiteral(location, token);
 				case __sunConstants.IDENTIFIER: return new sunIdentifier(location, token);
 				case __sunConstants.ELLIPSIS: return new sunEllipsis(location);
 				case __sunConstants.TRUE: return new sunTrue(location);
@@ -103,44 +103,44 @@ namespace arookas {
 
 			// operators
 			switch (id) {
-				case __sunConstants.ADD: return new sunAdd(location);
+				case __sunConstants.ADD: return new sunAddOperator(location);
 				case __sunConstants.SUB: {
 						if (parent == __sunConstants.UNARY_OPERATOR) {
-							return new sunNeg(location);
+							return new sunNegateOperator(location);
 						}
-						return new sunSub(location);
+						return new sunSubtractOperator(location);
 					}
-				case __sunConstants.MUL: return new sunMul(location);
-				case __sunConstants.DIV: return new sunDiv(location);
-				case __sunConstants.MOD: return new sunMod(location);
+				case __sunConstants.MUL: return new sunMultiplyOperator(location);
+				case __sunConstants.DIV: return new sunDivideOperator(location);
+				case __sunConstants.MOD: return new sunModuloOperator(location);
 
-				case __sunConstants.BIT_AND: return new sunBitAND(location);
-				case __sunConstants.BIT_OR: return new sunBitOR(location);
-				case __sunConstants.BIT_LSH: return new sunBitLsh(location);
-				case __sunConstants.BIT_RSH: return new sunBitRsh(location);
+				case __sunConstants.BAND: return new sunBitwiseAndOperator(location);
+				case __sunConstants.BOR: return new sunBitwiseOrOperator(location);
+				case __sunConstants.LSH: return new sunShiftLeftOperator(location);
+				case __sunConstants.RSH: return new sunShiftRightOperator(location);
 
-				case __sunConstants.LOG_AND: return new sunLogAND(location);
-				case __sunConstants.LOG_OR: return new sunLogOR(location);
-				case __sunConstants.LOG_NOT: return new sunLogNOT(location);
+				case __sunConstants.AND: return new sunLogicalAndOperator(location);
+				case __sunConstants.OR: return new sunLogicalOrOperator(location);
+				case __sunConstants.NOT: return new sunLogicalNotOperator(location);
 
-				case __sunConstants.EQ: return new sunEq(location);
-				case __sunConstants.NEQ: return new sunNtEq(location);
-				case __sunConstants.LT: return new sunLt(location);
-				case __sunConstants.GT: return new sunGt(location);
-				case __sunConstants.LTEQ: return new sunLtEq(location);
-				case __sunConstants.GTEQ: return new sunGtEq(location);
+				case __sunConstants.EQ: return new sunEqualOperator(location);
+				case __sunConstants.NE: return new sunNotEqualOperator(location);
+				case __sunConstants.LT: return new sunLessThanOperator(location);
+				case __sunConstants.GT: return new sunGreaterThanOperator(location);
+				case __sunConstants.LE: return new sunLessEqualOperator(location);
+				case __sunConstants.GE: return new sunGreaterEqualOperator(location);
 
-				case __sunConstants.ASSIGN: return new sunAssign(location);
-				case __sunConstants.ASSIGN_ADD: return new sunAssignAdd(location);
-				case __sunConstants.ASSIGN_SUB: return new sunAssignSub(location);
-				case __sunConstants.ASSIGN_MUL: return new sunAssignMul(location);
-				case __sunConstants.ASSIGN_DIV: return new sunAssignDiv(location);
-				case __sunConstants.ASSIGN_MOD: return new sunAssignMod(location);
+				case __sunConstants.ASSIGN: return new sunAssignOperator(location);
+				case __sunConstants.ASSIGN_ADD: return new sunAssignAddOperator(location);
+				case __sunConstants.ASSIGN_SUB: return new sunAssignSubtractOperator(location);
+				case __sunConstants.ASSIGN_MUL: return new sunAssignMultiplyOperator(location);
+				case __sunConstants.ASSIGN_DIV: return new sunAssignDivideOperator(location);
+				case __sunConstants.ASSIGN_MOD: return new sunAssignModuloOperator(location);
 
-				case __sunConstants.ASSIGN_BIT_AND: return new sunAssignBitAND(location);
-				case __sunConstants.ASSIGN_BIT_OR: return new sunAssignBitOR(location);
-				case __sunConstants.ASSIGN_BIT_LSH: return new sunAssignBitLsh(location);
-				case __sunConstants.ASSIGN_BIT_RSH: return new sunAssignBitRsh(location);
+				case __sunConstants.ASSIGN_BAND: return new sunAssignBitwiseAndOperator(location);
+				case __sunConstants.ASSIGN_BOR: return new sunAssignBitwiseOrOperator(location);
+				case __sunConstants.ASSIGN_LSH: return new sunAssignShiftLeftOperator(location);
+				case __sunConstants.ASSIGN_RSH: return new sunAssignShiftRightOperator(location);
 
 				case __sunConstants.INCREMENT: return new sunIncrement(location);
 				case __sunConstants.DECREMENT: return new sunDecrement(location);
