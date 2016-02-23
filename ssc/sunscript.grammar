@@ -124,7 +124,6 @@ statement									=
 														statement_block;
 compound_statement				= compound_statement_item {COMMA compound_statement_item};
 compound_statement_item		=
-														const_definition |
 														variable_definition |
 														variable_declaration |
 														variable_assignment |
@@ -170,15 +169,11 @@ term											=
 
 unary_operator_list				= unary_operator+;
 
-// constants
-const_definition					= const_modifiers IDENTIFIER ASSIGN expression;
-const_modifiers						= CONST [LOCAL];
-
 // variables
 variable_reference				= IDENTIFIER; // used in expressions
 variable_declaration			= variable_modifiers IDENTIFIER;
 variable_definition				= variable_modifiers IDENTIFIER ASSIGN expression;
-variable_modifiers				= VAR [LOCAL];
+variable_modifiers				= VAR [LOCAL] [CONST];
 variable_assignment				= IDENTIFIER assignment_operator expression;
 variable_augment					= postfix_augment | prefix_augment;
 

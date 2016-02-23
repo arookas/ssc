@@ -14,7 +14,11 @@ namespace arookas {
 			: base(location) { }
 
 		public override void Compile(sunCompiler compiler) {
-			compiler.Context.DeclareBuiltin(this);
+			var symbol = compiler.Context.DeclareBuiltin(this);
+			symbol.Modifiers = Modifiers;
+			if ((symbol.Modifiers & sunSymbolModifiers.Local) != 0) {
+				throw new sunInvalidModifierException(this[0]); // local builtins are not supported
+			}
 		}
 	}
 
@@ -33,7 +37,8 @@ namespace arookas {
 		public override void Compile(sunCompiler compiler) {
 			// this defines the function in the context
 			// it doesn't compile the definition body
-			compiler.Context.DefineFunction(this);
+			var symbol = compiler.Context.DefineFunction(this);
+			symbol.Modifiers = Modifiers;
 		}
 	}
 

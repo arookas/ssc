@@ -111,7 +111,7 @@ namespace arookas {
 			}
 			return symbol;
 		}
-		public sunConstantSymbol DeclareConstant(sunConstantDefinition node) {
+		public sunConstantSymbol DeclareConstant(sunVariableDefinition node) {
 			return DeclareConstant(node.Name, node.Expression, node.Modifiers);
 		}
 		sunConstantSymbol DeclareConstant(sunIdentifier node, sunExpression expression, sunSymbolModifiers modifiers) {

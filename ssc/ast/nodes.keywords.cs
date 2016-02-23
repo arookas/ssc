@@ -1,11 +1,11 @@
 ﻿namespace arookas {
-	class sunConstKeyword : sunNode {
-		public sunConstKeyword(sunSourceLocation location)
+	class sunConstModifier : sunNode {
+		public sunConstModifier(sunSourceLocation location)
 			: base(location) { }
 	}
 
-	class sunLocalKeyword : sunNode {
-		public sunLocalKeyword(sunSourceLocation location)
+	class sunLocalModifier : sunNode {
+		public sunLocalModifier(sunSourceLocation location)
 			: base(location) { }
 	}
 }

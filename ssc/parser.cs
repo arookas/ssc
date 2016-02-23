@@ -190,12 +190,6 @@ namespace arookas {
 				case __sunConstants.VARIABLE_AUGMENT: return new sunNode(location);
 			}
 
-			// constants
-			switch (id) {
-				case __sunConstants.CONST_DEFINITION: return new sunConstantDefinition(location);
-				case __sunConstants.CONST_MODIFIERS: return new sunNode(location);
-			}
-
 			// flow control
 			switch (id) {
 				case __sunConstants.IF_STATEMENT: return new sunIf(location);
@@ -211,17 +205,10 @@ namespace arookas {
 				case __sunConstants.CONTINUE_STATEMENT: return new sunContinue(location);
 			}
 			
-			// keywords
-			if (id == __sunConstants.CONST) {
-				switch (parent) {
-					case __sunConstants.FUNCTION_MODIFIERS:
-					case __sunConstants.BUILTIN_MODIFIERS: {
-							return new sunConstKeyword(location);
-						}
-				}
-			}
-			if (id == __sunConstants.LOCAL) {
-				return new sunLocalKeyword(location);
+			// modifiers
+			switch (id) {
+				case __sunConstants.LOCAL: return new sunLocalModifier(location);
+				case __sunConstants.CONST: return new sunConstModifier(location);
 			}
 
 			// emergency fallback
