@@ -124,7 +124,6 @@ statement									=
 														statement_block;
 compound_statement				= compound_statement_item {COMMA compound_statement_item};
 compound_statement_item		=
-														const_definition |
 														variable_definition |
 														variable_declaration |
 														variable_assignment |
@@ -169,10 +168,6 @@ term											=
 														L_BRACKET ternary_operator R_BRACKET; // HACK: the brackets remove ambiguity
 
 unary_operator_list				= unary_operator+;
-
-// constants
-const_definition					= const_modifiers IDENTIFIER ASSIGN expression;
-const_modifiers						= CONST [LOCAL];
 
 // variables
 variable_reference				= IDENTIFIER; // used in expressions
