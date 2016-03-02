@@ -44,8 +44,8 @@ namespace arookas {
 						if (sSettings.OutputData) {
 							WriteData();
 						}
-						if (sSettings.OutputDynsym) {
-							WriteDynsym();
+						if (sSettings.OutputSym) {
+							WriteSym();
 						}
 						if (sSettings.OutputBss) {
 							WriteBss();
@@ -198,9 +198,9 @@ namespace arookas {
 			}
 			sWriter.WriteLine();
 		}
-		static void WriteDynsym() {
-			Console.WriteLine("Outputting .dynsym...");
-			sWriter.WriteLine(".dynsym");
+		static void WriteSym() {
+			Console.WriteLine("Outputting .sym...");
+			sWriter.WriteLine(".sym");
 			sReader.Goto(sDynsymOffset);
 			for (int i = 0; i < sDynsymCount; ++i) {
 				var symbol = new Symbol(sReader);
