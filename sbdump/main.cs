@@ -191,7 +191,7 @@ namespace arookas {
 			Console.WriteLine("Outputting .data...");
 			sWriter.WriteLine(".data");
 			sReader.Goto(sDataOffset);
-			for (int i = 0; i < sDataCount; ++i) {
+			for (var i = 0; i < sDataCount; ++i) {
 				var ofs = sReader.Read32();
 				var data = FetchDataValue(ofs);
 				sWriter.WriteLine("  .string \"{0}\"", data);
@@ -202,17 +202,17 @@ namespace arookas {
 			Console.WriteLine("Outputting .sym...");
 			sWriter.WriteLine(".sym");
 			sReader.Goto(sSymOffset);
-			for (int i = 0; i < sSymCount; ++i) {
+			for (var i = 0; i < sSymCount; ++i) {
 				var symbol = new Symbol(sReader);
 				var name = FetchSymbolName(symbol);
 				sWriter.WriteLine("  .{0} {1}", sSymbolTypes[(int)symbol.Type], name);
 			}
 			sWriter.WriteLine();
 		}
-			for (int i = 0; i < sVarCount; ++i) {
 		static void WriteVars() {
 			Console.WriteLine("Outputting variables...");
 			sWriter.WriteLine("# variables:");
+			for (var i = 0; i < sVarCount; ++i) {
 				var symbol = FetchSymbol(j => j.Type == SymbolType.Variable && j.Data == i);
 				if (symbol != null) {
 					sWriter.WriteLine("# {0}", FetchSymbolName(symbol));
@@ -258,7 +258,7 @@ namespace arookas {
 			Symbol found = null;
 			sReader.Keep();
 			sReader.Goto(sSymOffset);
-			for (int i = 0; i < sSymCount; ++i) {
+			for (var i = 0; i < sSymCount; ++i) {
 				var symbol = new Symbol(sReader);
 				if (predicate(symbol)) {
 					found = symbol;
