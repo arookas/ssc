@@ -4,7 +4,7 @@ using System.IO;
 namespace arookas {
 	class CommandLineSettings {
 		string mInput, mOutput;
-		bool mOutputHeader, mOutputText, mOutputData, mOutputSym, mOutputBss;
+		bool mOutputHeader, mOutputText, mOutputData, mOutputSym, mOutputVars;
 
 		public string Input { get { return mInput; } }
 		public string Output { get { return mOutput; } }
@@ -12,7 +12,7 @@ namespace arookas {
 		public bool OutputText { get { return mOutputText; } }
 		public bool OutputData { get { return mOutputData; } }
 		public bool OutputSym { get { return mOutputSym; } }
-		public bool OutputBss { get { return mOutputBss; } }
+		public bool OutputVars { get { return mOutputVars; } }
 
 		public CommandLineSettings(aCommandLine cmd) {
 			if (cmd == null) {
@@ -30,8 +30,8 @@ namespace arookas {
 					case "-d": mOutputData = false; continue;
 					case "-S": mOutputSym = true; continue;
 					case "-s": mOutputSym = false; continue;
-					case "-B": mOutputBss = true; continue;
-					case "-b": mOutputBss = false; continue;
+					case "-V": mOutputVars = true; continue;
+					case "-v": mOutputVars = false; continue;
 				}
 			}
 			if (mInput == null) {

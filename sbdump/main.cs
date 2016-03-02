@@ -47,8 +47,8 @@ namespace arookas {
 						if (sSettings.OutputSym) {
 							WriteSym();
 						}
-						if (sSettings.OutputBss) {
-							WriteBss();
+						if (sSettings.OutputVars) {
+							WriteVars();
 						}
 						Console.WriteLine("Closing output file...");
 					}
@@ -209,16 +209,16 @@ namespace arookas {
 			}
 			sWriter.WriteLine();
 		}
-		static void WriteBss() {
-			Console.WriteLine("Outputting .bss...");
-			sWriter.WriteLine(".bss");
 			for (int i = 0; i < sVarCount; ++i) {
+		static void WriteVars() {
+			Console.WriteLine("Outputting variables...");
+			sWriter.WriteLine("# variables:");
 				var symbol = FetchSymbol(j => j.Type == SymbolType.Variable && j.Data == i);
 				if (symbol != null) {
-					sWriter.WriteLine("  .var {0}", FetchSymbolName(symbol));
+					sWriter.WriteLine("# {0}", FetchSymbolName(symbol));
 				}
 				else {
-					sWriter.WriteLine("  .var");
+					sWriter.WriteLine("# (NULL)");
 				}
 			}
 			sWriter.WriteLine();
@@ -233,7 +233,7 @@ namespace arookas {
 		}
 		static string FetchDataValue(int i) {
 			if (i < 0 || i >= sDataCount) {
-				return "null";
+				return "(NULL)";
 			}
 			return FetchDataValue(FetchData(i));
 		}
