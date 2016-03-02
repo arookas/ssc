@@ -120,10 +120,12 @@ namespace arookas {
 			byte command;
 			sReader.Keep();
 			sReader.Goto(sTextOffset + ofs);
+			var maxofs = 0u;
 			do {
 				var pos = sReader.Position - sTextOffset;
 				command = sReader.Read8();
 				sWriter.Write("  {0:X8} {1}", pos, sCommandNames[command]);
+				var nextofs = 0u;
 				switch (command) {
 					case 0x00: sWriter.Write(" {0}", sReader.ReadS32()); break;
 					case 0x01: sWriter.Write(" {0}", sReader.ReadF32()); break;
@@ -157,12 +159,14 @@ namespace arookas {
 					case 0x1D: sWriter.Write(" {0}, {1}", FetchSymbolName(FetchSymbol(sReader.ReadS32())), sReader.ReadS32()); break;
 					case 0x1E: sWriter.Write(" {0}", sReader.ReadS32()); break;
 					case 0x1F: sWriter.Write(" {0}", sReader.ReadS32()); break;
-					case 0x22: WriteJmp(ofs); break;
-					case 0x23: WriteJmp(ofs); break;
+					case 0x22: nextofs = WriteJmp(ofs); break;
+					case 0x23: nextofs = WriteJmp(ofs); break;
 				}
 				sWriter.WriteLine();
-
-			} while (command != 0x21 && command != 0x27);
+				if (nextofs > maxofs) {
+					maxofs = nextofs;
+				}
+			} while (!IsReturnCommand(command) || sReader.Position <= sTextOffset + maxofs);
 			sWriter.WriteLine();
 			sReader.Back();
 		}
@@ -274,6 +278,14 @@ namespace arookas {
 			var name = sReader.ReadString<aZSTR>();
 			sReader.Back();
 			return name;
+		}
+
+		static bool IsReturnCommand(byte cmd) {
+			return (
+				cmd == 0x20 || // ret
+				cmd == 0x21 || // ret0
+				cmd == 0x27 // end
+			);
 		}
 	}
 }
