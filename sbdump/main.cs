@@ -9,8 +9,8 @@ namespace arookas {
 		static CommandLineSettings sSettings;
 		static aBinaryReader sReader;
 		static TextWriter sWriter;
-		static uint sTextOffset, sDataOffset, sDynsymOffset;
-		static int sDataCount, sDynsymCount, sBssCount;
+		static uint sTextOffset, sDataOffset, sSymOffset;
+		static int sDataCount, sSymCount, sVarCount;
 
 		const string cTitle = "sbdump arookas";
 		static readonly string[] sSymbolTypes = { "builtin", "function", "var", };
@@ -88,9 +88,9 @@ namespace arookas {
 			sTextOffset = sReader.Read32();
 			sDataOffset = sReader.Read32();
 			sDataCount = sReader.ReadS32();
-			sDynsymOffset = sReader.Read32();
-			sDynsymCount = sReader.ReadS32();
-			sBssCount = sReader.ReadS32();
+			sSymOffset = sReader.Read32();
+			sSymCount = sReader.ReadS32();
+			sVarCount = sReader.ReadS32();
 		}
 		static void WriteHeader() {
 			Console.WriteLine("Outputting header...");
@@ -98,17 +98,17 @@ namespace arookas {
 			sWriter.WriteLine("#   .text offset   : {0:X8}", sTextOffset);
 			sWriter.WriteLine("#   .data offset   : {0:X8}", sDataOffset);
 			sWriter.WriteLine("#   .data count    : {0}", sDataCount);
-			sWriter.WriteLine("#   .dynsym offset : {0:X8}", sDynsymOffset);
-			sWriter.WriteLine("#   .dynsym count  : {0}", sDynsymCount);
-			sWriter.WriteLine("#   .bss count     : {0}", sBssCount);
+			sWriter.WriteLine("#   .sym offset    : {0:X8}", sSymOffset);
+			sWriter.WriteLine("#   .sym count     : {0}", sSymCount);
+			sWriter.WriteLine("#   var count      : {0}", sVarCount);
 			sWriter.WriteLine();
 		}
 		static void WriteText() {
 			Console.WriteLine("Outputting .text...");
 			sWriter.WriteLine(".text");
 			WriteText(0u);
-			var symbols = new Symbol[sDynsymCount];
-			for (var i = 0; i < sDynsymCount; ++i) {
+			var symbols = new Symbol[sSymCount];
+			for (var i = 0; i < sSymCount; ++i) {
 				symbols[i] = FetchSymbol(i);
 			}
 			foreach (var symbol in symbols.Where(i => i.Type == SymbolType.Function).OrderBy(i => i.Data)) {
@@ -201,8 +201,8 @@ namespace arookas {
 		static void WriteSym() {
 			Console.WriteLine("Outputting .sym...");
 			sWriter.WriteLine(".sym");
-			sReader.Goto(sDynsymOffset);
-			for (int i = 0; i < sDynsymCount; ++i) {
+			sReader.Goto(sSymOffset);
+			for (int i = 0; i < sSymCount; ++i) {
 				var symbol = new Symbol(sReader);
 				var name = FetchSymbolName(symbol);
 				sWriter.WriteLine("  .{0} {1}", sSymbolTypes[(int)symbol.Type], name);
@@ -212,7 +212,7 @@ namespace arookas {
 		static void WriteBss() {
 			Console.WriteLine("Outputting .bss...");
 			sWriter.WriteLine(".bss");
-			for (int i = 0; i < sBssCount; ++i) {
+			for (int i = 0; i < sVarCount; ++i) {
 				var symbol = FetchSymbol(j => j.Type == SymbolType.Variable && j.Data == i);
 				if (symbol != null) {
 					sWriter.WriteLine("  .var {0}", FetchSymbolName(symbol));
@@ -246,7 +246,7 @@ namespace arookas {
 		}
 		static Symbol FetchSymbol(int i) {
 			sReader.Keep();
-			sReader.Goto(sDynsymOffset + (20 * i));
+			sReader.Goto(sSymOffset + (20 * i));
 			var symbol = new Symbol(sReader);
 			sReader.Back();
 			return symbol;
@@ -257,8 +257,8 @@ namespace arookas {
 			}
 			Symbol found = null;
 			sReader.Keep();
-			sReader.Goto(sDynsymOffset);
-			for (int i = 0; i < sDynsymCount; ++i) {
+			sReader.Goto(sSymOffset);
+			for (int i = 0; i < sSymCount; ++i) {
 				var symbol = new Symbol(sReader);
 				if (predicate(symbol)) {
 					found = symbol;
@@ -270,7 +270,7 @@ namespace arookas {
 		}
 		static string FetchSymbolName(Symbol symbol) {
 			sReader.Keep();
-			sReader.Goto(sDynsymOffset + (20 * sDynsymCount) + symbol.StringOffset);
+			sReader.Goto(sSymOffset + (20 * sSymCount) + symbol.StringOffset);
 			var name = sReader.ReadString<aZSTR>();
 			sReader.Back();
 			return name;
