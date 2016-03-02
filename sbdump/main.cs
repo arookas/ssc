@@ -12,7 +12,7 @@ namespace arookas {
 		static uint sTextOffset, sDataOffset, sDynsymOffset;
 		static int sDataCount, sDynsymCount, sBssCount;
 
-		const string cTitle = "sbdump v0.1 arookas";
+		const string cTitle = "sbdump arookas";
 		static readonly string[] sSymbolTypes = { "builtin", "function", "var", };
 		static readonly string[] sCommandNames = {
 			"int", "flt", "str", "adr", "var", "nop", "inc", "dec",
