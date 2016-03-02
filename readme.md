@@ -1,6 +1,7 @@
 # ssc
 
 ![SunScript ST3 syntax preview](http://i.imgur.com/YHChKwd.png)
+> Preview of [the standard library](stdlib/talk.sun) in Sublime Text 3 using the included [syntax script](sunscript.sublime-syntax).
 
 ## Summary
 
@@ -50,8 +51,8 @@ All dependencies must be placed in the _lib-dir_ folder (see below), unless stat
 |[arookas library](https://github.com/arookas/arookas)|Preferably, the library should be built in the same configuration as _ssc_ (e.g. debug, release).|
 |[Grammatica 1.6](http://grammatica.percederberg.net/)|Already included in the repository.|
 
-_**Note:** A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.
-For more information, see Grammatica's official [installation documentation](http://grammatica.percederberg.net/doc/release/install.html)._
+> A Java runtime compatible with JDK 1.5 is required for generating the Grammatica parser classes during compilation.
+> For more information, see Grammatica's official [installation documentation](http://grammatica.percederberg.net/doc/release/install.html).
 
 ### premake
 
