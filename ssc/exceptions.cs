@@ -259,4 +259,12 @@ namespace arookas {
 		public sunInvalidModifierException(sunNode node)
 			: base(node) { }
 	}
+	class sunConstantDeclarationException : sunNodeException<sunVariableDeclaration> {
+		public override string Message {
+			get { return "Constant variables must be assigned a value."; }
+		}
+
+		public sunConstantDeclarationException(sunVariableDeclaration node)
+			: base(node) { }
+	}
 }
