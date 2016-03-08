@@ -66,25 +66,6 @@ namespace arookas {
 
 		public int LocalCount {
 			get {
-#if SSC_SCOPES
-				var locals = 0;
-				var maxChildLocals = 0;
-				foreach (var child in this) {
-					if (child is sunVariableDeclaration || child is sunVariableDefinition) {
-						++locals;
-					}
-					else if (child is sunCompoundStatement) {
-						locals += child.LocalCount; // HACK: compound statements aren't their own scope
-					}
-					else if (!(child is sunFunctionDefinition)) { // don't recurse into function bodies
-						var childLocals = child.LocalCount;
-						if (childLocals > maxChildLocals) {
-							maxChildLocals = childLocals;
-						}
-					}
-				}
-				return locals + maxChildLocals;
-#else
 				var locals = 0;
 				foreach (var child in this) {
 					if (child is sunVariableDeclaration || child is sunVariableDefinition) {
@@ -95,7 +76,6 @@ namespace arookas {
 					}
 				}
 				return locals;
-#endif
 			}
 		}
 

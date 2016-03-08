@@ -185,11 +185,7 @@ namespace arookas {
 
 		public override void Compile(sunCompiler compiler) {
 			mOffset = compiler.Binary.Offset;
-#if SSC_SCOPES
-			compiler.Context.Scopes.Push(sunScopeType.Function);
-#else
 			compiler.Context.Scopes.Push();
-#endif
 			foreach (var parameter in Parameters) {
 				compiler.Context.Scopes.DeclareVariable(parameter); // since there is no AST node for these, they won't affect MaxLocalCount
 			}
