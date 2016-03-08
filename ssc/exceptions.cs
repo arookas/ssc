@@ -267,4 +267,12 @@ namespace arookas {
 		public sunConstantDeclarationException(sunVariableDeclaration node)
 			: base(node) { }
 	}
+	class sunLocalFunctionVariableException : sunNodeException<sunNode> {
+		public override string Message {
+			get { return "Only script-scope variables can be declared local."; }
+		}
+
+		public sunLocalFunctionVariableException(sunNode node)
+			: base(node) { }
+	}
 }

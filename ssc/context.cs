@@ -97,6 +97,13 @@ namespace arookas {
 		}
 		sunVariableSymbol DeclareVariable(sunIdentifier node, sunSymbolModifiers modifiers) {
 			var local = (modifiers & sunSymbolModifiers.Local) != 0;
+#if SSC_SCOPES
+			if (local && Scopes.Top.Type == sunScopeType.Function) {
+#else
+			if (local && Scopes.Count > 1) {
+#endif
+				throw new sunLocalFunctionVariableException(node);
+			}
 			var name = MangleSymbolName(node.Value, node.Location.ScriptId, false, local);
 			var symbol = Scopes.DeclareVariable(name);
 			if (symbol == null) {
